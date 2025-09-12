@@ -120,12 +120,12 @@ const navbarActionsClass = computed(() => {
 });
 
 /**
- * 退出登錄
+ * Logout function
  */
 function logout() {
-  ElMessageBox.confirm("確定註銷並退出系統嗎？", "提示", {
-    confirmButtonText: "確定",
-    cancelButtonText: "取消",
+  ElMessageBox.confirm(t("navbar.logoutConfirm"), t("navbar.logoutConfirmTitle"), {
+    confirmButtonText: t("common.confirm"),
+    cancelButtonText: t("common.cancel"),
     type: "warning",
     lockScroll: false,
   }).then(() => {

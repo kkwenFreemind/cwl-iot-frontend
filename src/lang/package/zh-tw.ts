@@ -49,6 +49,8 @@ export default {
     document: "專案文件",
     gitee: "專案地址",
     profile: "個人中心",
+    logoutConfirm: "確定登出並退出系統嗎？",
+    logoutConfirmTitle: "確認登出",
   },
   sizeSelect: {
     tooltip: "佈局大小",

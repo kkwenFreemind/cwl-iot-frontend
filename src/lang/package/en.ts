@@ -49,6 +49,8 @@ export default {
     document: "Document",
     gitee: "Gitee",
     profile: "User Profile",
+    logoutConfirm: "Are you sure you want to logout and exit the system?",
+    logoutConfirmTitle: "Confirm Logout",
   },
   sizeSelect: {
     tooltip: "Layout Size",
