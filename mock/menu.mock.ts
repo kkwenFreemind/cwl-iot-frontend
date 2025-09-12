@@ -138,33 +138,7 @@ export default defineMock([
             },
           ],
         },
-        {
-          path: "/codegen",
-          component: "Layout",
-          name: "/codegen",
-          meta: {
-            title: "系统工具",
-            icon: "menu",
-            hidden: false,
-            alwaysShow: false,
-            params: null,
-          },
-          children: [
-            {
-              path: "codegen",
-              component: "codegen/index",
-              name: "Codegen",
-              meta: {
-                title: "代码生成",
-                icon: "code",
-                hidden: false,
-                keepAlive: true,
-                alwaysShow: false,
-                params: null,
-              },
-            },
-          ],
-        },
+        // Codegen menu removed — feature not required for this project
         {
           path: "/api",
           component: "Layout",
@@ -1191,37 +1165,7 @@ export default defineMock([
             },
           ],
         },
-        {
-          id: 118,
-          parentId: 0,
-          name: "系统工具",
-          type: "CATALOG",
-          routeName: null,
-          routePath: "/codegen",
-          component: "Layout",
-          sort: 2,
-          visible: 1,
-          icon: "menu",
-          redirect: null,
-          perm: null,
-          children: [
-            {
-              id: 119,
-              parentId: 118,
-              name: "代码生成",
-              type: "MENU",
-              routeName: "Codegen",
-              routePath: "codegen",
-              component: "codegen/index",
-              sort: 1,
-              visible: 1,
-              icon: "code",
-              redirect: null,
-              perm: null,
-              children: [],
-            },
-          ],
-        },
+        // Codegen menu entries removed — feature not required
         {
           id: 40,
           parentId: 0,
