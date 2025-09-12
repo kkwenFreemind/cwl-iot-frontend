@@ -76,6 +76,9 @@
             <el-descriptions-item :label="t('profile.department')">
               {{ userProfile.deptName }}
             </el-descriptions-item>
+            <el-descriptions-item :label="t('profile.role')">
+              {{ userProfile.roleNames }}
+            </el-descriptions-item>
             <el-descriptions-item :label="t('profile.createTime')">
               {{ userProfile.createTime }}
             </el-descriptions-item>
