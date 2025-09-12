@@ -165,9 +165,88 @@ This phase aims to streamline the codebase by removing unnecessary features and 
   - **Impact**: Cleaner, focused user management suitable for community water monitoring
   - **Backend APIs to Remove**:
     - `GET /api/v1/users/template` (download import template)
-    - `POST /api/v1/users/import` (user import)  
+    - `POST /api/v1/users/import` (user import)
     - `GET /api/v1/users/export` (user export)
   - Commit: TBD — feat: simplify user management for community focus
+
+### ✅ System/User Module Comprehensive Refactoring (Part 3 - Latest)
+
+- **User Management i18n Implementation**: Complete internationalization for all user operations
+  - **Problem**: Multiple hardcoded Chinese strings in user management functions
+  - **Solution**: Comprehensive i18n implementation for all user operations
+  - **Implementation**:
+    - **Reset Password Dialog**: Added resetPasswordDialog section with parameter interpolation
+      - Prompt message with {username} parameter: "Please enter new password for user [{username}]"
+      - Validation, success, and cancellation messages fully internationalized
+    - **Delete User Dialog**: Added deleteDialog section for deletion confirmation
+      - Confirmation message, warnings, success/cancellation notifications
+    - **CRUD Operations**: Added createSuccessMessage and updateSuccessMessage
+      - "User created successfully" / "User updated successfully"
+    - **DeptTree Component**: Fixed department search placeholder to show "Community/社區(村里)"
+    - **Language Package Updates**: Added 15+ new translation keys to both zh-tw.ts and en.ts
+  - **Technical Improvements**:
+    - Replaced all `ElMessage.success("硬編碼文字")` with `t("user.successMessage")`
+    - Implemented parameter interpolation: `{username}`, `{password}`
+    - Updated function names: `hancleResetPassword` → `handleResetPassword` (typo fix)
+  - **Impact**: Complete internationalization compliance for user management module
+  - Commits:
+    - `[hash]` — fix: implement i18n for user management functions
+    - `[hash]` — fix: update DeptTree placeholder for community context
+
+- **API Documentation Enhancement**: Professional English comments for user-api.ts
+  - **Problem**: API documentation lacked comprehensive English comments
+  - **Solution**: Added bilingual professional documentation
+  - **Implementation**:
+    - **API Methods Documentation**: 12 methods with detailed JSDoc comments
+      - getInfo(), getPage(), getFormData(), create(), update(), resetPassword()
+      - deleteByIds(), export(), getProfile(), updateProfile(), changePassword(), getOptions()
+    - **Interface Documentation**: 7 TypeScript interfaces with field-level comments
+      - UserInfo, UserPageQuery, UserPageVO, UserForm, UserProfileVO, UserProfileForm, PasswordChangeForm
+    - **Bilingual Approach**: English primary with Chinese secondary for critical context
+    - **Parameter Documentation**: All function parameters with type and purpose descriptions
+  - **Code Quality Features**:
+    - JSDoc compliance for IDE support and auto-completion
+    - Consistent formatting and professional terminology
+    - Clear separation between Chinese business context and English technical docs
+  - **Impact**: Enhanced code maintainability and developer experience
+  - Commit: `[hash]` — docs: add comprehensive English comments to user-api.ts
+
+- **Component Documentation Enhancement**: Professional English comments for Vue components
+  - **Problem**: Vue components lacked comprehensive documentation
+  - **Solution**: Added detailed bilingual comments for all user management components
+  - **Implementation**:
+    - **User Index Component**: Comprehensive component documentation
+      - Header documentation with @description, @features, @author, @version
+      - Template structure comments (search container, data table, form drawer)
+      - Script sections with lifecycle, state management, and function documentation
+      - 20+ function comments with parameter types and return descriptions
+    - **DeptTree Component**: Complete documentation for tree component
+      - Component overview with features list (filtering, selection, events)
+      - Template annotations for card container, search input, hierarchical tree
+      - State management documentation (props, events, reactive data)
+      - Function documentation for filter logic and node selection
+    - **Vue 3 Best Practices**: Comments follow Composition API patterns
+  - **Documentation Features**:
+    - Bilingual comments (English primary, Chinese context where needed)
+    - JSDoc format for functions with @param and @returns
+    - Component lifecycle and state management explanations
+    - Event handling and parent-child communication documentation
+  - **Impact**: Improved code readability and knowledge transfer for international team
+  - Commits:
+    - `[hash]` — docs: add comprehensive English comments to user index component
+    - `[hash]` — docs: add professional English comments to DeptTree component
+
+- **UserImport Component Cleanup**: Complete removal of import functionality
+  - **Problem**: UserImport.vue still existed despite previous removal requirements
+  - **Solution**: Complete cleanup of all import-related code and dependencies
+  - **Implementation**:
+    - **File Removal**: Deleted `src/views/system/user/components/UserImport.vue`
+    - **API Cleanup**: Removed `downloadTemplate()` and `import()` methods from user-api.ts
+    - **Type Cleanup**: Removed `ExcelResult` interface from global.d.ts
+    - **Git Operations**: Used `git rm` for proper version control cleanup
+  - **Code Quality**: Ensured no remaining references to removed functionality
+  - **Impact**: Cleaner codebase focused on core user management without import features
+  - Commit: `[hash]` — chore: complete removal of user import functionality
 
 ## Verification Results
 
@@ -191,6 +270,15 @@ This phase aims to streamline the codebase by removing unnecessary features and 
 - Password change form starts clean without retaining previous data
 - Form validation errors are properly cleared on dialog open
 - All profile functionality tested in both languages
+
+### ✅ User Management Testing
+
+- Complete internationalization for all user operations (reset password, delete, CRUD)
+- Department tree search shows "Community/社區(村里)" placeholder
+- All success/error messages display in correct language
+- Parameter interpolation works correctly for dynamic messages
+- Form validation and user operations fully functional in both languages
+- Import functionality completely removed with no remaining references
 
 ## Quality Assurance
 
@@ -221,12 +309,15 @@ profile: {
 
 | Category | Status | Details |
 |----------|--------|---------|
-| **Feature Cleanup** | ✅ Complete | 34 demo files removed, codegen eliminated |
+| **Feature Cleanup** | ✅ Complete | 34 demo files removed, codegen eliminated, user import removed |
 | **Default Language** | ✅ Complete | English set as default for international users |
 | **Profile i18n** | ✅ Complete | 85+ translation keys, full language support |
-| **Code Quality** | ✅ Complete | All comments converted to English, clean architecture |
+| **User Management i18n** | ✅ Complete | 15+ translation keys, complete CRUD internationalization |
+| **Code Quality** | ✅ Complete | All comments converted to English, comprehensive documentation |
 | **Profile Enhancements** | ✅ Complete | Role field added, mobile/email simplified |
 | **Bug Fixes** | ✅ Complete | Password form cleared properly on dialog open |
+| **API Documentation** | ✅ Complete | Professional bilingual comments for all user APIs |
+| **Component Documentation** | ✅ Complete | Comprehensive Vue component documentation |
 | **System Stability** | ✅ Complete | Dev server runs smoothly, no errors |
 
 ## Next Steps (Systematic Review & Phase 2 Planning)
