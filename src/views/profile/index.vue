@@ -1,7 +1,7 @@
 <template>
   <div class="profile-container">
     <el-row :gutter="20">
-      <!-- 左側個人資訊卡片 -->
+      <!-- Left side personal information card -->
       <el-col :span="8">
         <el-card class="user-card">
           <div class="user-info">
@@ -49,7 +49,7 @@
         </el-card>
       </el-col>
 
-      <!-- 右側資訊卡片 -->
+      <!-- Right side information card -->
       <el-col :span="16">
         <el-card class="info-card">
           <template #header>
@@ -133,9 +133,9 @@
       </el-col>
     </el-row>
 
-    <!-- 彈窗 -->
+    <!-- Dialog -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" :width="500">
-      <!-- 賬號資料 -->
+      <!-- Account data -->
       <el-form
         v-if="dialog.type === DialogType.ACCOUNT"
         ref="userProfileFormRef"
@@ -150,7 +150,7 @@
         </el-form-item>
       </el-form>
 
-      <!-- 修改密碼 -->
+      <!-- Change password -->
       <el-form
         v-if="dialog.type === DialogType.PASSWORD"
         ref="passwordChangeFormRef"
@@ -169,7 +169,7 @@
         </el-form-item>
       </el-form>
 
-      <!-- 繫結手機 -->
+      <!-- Bind mobile -->
       <el-form
         v-else-if="dialog.type === DialogType.MOBILE"
         ref="mobileBindingFormRef"
@@ -195,7 +195,7 @@
         </el-form-item>
       </el-form>
 
-      <!-- 繫結郵箱 -->
+      <!-- Bind email -->
       <el-form
         v-else-if="dialog.type === DialogType.EMAIL"
         ref="emailBindingFormRef"
@@ -262,7 +262,7 @@ const enum DialogType {
 const dialog = reactive({
   visible: false,
   title: "",
-  type: "" as DialogType, // 修改賬號資料,修改密碼、繫結手機、繫結郵箱
+  type: "" as DialogType, // Account data, change password, bind mobile, bind email
 });
 const userProfileFormRef = ref();
 const passwordChangeFormRef = ref();
@@ -280,7 +280,7 @@ const mobileTimer = ref();
 const emailCountdown = ref(0);
 const emailTimer = ref();
 
-// 修改密碼校驗規則
+// Password change validation rules
 const passwordChangeRules = computed(() => ({
   oldPassword: [
     { required: true, message: t("profile.validation.oldPasswordRequired"), trigger: "blur" },
@@ -293,7 +293,7 @@ const passwordChangeRules = computed(() => ({
   ],
 }));
 
-// 手機號校驗規則
+// Mobile number validation rules
 const mobileBindingRules = computed(() => ({
   mobile: [
     { required: true, message: t("profile.validation.mobileRequired"), trigger: "blur" },
@@ -308,7 +308,7 @@ const mobileBindingRules = computed(() => ({
   ],
 }));
 
-// 郵箱校驗規則
+// Email validation rules
 const emailBindingRules = computed(() => ({
   email: [
     { required: true, message: t("profile.validation.emailRequired"), trigger: "blur" },
@@ -324,8 +324,8 @@ const emailBindingRules = computed(() => ({
 }));
 
 /**
- * 開啟彈窗
- * @param type 彈窗型別 ACCOUNT: 賬號資料 PASSWORD: 修改密碼 MOBILE: 繫結手機 EMAIL: 繫結郵箱
+ * Open dialog
+ * @param type Dialog type ACCOUNT: account data PASSWORD: change password MOBILE: bind mobile EMAIL: bind email
  */
 const handleOpenDialog = (type: DialogType) => {
   dialog.type = type;
@@ -333,7 +333,7 @@ const handleOpenDialog = (type: DialogType) => {
   switch (type) {
     case DialogType.ACCOUNT:
       dialog.title = t("profile.dialogs.accountData");
-      // 初始化表單資料
+      // Initialize form data
       userProfileForm.id = userProfile.value.id;
       userProfileForm.nickname = userProfile.value.nickname;
       userProfileForm.gender = userProfile.value.gender;
@@ -351,24 +351,24 @@ const handleOpenDialog = (type: DialogType) => {
 };
 
 /**
- * 傳送手機驗證碼
+ * Send mobile verification code
  */
 function handleSendMobileCode() {
   if (!mobileUpdateForm.mobile) {
     ElMessage.error(t("profile.validation.mobileRequired"));
     return;
   }
-  // 驗證手機號格式
+  // Validate mobile number format
   const reg = /^1[3-9]\d{9}$/;
   if (!reg.test(mobileUpdateForm.mobile)) {
     ElMessage.error(t("profile.validation.mobileInvalid"));
     return;
   }
-  // 傳送簡訊驗證碼
+  // Send SMS verification code
   UserAPI.sendMobileCode(mobileUpdateForm.mobile).then(() => {
     ElMessage.success(t("profile.messages.codeSuccess"));
 
-    // 倒計時 60s 重新傳送
+    // Countdown 60s resend
     mobileCountdown.value = 60;
     mobileTimer.value = setInterval(() => {
       if (mobileCountdown.value > 0) {
@@ -381,24 +381,24 @@ function handleSendMobileCode() {
 }
 
 /**
- * 傳送郵箱驗證碼
+ * Send email verification code
  */
 function handleSendEmailCode() {
   if (!emailUpdateForm.email) {
     ElMessage.error(t("profile.validation.emailRequired"));
     return;
   }
-  // 驗證郵箱格式
+  // Validate email format
   const reg = /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
   if (!reg.test(emailUpdateForm.email)) {
     ElMessage.error(t("profile.validation.emailInvalid"));
     return;
   }
 
-  // 傳送郵箱驗證碼
+  // Send email verification code
   UserAPI.sendEmailCode(emailUpdateForm.email).then(() => {
     ElMessage.success(t("profile.messages.codeSuccess"));
-    // 倒計時 60s 重新傳送
+    // Countdown 60s resend
     emailCountdown.value = 60;
     emailTimer.value = setInterval(() => {
       if (emailCountdown.value > 0) {
@@ -411,7 +411,7 @@ function handleSendEmailCode() {
 }
 
 /**
- * 提交表單
+ * Submit form
  */
 const handleSubmit = async () => {
   if (dialog.type === DialogType.ACCOUNT) {
@@ -445,7 +445,7 @@ const handleSubmit = async () => {
 };
 
 /**
- * 取消
+ * Cancel
  */
 const handleCancel = () => {
   dialog.visible = false;
@@ -470,24 +470,24 @@ const handleFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files ? target.files[0] : null;
   if (file) {
-    // 呼叫檔案上傳API
+    // Call file upload API
     try {
       const data = await FileAPI.uploadFile(file);
-      // 更新使用者資訊
+      // Update user information
       await UserAPI.updateProfile({
         avatar: data.url,
       });
-      // 更新使用者頭像
+      // Update user avatar
       userStore.userInfo.avatar = data.url;
       ElMessage.success(t("profile.messages.avatarUploadSuccess"));
     } catch (error) {
-      console.error("頭像上傳失敗：" + error);
+      console.error("Avatar upload failed: " + error);
       ElMessage.error(t("profile.messages.avatarUploadFailed"));
     }
   }
 };
 
-/** 載入使用者資訊 */
+/** Load user profile */
 const loadUserProfile = async () => {
   const data = await UserAPI.getProfile();
   userProfile.value = data;
@@ -658,7 +658,7 @@ onMounted(async () => {
   }
 }
 
-// 響應式適配
+// Responsive design
 @media (max-width: 768px) {
   .profile-container {
     padding: 10px;
