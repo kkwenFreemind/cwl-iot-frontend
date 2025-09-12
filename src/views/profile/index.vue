@@ -211,6 +211,14 @@ const handleOpenDialog = (type: DialogType) => {
       break;
     case DialogType.PASSWORD:
       dialog.title = t("profile.dialogs.changePassword");
+      // Clear password form data
+      passwordChangeForm.oldPassword = "";
+      passwordChangeForm.newPassword = "";
+      passwordChangeForm.confirmPassword = "";
+      // Clear form validation errors on next tick
+      nextTick(() => {
+        passwordChangeFormRef.value?.clearValidate();
+      });
       break;
   }
 };
@@ -233,6 +241,14 @@ const handleSubmit = async () => {
     UserAPI.changePassword(passwordChangeForm).then(() => {
       ElMessage.success(t("profile.messages.passwordChangeSuccess"));
       dialog.visible = false;
+      // Clear password form after successful submission
+      passwordChangeForm.oldPassword = "";
+      passwordChangeForm.newPassword = "";
+      passwordChangeForm.confirmPassword = "";
+      // Clear form validation errors
+      nextTick(() => {
+        passwordChangeFormRef.value?.clearValidate();
+      });
     });
   }
 };
