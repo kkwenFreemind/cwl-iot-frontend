@@ -1,28 +1,53 @@
+<!-- 
+  @author youlaitech
+  @since 2024-08-27
+ 
+  @author Chang Xiu-Wen, AI-Enhanced
+  @since 2025-09-12
+
+  Department Management Component
+  
+  This component provides comprehensive department/community management functionality for the IoT water level monitoring system including:
+  - Hierarchical community structure management with parent-child relationships
+  - Advanced search and filtering capabilities by name and status
+  - CRUD operations (Create, Read, Update, Delete) for community records
+  - Internationalization support with reactive validation and responsive UI design
+  - Batch operations for efficient community management
+  - Real-time data synchronization with backend API
+  - Professional form validation with multilingual error messages
+-->
+
 <template>
   <div class="app-container">
-    <!-- 搜尋區域 -->
+    <!-- Search and Filter Section -->
+    <!-- Provides advanced search capabilities for community/department filtering -->
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item label="關鍵字" prop="keywords">
+        <el-form-item :label="$t('dept.keywords')" prop="keywords">
           <el-input
             v-model="queryParams.keywords"
-            placeholder="部門名稱"
+            :placeholder="$t('dept.deptNamePlaceholder')"
             @keyup.enter="handleQuery"
           />
         </el-form-item>
 
-        <el-form-item label="部門狀態" prop="status">
-          <el-select v-model="queryParams.status" placeholder="全部" clearable style="width: 100px">
-            <el-option :value="1" label="正常" />
-            <el-option :value="0" label="禁用" />
+        <el-form-item :label="$t('dept.status')" prop="status">
+          <el-select
+            v-model="queryParams.status"
+            :placeholder="$t('dept.statusAll')"
+            clearable
+            style="width: 100px"
+          >
+            <el-option :value="1" :label="$t('dept.statusNormal')" />
+            <el-option :value="0" :label="$t('dept.statusDisabled')" />
           </el-select>
         </el-form-item>
 
         <el-form-item class="search-buttons">
           <el-button class="filter-item" type="primary" icon="search" @click="handleQuery">
-            搜尋
+            {{ $t("common.search") }}
           </el-button>
-          <el-button icon="refresh" @click="handleResetQuery">重置</el-button>
+          <el-button icon="refresh" @click="handleResetQuery">{{ $t("common.reset") }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -30,14 +55,16 @@
     <el-card shadow="hover" class="data-table">
       <div class="data-table__toolbar">
         <div class="data-table__toolbar--actions">
-          <el-button type="success" icon="plus" @click="handleOpenDialog()">新增</el-button>
+          <el-button type="success" icon="plus" @click="handleOpenDialog()">
+            {{ $t("common.add") }}
+          </el-button>
           <el-button
             type="danger"
             :disabled="selectIds.length === 0"
             icon="delete"
             @click="handleDelete()"
           >
-            刪除
+            {{ $t("common.delete") }}
           </el-button>
         </div>
       </div>
@@ -52,18 +79,20 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column prop="name" label="部門名稱" min-width="200" />
-        <el-table-column prop="code" label="部門編號" width="200" />
-        <el-table-column prop="status" label="狀態" width="100">
+        <el-table-column prop="name" :label="$t('dept.deptName')" min-width="200" />
+        <el-table-column prop="code" :label="$t('dept.deptCode')" width="200" />
+        <el-table-column prop="status" :label="$t('common.status')" width="100">
           <template #default="scope">
-            <el-tag v-if="scope.row.status == 1" type="success">正常</el-tag>
-            <el-tag v-else type="info">禁用</el-tag>
+            <el-tag v-if="scope.row.status == 1" type="success">
+              {{ $t("dept.statusNormal") }}
+            </el-tag>
+            <el-tag v-else type="info">{{ $t("dept.statusDisabled") }}</el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column prop="sort" label="排序" width="100" />
+        <el-table-column prop="sort" :label="$t('dept.sort')" width="100" />
 
-        <el-table-column label="操作" fixed="right" align="left" width="200">
+        <el-table-column :label="$t('common.operation')" fixed="right" align="left" width="200">
           <template #default="scope">
             <el-button
               type="primary"
@@ -72,7 +101,7 @@
               icon="plus"
               @click.stop="handleOpenDialog(scope.row.id, undefined)"
             >
-              新增
+              {{ $t("common.add") }}
             </el-button>
             <el-button
               type="primary"
@@ -81,7 +110,7 @@
               icon="edit"
               @click.stop="handleOpenDialog(scope.row.parentId, scope.row.id)"
             >
-              編輯
+              {{ $t("common.edit") }}
             </el-button>
             <el-button
               type="danger"
@@ -90,7 +119,7 @@
               icon="delete"
               @click.stop="handleDelete(scope.row.id)"
             >
-              刪除
+              {{ $t("common.delete") }}
             </el-button>
           </template>
         </el-table-column>
@@ -100,27 +129,27 @@
     <el-dialog
       v-model="dialog.visible"
       :title="dialog.title"
-      width="600px"
+      width="650px"
       @closed="handleCloseDialog"
     >
-      <el-form ref="deptFormRef" :model="formData" :rules="rules" label-width="80px">
-        <el-form-item label="上級部門" prop="parentId">
+      <el-form ref="deptFormRef" :model="formData" :rules="rules" label-width="140px">
+        <el-form-item :label="$t('dept.form.parentDept')" prop="parentId">
           <el-tree-select
             v-model="formData.parentId"
-            placeholder="選擇上級部門"
+            :placeholder="$t('dept.parentDeptPlaceholder')"
             :data="deptOptions"
             filterable
             check-strictly
             :render-after-expand="false"
           />
         </el-form-item>
-        <el-form-item label="部門名稱" prop="name">
-          <el-input v-model="formData.name" placeholder="請輸入部門名稱" />
+        <el-form-item :label="$t('dept.form.deptName')" prop="name">
+          <el-input v-model="formData.name" :placeholder="$t('dept.form.deptNamePlaceholder')" />
         </el-form-item>
-        <el-form-item label="部門編號" prop="code">
-          <el-input v-model="formData.code" placeholder="請輸入部門編號" />
+        <el-form-item :label="$t('dept.form.deptCode')" prop="code">
+          <el-input v-model="formData.code" :placeholder="$t('dept.form.deptCodePlaceholder')" />
         </el-form-item>
-        <el-form-item label="顯示排序" prop="sort">
+        <el-form-item :label="$t('dept.form.sort')" prop="sort">
           <el-input-number
             v-model="formData.sort"
             controls-position="right"
@@ -128,18 +157,18 @@
             :min="0"
           />
         </el-form-item>
-        <el-form-item label="部門狀態">
+        <el-form-item :label="$t('dept.form.status')">
           <el-radio-group v-model="formData.status">
-            <el-radio :value="1">正常</el-radio>
-            <el-radio :value="0">禁用</el-radio>
+            <el-radio :value="1">{{ $t("dept.form.statusNormal") }}</el-radio>
+            <el-radio :value="0">{{ $t("dept.form.statusDisabled") }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="handleSubmit">確 定</el-button>
-          <el-button @click="handleCloseDialog">取 消</el-button>
+          <el-button type="primary" @click="handleSubmit">{{ $t("common.confirm") }}</el-button>
+          <el-button @click="handleCloseDialog">{{ $t("common.cancel") }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -153,6 +182,8 @@ defineOptions({
 });
 
 import DeptAPI, { DeptVO, DeptForm, DeptQuery } from "@/api/system/dept-api";
+
+const { t } = useI18n();
 
 const queryFormRef = ref();
 const deptFormRef = ref();
@@ -174,14 +205,19 @@ const formData = reactive<DeptForm>({
   sort: 1,
 });
 
-const rules = reactive({
-  parentId: [{ required: true, message: "上級部門不能為空", trigger: "change" }],
-  name: [{ required: true, message: "部門名稱不能為空", trigger: "blur" }],
-  code: [{ required: true, message: "部門編號不能為空", trigger: "blur" }],
-  sort: [{ required: true, message: "顯示排序不能為空", trigger: "blur" }],
-});
+const rules = computed(() => ({
+  parentId: [
+    { required: true, message: t("dept.validation.parentDeptRequired"), trigger: "change" },
+  ],
+  name: [{ required: true, message: t("dept.validation.deptNameRequired"), trigger: "blur" }],
+  code: [{ required: true, message: t("dept.validation.deptCodeRequired"), trigger: "blur" }],
+  sort: [{ required: true, message: t("dept.validation.sortRequired"), trigger: "blur" }],
+}));
 
-// 查詢部門
+/**
+ * Query department/community list
+ * Fetches data based on current query parameters
+ */
 function handleQuery() {
   loading.value = true;
   DeptAPI.getList(queryParams).then((data) => {
@@ -190,47 +226,56 @@ function handleQuery() {
   });
 }
 
-// 重置查詢
+/**
+ * Reset query form and refresh data
+ */
 function handleResetQuery() {
   queryFormRef.value.resetFields();
   handleQuery();
 }
 
-// 處理選中項變化
+/**
+ * Handle table selection change
+ * Updates selected IDs for batch operations
+ */
 function handleSelectionChange(selection: any) {
   selectIds.value = selection.map((item: any) => item.id);
 }
 
 /**
- * 開啟部門彈窗
+ * Open department/community dialog for create or edit
+ * Loads department options and populates form data for editing
  *
- * @param parentId 父部門ID
- * @param deptId 部門ID
+ * @param parentId Parent department ID for new departments
+ * @param deptId Department ID for editing existing departments
  */
 async function handleOpenDialog(parentId?: string, deptId?: string) {
-  // 載入部門下拉資料
+  // Load department dropdown options
   const data = await DeptAPI.getOptions();
   deptOptions.value = [
     {
       value: "0",
-      label: "頂級部門",
+      label: t("dept.topLevel"),
       children: data,
     },
   ];
 
   dialog.visible = true;
   if (deptId) {
-    dialog.title = "修改部門";
+    dialog.title = t("dept.form.title.edit");
     DeptAPI.getFormData(deptId).then((data) => {
       Object.assign(formData, data);
     });
   } else {
-    dialog.title = "新增部門";
+    dialog.title = t("dept.form.title.add");
     formData.parentId = parentId || "0";
   }
 }
 
-// 提交部門表單
+/**
+ * Submit department/community form
+ * Handles both create and update operations
+ */
 function handleSubmit() {
   deptFormRef.value.validate((valid: any) => {
     if (valid) {
@@ -239,7 +284,7 @@ function handleSubmit() {
       if (deptId) {
         DeptAPI.update(deptId, formData)
           .then(() => {
-            ElMessage.success("修改成功");
+            ElMessage.success(t("dept.messages.updateSuccess"));
             handleCloseDialog();
             handleQuery();
           })
@@ -247,7 +292,7 @@ function handleSubmit() {
       } else {
         DeptAPI.create(formData)
           .then(() => {
-            ElMessage.success("新增成功");
+            ElMessage.success(t("dept.messages.createSuccess"));
             handleCloseDialog();
             handleQuery();
           })
@@ -257,36 +302,42 @@ function handleSubmit() {
   });
 }
 
-// 刪除部門
+/**
+ * Delete department/community
+ * Supports both single and batch deletion
+ */
 function handleDelete(deptId?: number) {
   const deptIds = [deptId || selectIds.value].join(",");
 
   if (!deptIds) {
-    ElMessage.warning("請勾選刪除項");
+    ElMessage.warning(t("dept.messages.selectDeleteItems"));
     return;
   }
 
-  ElMessageBox.confirm("確認刪除已選中的資料項?", "警告", {
-    confirmButtonText: "確定",
-    cancelButtonText: "取消",
+  ElMessageBox.confirm(t("dept.messages.confirmDelete"), t("dept.messages.deleteConfirmTitle"), {
+    confirmButtonText: t("common.confirm"),
+    cancelButtonText: t("common.cancel"),
     type: "warning",
   }).then(
     () => {
       loading.value = true;
       DeptAPI.deleteByIds(deptIds)
         .then(() => {
-          ElMessage.success("刪除成功");
+          ElMessage.success(t("dept.messages.deleteSuccess"));
           handleResetQuery();
         })
         .finally(() => (loading.value = false));
     },
     () => {
-      ElMessage.info("已取消刪除");
+      ElMessage.info(t("dept.messages.deleteCancelled"));
     }
   );
 }
 
-// 重置表單
+/**
+ * Reset form fields and validation state
+ * Clears all form data and error states
+ */
 function resetForm() {
   deptFormRef.value.resetFields();
   deptFormRef.value.clearValidate();
@@ -297,7 +348,10 @@ function resetForm() {
   formData.sort = 1;
 }
 
-// 關閉彈窗
+/**
+ * Close dialog and reset form
+ * Handles dialog cleanup and form reset
+ */
 function handleCloseDialog() {
   dialog.visible = false;
   resetForm();
@@ -307,3 +361,75 @@ onMounted(() => {
   handleQuery();
 });
 </script>
+
+<style lang="scss" scoped>
+/**
+ * Department Management Component Styles
+ *
+ * Responsive design for department/community management interface
+ * Prevents text wrapping and ensures optimal layout across devices
+ */
+
+/* Dialog responsive adjustments */
+:deep(.el-dialog) {
+  @media (max-width: 768px) {
+    width: 95% !important;
+    margin: 5vh auto;
+  }
+}
+
+/* Form responsive layout */
+:deep(.el-form) {
+  @media (max-width: 768px) {
+    .el-form-item__label {
+      width: 100% !important;
+      margin-bottom: 5px;
+      text-align: left !important;
+    }
+
+    .el-form-item__content {
+      margin-left: 0 !important;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .el-form-item__label {
+      width: 120px !important;
+    }
+  }
+}
+
+/* Prevent text wrapping in table cells */
+:deep(.el-table) {
+  .el-table__cell {
+    .cell {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+/* Button text wrapping prevention */
+:deep(.el-button) {
+  white-space: nowrap;
+}
+
+/* Input and select width adjustments */
+:deep(.el-input),
+:deep(.el-select),
+:deep(.el-tree-select) {
+  width: 100%;
+}
+
+/* Radio group responsive layout */
+:deep(.el-radio-group) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  .el-radio {
+    margin-right: 0;
+  }
+}
+</style>
