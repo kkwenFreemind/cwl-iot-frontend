@@ -69,41 +69,9 @@
             </el-descriptions-item>
             <el-descriptions-item :label="t('profile.mobile')">
               {{ userProfile.mobile || t("profile.status.unbound") }}
-              <el-button
-                v-if="userProfile.mobile"
-                type="primary"
-                link
-                @click="() => handleOpenDialog(DialogType.MOBILE)"
-              >
-                {{ t("profile.actions.change") }}
-              </el-button>
-              <el-button
-                v-else
-                type="primary"
-                link
-                @click="() => handleOpenDialog(DialogType.MOBILE)"
-              >
-                {{ t("profile.actions.bind") }}
-              </el-button>
             </el-descriptions-item>
             <el-descriptions-item :label="t('profile.email')">
               {{ userProfile.email || t("profile.status.unbound") }}
-              <el-button
-                v-if="userProfile.email"
-                type="primary"
-                link
-                @click="() => handleOpenDialog(DialogType.EMAIL)"
-              >
-                {{ t("profile.actions.change") }}
-              </el-button>
-              <el-button
-                v-else
-                type="primary"
-                link
-                @click="() => handleOpenDialog(DialogType.EMAIL)"
-              >
-                {{ t("profile.actions.bind") }}
-              </el-button>
             </el-descriptions-item>
             <el-descriptions-item :label="t('profile.department')">
               {{ userProfile.deptName }}
@@ -169,58 +137,6 @@
         </el-form-item>
       </el-form>
 
-      <!-- Bind mobile -->
-      <el-form
-        v-else-if="dialog.type === DialogType.MOBILE"
-        ref="mobileBindingFormRef"
-        :model="mobileUpdateForm"
-        :rules="mobileBindingRules"
-        :label-width="100"
-      >
-        <el-form-item :label="t('profile.mobile')" prop="mobile">
-          <el-input v-model="mobileUpdateForm.mobile" style="width: 250px" />
-        </el-form-item>
-        <el-form-item :label="t('profile.forms.verificationCode')" prop="code">
-          <el-input v-model="mobileUpdateForm.code" style="width: 250px">
-            <template #append>
-              <el-button :disabled="mobileCountdown > 0" @click="handleSendMobileCode">
-                {{
-                  mobileCountdown > 0
-                    ? `${mobileCountdown}${t("profile.forms.resendAfter")}`
-                    : t("profile.forms.sendCode")
-                }}
-              </el-button>
-            </template>
-          </el-input>
-        </el-form-item>
-      </el-form>
-
-      <!-- Bind email -->
-      <el-form
-        v-else-if="dialog.type === DialogType.EMAIL"
-        ref="emailBindingFormRef"
-        :model="emailUpdateForm"
-        :rules="emailBindingRules"
-        :label-width="100"
-      >
-        <el-form-item :label="t('profile.email')" prop="email">
-          <el-input v-model="emailUpdateForm.email" style="width: 250px" />
-        </el-form-item>
-        <el-form-item :label="t('profile.forms.verificationCode')" prop="code">
-          <el-input v-model="emailUpdateForm.code" style="width: 250px">
-            <template #append>
-              <el-button :disabled="emailCountdown > 0" @click="handleSendEmailCode">
-                {{
-                  emailCountdown > 0
-                    ? `${emailCountdown}${t("profile.forms.resendAfter")}`
-                    : t("profile.forms.sendCode")
-                }}
-              </el-button>
-            </template>
-          </el-input>
-        </el-form-item>
-      </el-form>
-
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="handleCancel">{{ t("profile.actions.cancel") }}</el-button>
@@ -234,13 +150,7 @@
 </template>
 
 <script lang="ts" setup>
-import UserAPI, {
-  UserProfileVO,
-  PasswordChangeForm,
-  MobileUpdateForm,
-  EmailUpdateForm,
-  UserProfileForm,
-} from "@/api/system/user-api";
+import UserAPI, { UserProfileVO, PasswordChangeForm, UserProfileForm } from "@/api/system/user-api";
 
 import FileAPI from "@/api/file-api";
 import { useUserStoreHook } from "@/store";
@@ -255,30 +165,18 @@ const userProfile = ref<UserProfileVO>({});
 const enum DialogType {
   ACCOUNT = "account",
   PASSWORD = "password",
-  MOBILE = "mobile",
-  EMAIL = "email",
 }
 
 const dialog = reactive({
   visible: false,
   title: "",
-  type: "" as DialogType, // Account data, change password, bind mobile, bind email
+  type: "" as DialogType, // Account data, change password
 });
 const userProfileFormRef = ref();
 const passwordChangeFormRef = ref();
-const mobileBindingFormRef = ref();
-const emailBindingFormRef = ref();
 
 const userProfileForm = reactive<UserProfileForm>({});
 const passwordChangeForm = reactive<PasswordChangeForm>({});
-const mobileUpdateForm = reactive<MobileUpdateForm>({});
-const emailUpdateForm = reactive<EmailUpdateForm>({});
-
-const mobileCountdown = ref(0);
-const mobileTimer = ref();
-
-const emailCountdown = ref(0);
-const emailTimer = ref();
 
 // Password change validation rules
 const passwordChangeRules = computed(() => ({
@@ -290,36 +188,6 @@ const passwordChangeRules = computed(() => ({
   ],
   confirmPassword: [
     { required: true, message: t("profile.validation.confirmPasswordRequired"), trigger: "blur" },
-  ],
-}));
-
-// Mobile number validation rules
-const mobileBindingRules = computed(() => ({
-  mobile: [
-    { required: true, message: t("profile.validation.mobileRequired"), trigger: "blur" },
-    {
-      pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-      message: t("profile.validation.mobileInvalid"),
-      trigger: "blur",
-    },
-  ],
-  code: [
-    { required: true, message: t("profile.validation.verificationCodeRequired"), trigger: "blur" },
-  ],
-}));
-
-// Email validation rules
-const emailBindingRules = computed(() => ({
-  email: [
-    { required: true, message: t("profile.validation.emailRequired"), trigger: "blur" },
-    {
-      pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/,
-      message: t("profile.validation.emailInvalid"),
-      trigger: "blur",
-    },
-  ],
-  code: [
-    { required: true, message: t("profile.validation.verificationCodeRequired"), trigger: "blur" },
   ],
 }));
 
@@ -341,74 +209,8 @@ const handleOpenDialog = (type: DialogType) => {
     case DialogType.PASSWORD:
       dialog.title = t("profile.dialogs.changePassword");
       break;
-    case DialogType.MOBILE:
-      dialog.title = t("profile.dialogs.bindMobile");
-      break;
-    case DialogType.EMAIL:
-      dialog.title = t("profile.dialogs.bindEmail");
-      break;
   }
 };
-
-/**
- * Send mobile verification code
- */
-function handleSendMobileCode() {
-  if (!mobileUpdateForm.mobile) {
-    ElMessage.error(t("profile.validation.mobileRequired"));
-    return;
-  }
-  // Validate mobile number format
-  const reg = /^1[3-9]\d{9}$/;
-  if (!reg.test(mobileUpdateForm.mobile)) {
-    ElMessage.error(t("profile.validation.mobileInvalid"));
-    return;
-  }
-  // Send SMS verification code
-  UserAPI.sendMobileCode(mobileUpdateForm.mobile).then(() => {
-    ElMessage.success(t("profile.messages.codeSuccess"));
-
-    // Countdown 60s resend
-    mobileCountdown.value = 60;
-    mobileTimer.value = setInterval(() => {
-      if (mobileCountdown.value > 0) {
-        mobileCountdown.value -= 1;
-      } else {
-        clearInterval(mobileTimer.value!);
-      }
-    }, 1000);
-  });
-}
-
-/**
- * Send email verification code
- */
-function handleSendEmailCode() {
-  if (!emailUpdateForm.email) {
-    ElMessage.error(t("profile.validation.emailRequired"));
-    return;
-  }
-  // Validate email format
-  const reg = /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
-  if (!reg.test(emailUpdateForm.email)) {
-    ElMessage.error(t("profile.validation.emailInvalid"));
-    return;
-  }
-
-  // Send email verification code
-  UserAPI.sendEmailCode(emailUpdateForm.email).then(() => {
-    ElMessage.success(t("profile.messages.codeSuccess"));
-    // Countdown 60s resend
-    emailCountdown.value = 60;
-    emailTimer.value = setInterval(() => {
-      if (emailCountdown.value > 0) {
-        emailCountdown.value -= 1;
-      } else {
-        clearInterval(emailTimer.value!);
-      }
-    }, 1000);
-  });
-}
 
 /**
  * Submit form
@@ -429,18 +231,6 @@ const handleSubmit = async () => {
       ElMessage.success(t("profile.messages.passwordChangeSuccess"));
       dialog.visible = false;
     });
-  } else if (dialog.type === DialogType.MOBILE) {
-    UserAPI.bindOrChangeMobile(mobileUpdateForm).then(() => {
-      ElMessage.success(t("profile.messages.mobileBindSuccess"));
-      dialog.visible = false;
-      loadUserProfile();
-    });
-  } else if (dialog.type === DialogType.EMAIL) {
-    UserAPI.bindOrChangeEmail(emailUpdateForm).then(() => {
-      ElMessage.success(t("profile.messages.emailBindSuccess"));
-      dialog.visible = false;
-      loadUserProfile();
-    });
   }
 };
 
@@ -453,10 +243,6 @@ const handleCancel = () => {
     userProfileFormRef.value?.resetFields();
   } else if (dialog.type === DialogType.PASSWORD) {
     passwordChangeFormRef.value?.resetFields();
-  } else if (dialog.type === DialogType.MOBILE) {
-    mobileBindingFormRef.value?.resetFields();
-  } else if (dialog.type === DialogType.EMAIL) {
-    emailBindingFormRef.value?.resetFields();
   }
 };
 
@@ -494,12 +280,6 @@ const loadUserProfile = async () => {
 };
 
 onMounted(async () => {
-  if (mobileTimer.value) {
-    clearInterval(mobileTimer.value);
-  }
-  if (emailTimer.value) {
-    clearInterval(emailTimer.value);
-  }
   await loadUserProfile();
 });
 </script>

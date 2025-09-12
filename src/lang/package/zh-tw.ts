@@ -349,8 +349,6 @@ export default {
     dialogs: {
       accountData: "賬號資料",
       changePassword: "修改密碼",
-      bindMobile: "繫結手機",
-      bindEmail: "繫結郵箱",
     },
 
     // 表單欄位
@@ -358,16 +356,11 @@ export default {
       oldPassword: "原密碼",
       newPassword: "新密碼",
       confirmPassword: "確認密碼",
-      verificationCode: "驗證碼",
-      sendCode: "傳送驗證碼",
-      resendAfter: "s後重新傳送",
     },
 
     // 按鈕文字
     actions: {
       edit: "編輯",
-      change: "更換",
-      bind: "繫結",
       modify: "修改",
       upload: "上傳",
       cancel: "取消",
@@ -392,11 +385,6 @@ export default {
       newPasswordRequired: "請輸入新密碼",
       confirmPasswordRequired: "請再次輸入新密碼",
       passwordMismatch: "兩次輸入的密碼不一致",
-      mobileRequired: "請輸入手機號",
-      mobileInvalid: "手機號格式不正確",
-      emailRequired: "請輸入郵箱",
-      emailInvalid: "郵箱格式不正確",
-      verificationCodeRequired: "請輸入驗證碼",
     },
 
     // 成功訊息
@@ -405,9 +393,6 @@ export default {
       avatarUploadFailed: "頭像上傳失敗",
       profileUpdateSuccess: "賬號資料修改成功",
       passwordChangeSuccess: "密碼修改成功",
-      mobileBindSuccess: "手機號繫結成功",
-      emailBindSuccess: "郵箱繫結成功",
-      codeSuccess: "驗證碼傳送成功",
     },
   },
   // 通用翻譯

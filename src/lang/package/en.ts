@@ -350,8 +350,6 @@ export default {
     dialogs: {
       accountData: "Account Data",
       changePassword: "Change Password",
-      bindMobile: "Bind Mobile",
-      bindEmail: "Bind Email",
     },
 
     // Form fields
@@ -359,16 +357,11 @@ export default {
       oldPassword: "Current Password",
       newPassword: "New Password",
       confirmPassword: "Confirm Password",
-      verificationCode: "Verification Code",
-      sendCode: "Send Code",
-      resendAfter: "s resend",
     },
 
     // Action buttons
     actions: {
       edit: "Edit",
-      change: "Change",
-      bind: "Bind",
       modify: "Modify",
       upload: "Upload",
       cancel: "Cancel",
@@ -393,11 +386,6 @@ export default {
       newPasswordRequired: "Please enter new password",
       confirmPasswordRequired: "Please confirm new password",
       passwordMismatch: "Password confirmation does not match",
-      mobileRequired: "Please enter mobile number",
-      mobileInvalid: "Invalid mobile number format",
-      emailRequired: "Please enter email",
-      emailInvalid: "Invalid email format",
-      verificationCodeRequired: "Please enter verification code",
     },
 
     // Success messages
@@ -406,9 +394,6 @@ export default {
       avatarUploadFailed: "Avatar upload failed",
       profileUpdateSuccess: "Profile updated successfully",
       passwordChangeSuccess: "Password changed successfully",
-      mobileBindSuccess: "Mobile bound successfully",
-      emailBindSuccess: "Email bound successfully",
-      codeSuccess: "Verification code sent successfully",
     },
   },
   // Common Translations

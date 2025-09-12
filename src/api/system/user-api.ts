@@ -163,42 +163,6 @@ const UserAPI = {
     });
   },
 
-  /** 傳送簡訊驗證碼（繫結或更換手機號）*/
-  sendMobileCode(mobile: string) {
-    return request({
-      url: `${USER_BASE_URL}/mobile/code`,
-      method: "post",
-      params: { mobile },
-    });
-  },
-
-  /** 繫結或更換手機號 */
-  bindOrChangeMobile(data: MobileUpdateForm) {
-    return request({
-      url: `${USER_BASE_URL}/mobile`,
-      method: "put",
-      data,
-    });
-  },
-
-  /** 傳送郵箱驗證碼（繫結或更換郵箱）*/
-  sendEmailCode(email: string) {
-    return request({
-      url: `${USER_BASE_URL}/email/code`,
-      method: "post",
-      params: { email },
-    });
-  },
-
-  /** 繫結或更換郵箱 */
-  bindOrChangeEmail(data: EmailUpdateForm) {
-    return request({
-      url: `${USER_BASE_URL}/email`,
-      method: "put",
-      data,
-    });
-  },
-
   /**
    *  獲取使用者下拉選單
    */
@@ -365,20 +329,4 @@ export interface PasswordChangeForm {
   newPassword?: string;
   /** 確認新密碼 */
   confirmPassword?: string;
-}
-
-/** 修改手機表單 */
-export interface MobileUpdateForm {
-  /** 手機號 */
-  mobile?: string;
-  /** 驗證碼 */
-  code?: string;
-}
-
-/** 修改郵箱表單 */
-export interface EmailUpdateForm {
-  /** 郵箱 */
-  email?: string;
-  /** 驗證碼 */
-  code?: string;
 }
