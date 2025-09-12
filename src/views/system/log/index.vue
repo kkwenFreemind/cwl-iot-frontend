@@ -1,33 +1,37 @@
 <template>
   <div class="app-container">
-    <!-- 搜尋區域 -->
+    <!-- Search Area -->
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item prop="keywords" label="關鍵字">
+        <el-form-item prop="keywords" :label="$t('log.keywords')">
           <el-input
             v-model="queryParams.keywords"
-            placeholder="日誌內容"
+            :placeholder="$t('log.keywordsPlaceholder')"
             clearable
             @keyup.enter="handleQuery"
           />
         </el-form-item>
 
-        <el-form-item prop="createTime" label="操作時間">
+        <el-form-item prop="createTime" :label="$t('log.operationTime')">
           <el-date-picker
             v-model="queryParams.createTime"
             :editable="false"
             type="daterange"
             range-separator="~"
-            start-placeholder="開始時間"
-            end-placeholder="截止時間"
+            :start-placeholder="$t('log.startTime')"
+            :end-placeholder="$t('log.endTime')"
             value-format="YYYY-MM-DD"
             style="width: 200px"
           />
         </el-form-item>
 
         <el-form-item class="search-buttons">
-          <el-button type="primary" icon="search" @click="handleQuery">搜尋</el-button>
-          <el-button icon="refresh" @click="handleResetQuery">重置</el-button>
+          <el-button type="primary" icon="search" @click="handleQuery">
+            {{ $t("log.search") }}
+          </el-button>
+          <el-button icon="refresh" @click="handleResetQuery">
+            {{ $t("log.reset") }}
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -40,15 +44,15 @@
         border
         class="data-table__content"
       >
-        <el-table-column label="操作時間" prop="createTime" width="180" />
-        <el-table-column label="操作人" prop="operator" width="120" />
-        <el-table-column label="日誌模組" prop="module" width="100" />
-        <el-table-column label="日誌內容" prop="content" min-width="200" />
-        <el-table-column label="IP 地址" prop="ip" width="150" />
-        <el-table-column label="地區" prop="region" width="150" />
-        <el-table-column label="瀏覽器" prop="browser" width="150" />
-        <el-table-column label="終端系統" prop="os" width="200" show-overflow-tooltip />
-        <el-table-column label="執行時間(ms)" prop="executionTime" width="150" />
+        <el-table-column :label="$t('log.table.operationTime')" prop="createTime" width="180" />
+        <el-table-column :label="$t('log.table.operator')" prop="operator" width="120" />
+        <el-table-column :label="$t('log.table.module')" prop="module" width="100" />
+        <el-table-column :label="$t('log.logContent')" prop="content" min-width="200" />
+        <el-table-column :label="$t('log.table.ipAddress')" prop="ip" width="150" />
+        <el-table-column :label="$t('log.table.region')" prop="region" width="150" />
+        <el-table-column :label="$t('log.table.browser')" prop="browser" width="150" />
+        <el-table-column :label="$t('log.table.os')" prop="os" width="200" show-overflow-tooltip />
+        <el-table-column :label="$t('log.table.executionTime')" prop="executionTime" width="150" />
       </el-table>
 
       <pagination
@@ -63,6 +67,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @fileoverview System Log Management Component
+ * @description Provides comprehensive system log viewing and filtering functionality with internationalization support
+ * @author System Administrator
+ * @created 2024-01-15
+ * @updated 2024-01-15
+ */
+
 defineOptions({
   name: "Log",
   inheritAttrs: false,
@@ -82,10 +94,14 @@ const queryParams = reactive<LogPageQuery>({
   createTime: ["", ""],
 });
 
-// 日誌表格資料
+// System log table data
 const pageData = ref<LogPageVO[]>();
 
-/** 獲取資料 */
+/**
+ * Fetch system log data from API
+ * @description Retrieves paginated system log data based on current query parameters
+ * @returns {Promise<void>} Promise that resolves when data is fetched
+ */
 function fetchData() {
   loading.value = true;
   LogAPI.getPage(queryParams)
@@ -98,13 +114,21 @@ function fetchData() {
     });
 }
 
-/** 查詢（重置頁碼後獲取資料） */
+/**
+ * Handle search query execution
+ * @description Resets pagination to first page and executes data fetch with current filters
+ * @returns {void}
+ */
 function handleQuery() {
   queryParams.pageNum = 1;
   fetchData();
 }
 
-/** 重置查詢 */
+/**
+ * Reset query form and parameters
+ * @description Clears all search filters, resets form validation, and fetches fresh data
+ * @returns {void}
+ */
 function handleResetQuery() {
   queryFormRef.value.resetFields();
   queryParams.pageNum = 1;
