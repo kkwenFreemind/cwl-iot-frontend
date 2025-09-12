@@ -1,11 +1,11 @@
 /**
- * 语言枚举
+ * 語言枚舉
  */
 export const enum LanguageEnum {
   /**
-   * 中文
+   * 繁體中文
    */
-  ZH_CN = "zh-cn",
+  ZH_TW = "zh-tw",
 
   /**
    * 英文

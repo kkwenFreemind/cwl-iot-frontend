@@ -4,9 +4,9 @@ const USER_BASE_URL = "/api/v1/users";
 
 const UserAPI = {
   /**
-   * 获取当前登录用户信息
+   * 獲取當前登入使用者資訊
    *
-   * @returns 登录用户昵称、头像信息，包括角色和权限
+   * @returns 登入使用者暱稱、頭像資訊，包括角色和許可權
    */
   getInfo() {
     return request<any, UserInfo>({
@@ -16,9 +16,9 @@ const UserAPI = {
   },
 
   /**
-   * 获取用户分页列表
+   * 獲取使用者分頁列表
    *
-   * @param queryParams 查询参数
+   * @param queryParams 查詢引數
    */
   getPage(queryParams: UserPageQuery) {
     return request<any, PageResult<UserPageVO[]>>({
@@ -29,10 +29,10 @@ const UserAPI = {
   },
 
   /**
-   * 获取用户表单详情
+   * 獲取使用者表單詳情
    *
-   * @param userId 用户ID
-   * @returns 用户表单详情
+   * @param userId 使用者ID
+   * @returns 使用者表單詳情
    */
   getFormData(userId: string) {
     return request<any, UserForm>({
@@ -42,9 +42,9 @@ const UserAPI = {
   },
 
   /**
-   * 添加用户
+   * 新增使用者
    *
-   * @param data 用户表单数据
+   * @param data 使用者表單資料
    */
   create(data: UserForm) {
     return request({
@@ -55,10 +55,10 @@ const UserAPI = {
   },
 
   /**
-   * 修改用户
+   * 修改使用者
    *
-   * @param id 用户ID
-   * @param data 用户表单数据
+   * @param id 使用者ID
+   * @param data 使用者表單資料
    */
   update(id: string, data: UserForm) {
     return request({
@@ -69,10 +69,10 @@ const UserAPI = {
   },
 
   /**
-   * 修改用户密码
+   * 修改使用者密碼
    *
-   * @param id 用户ID
-   * @param password 新密码
+   * @param id 使用者ID
+   * @param password 新密碼
    */
   resetPassword(id: string, password: string) {
     return request({
@@ -83,9 +83,9 @@ const UserAPI = {
   },
 
   /**
-   * 批量删除用户，多个以英文逗号(,)分割
+   * 批次刪除使用者，多個以英文逗號(,)分割
    *
-   * @param ids 用户ID字符串，多个以英文逗号(,)分割
+   * @param ids 使用者ID字串，多個以英文逗號(,)分割
    */
   deleteByIds(ids: string) {
     return request({
@@ -94,7 +94,7 @@ const UserAPI = {
     });
   },
 
-  /** 下载用户导入模板 */
+  /** 下載使用者匯入模板 */
   downloadTemplate() {
     return request({
       url: `${USER_BASE_URL}/template`,
@@ -104,9 +104,9 @@ const UserAPI = {
   },
 
   /**
-   * 导出用户
+   * 匯出使用者
    *
-   * @param queryParams 查询参数
+   * @param queryParams 查詢引數
    */
   export(queryParams: UserPageQuery) {
     return request({
@@ -118,10 +118,10 @@ const UserAPI = {
   },
 
   /**
-   * 导入用户
+   * 匯入使用者
    *
-   * @param deptId 部门ID
-   * @param file 导入文件
+   * @param deptId 部門ID
+   * @param file 匯入檔案
    */
   import(deptId: string, file: File) {
     const formData = new FormData();
@@ -137,7 +137,7 @@ const UserAPI = {
     });
   },
 
-  /** 获取个人中心用户信息 */
+  /** 獲取個人中心使用者資訊 */
   getProfile() {
     return request<any, UserProfileVO>({
       url: `${USER_BASE_URL}/profile`,
@@ -145,7 +145,7 @@ const UserAPI = {
     });
   },
 
-  /** 修改个人中心用户信息 */
+  /** 修改個人中心使用者資訊 */
   updateProfile(data: UserProfileForm) {
     return request({
       url: `${USER_BASE_URL}/profile`,
@@ -154,7 +154,7 @@ const UserAPI = {
     });
   },
 
-  /** 修改个人中心用户密码 */
+  /** 修改個人中心使用者密碼 */
   changePassword(data: PasswordChangeForm) {
     return request({
       url: `${USER_BASE_URL}/password`,
@@ -163,7 +163,7 @@ const UserAPI = {
     });
   },
 
-  /** 发送短信验证码（绑定或更换手机号）*/
+  /** 傳送簡訊驗證碼（繫結或更換手機號）*/
   sendMobileCode(mobile: string) {
     return request({
       url: `${USER_BASE_URL}/mobile/code`,
@@ -172,7 +172,7 @@ const UserAPI = {
     });
   },
 
-  /** 绑定或更换手机号 */
+  /** 繫結或更換手機號 */
   bindOrChangeMobile(data: MobileUpdateForm) {
     return request({
       url: `${USER_BASE_URL}/mobile`,
@@ -181,7 +181,7 @@ const UserAPI = {
     });
   },
 
-  /** 发送邮箱验证码（绑定或更换邮箱）*/
+  /** 傳送郵箱驗證碼（繫結或更換郵箱）*/
   sendEmailCode(email: string) {
     return request({
       url: `${USER_BASE_URL}/email/code`,
@@ -190,7 +190,7 @@ const UserAPI = {
     });
   },
 
-  /** 绑定或更换邮箱 */
+  /** 繫結或更換郵箱 */
   bindOrChangeEmail(data: EmailUpdateForm) {
     return request({
       url: `${USER_BASE_URL}/email`,
@@ -200,7 +200,7 @@ const UserAPI = {
   },
 
   /**
-   *  获取用户下拉列表
+   *  獲取使用者下拉選單
    */
   getOptions() {
     return request<any, OptionType[]>({
@@ -212,173 +212,173 @@ const UserAPI = {
 
 export default UserAPI;
 
-/** 登录用户信息 */
+/** 登入使用者資訊 */
 export interface UserInfo {
-  /** 用户ID */
+  /** 使用者ID */
   userId?: string;
 
-  /** 用户名 */
+  /** 使用者名稱 */
   username?: string;
 
-  /** 昵称 */
+  /** 暱稱 */
   nickname?: string;
 
-  /** 头像URL */
+  /** 頭像URL */
   avatar?: string;
 
   /** 角色 */
   roles: string[];
 
-  /** 权限 */
+  /** 許可權 */
   perms: string[];
 }
 
 /**
- * 用户分页查询对象
+ * 使用者分頁查詢物件
  */
 export interface UserPageQuery extends PageQuery {
-  /** 搜索关键字 */
+  /** 搜尋關鍵字 */
   keywords?: string;
 
-  /** 用户状态 */
+  /** 使用者狀態 */
   status?: number;
 
-  /** 部门ID */
+  /** 部門ID */
   deptId?: string;
 
-  /** 开始时间 */
+  /** 開始時間 */
   createTime?: [string, string];
 }
 
-/** 用户分页对象 */
+/** 使用者分頁物件 */
 export interface UserPageVO {
-  /** 用户ID */
+  /** 使用者ID */
   id: string;
-  /** 用户头像URL */
+  /** 使用者頭像URL */
   avatar?: string;
-  /** 创建时间 */
+  /** 建立時間 */
   createTime?: Date;
-  /** 部门名称 */
+  /** 部門名稱 */
   deptName?: string;
-  /** 用户邮箱 */
+  /** 使用者郵箱 */
   email?: string;
-  /** 性别 */
+  /** 性別 */
   gender?: number;
-  /** 手机号 */
+  /** 手機號 */
   mobile?: string;
-  /** 用户昵称 */
+  /** 使用者暱稱 */
   nickname?: string;
-  /** 角色名称，多个使用英文逗号(,)分割 */
+  /** 角色名稱，多個使用英文逗號(,)分割 */
   roleNames?: string;
-  /** 用户状态(1:启用;0:禁用) */
+  /** 使用者狀態(1:啟用;0:禁用) */
   status?: number;
-  /** 用户名 */
+  /** 使用者名稱 */
   username?: string;
 }
 
-/** 用户表单类型 */
+/** 使用者表單型別 */
 export interface UserForm {
-  /** 用户ID */
+  /** 使用者ID */
   id?: string;
-  /** 用户头像 */
+  /** 使用者頭像 */
   avatar?: string;
-  /** 部门ID */
+  /** 部門ID */
   deptId?: string;
-  /** 邮箱 */
+  /** 郵箱 */
   email?: string;
-  /** 性别 */
+  /** 性別 */
   gender?: number;
-  /** 手机号 */
+  /** 手機號 */
   mobile?: string;
-  /** 昵称 */
+  /** 暱稱 */
   nickname?: string;
   /** 角色ID集合 */
   roleIds?: number[];
-  /** 用户状态(1:正常;0:禁用) */
+  /** 使用者狀態(1:正常;0:禁用) */
   status?: number;
-  /** 用户名 */
+  /** 使用者名稱 */
   username?: string;
 }
 
-/** 个人中心用户信息 */
+/** 個人中心使用者資訊 */
 export interface UserProfileVO {
-  /** 用户ID */
+  /** 使用者ID */
   id?: string;
 
-  /** 用户名 */
+  /** 使用者名稱 */
   username?: string;
 
-  /** 昵称 */
+  /** 暱稱 */
   nickname?: string;
 
-  /** 头像URL */
+  /** 頭像URL */
   avatar?: string;
 
-  /** 性别 */
+  /** 性別 */
   gender?: number;
 
-  /** 手机号 */
+  /** 手機號 */
   mobile?: string;
 
-  /** 邮箱 */
+  /** 郵箱 */
   email?: string;
 
-  /** 部门名称 */
+  /** 部門名稱 */
   deptName?: string;
 
-  /** 角色名称，多个使用英文逗号(,)分割 */
+  /** 角色名稱，多個使用英文逗號(,)分割 */
   roleNames?: string;
 
-  /** 创建时间 */
+  /** 建立時間 */
   createTime?: Date;
 }
 
-/** 个人中心用户信息表单 */
+/** 個人中心使用者資訊表單 */
 export interface UserProfileForm {
-  /** 用户ID */
+  /** 使用者ID */
   id?: string;
 
-  /** 用户名 */
+  /** 使用者名稱 */
   username?: string;
 
-  /** 昵称 */
+  /** 暱稱 */
   nickname?: string;
 
-  /** 头像URL */
+  /** 頭像URL */
   avatar?: string;
 
-  /** 性别 */
+  /** 性別 */
   gender?: number;
 
-  /** 手机号 */
+  /** 手機號 */
   mobile?: string;
 
-  /** 邮箱 */
+  /** 郵箱 */
   email?: string;
 }
 
-/** 修改密码表单 */
+/** 修改密碼錶單 */
 export interface PasswordChangeForm {
-  /** 原密码 */
+  /** 原密碼 */
   oldPassword?: string;
-  /** 新密码 */
+  /** 新密碼 */
   newPassword?: string;
-  /** 确认新密码 */
+  /** 確認新密碼 */
   confirmPassword?: string;
 }
 
-/** 修改手机表单 */
+/** 修改手機表單 */
 export interface MobileUpdateForm {
-  /** 手机号 */
+  /** 手機號 */
   mobile?: string;
-  /** 验证码 */
+  /** 驗證碼 */
   code?: string;
 }
 
-/** 修改邮箱表单 */
+/** 修改郵箱表單 */
 export interface EmailUpdateForm {
-  /** 邮箱 */
+  /** 郵箱 */
   email?: string;
-  /** 验证码 */
+  /** 驗證碼 */
   code?: string;
 }

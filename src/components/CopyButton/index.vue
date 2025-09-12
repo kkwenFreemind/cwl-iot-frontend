@@ -1,4 +1,4 @@
-<!-- 复制组件 -->
+<!-- 複製元件 -->
 <template>
   <el-button link :style="style" @click="handleClipboard">
     <slot>
@@ -37,7 +37,7 @@ function handleClipboard() {
         console.log("[CopyButton] Copy failed", error);
       });
   } else {
-    // 兼容性处理（useClipboard 有兼容性问题）
+    // 相容性處理（useClipboard 有相容性問題）
     const input = document.createElement("input");
     input.style.position = "absolute";
     input.style.left = "-9999px";

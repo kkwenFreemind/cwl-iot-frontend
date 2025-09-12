@@ -21,11 +21,11 @@ type ToolbarLeft = "add" | "delete" | "import" | "export";
 type ToolbarRight = "refresh" | "filter" | "imports" | "exports" | "search";
 type ToolbarTable = "edit" | "view" | "delete";
 export type IToolsButton = {
-  name: string; // 按钮名称
-  text?: string; // 按钮文本
-  perm?: Array<string> | string; // 权限标识(可以是完整权限字符串如'sys:user:add'或操作权限如'add')
-  attrs?: Partial<ButtonProps> & { style?: CSSProperties }; // 按钮属性
-  render?: (row: IObject) => boolean; // 条件渲染
+  name: string; // 按鈕名稱
+  text?: string; // 按鈕文字
+  perm?: Array<string> | string; // 許可權標識(可以是完整許可權字串如'sys:user:add'或操作許可權如'add')
+  attrs?: Partial<ButtonProps> & { style?: CSSProperties }; // 按鈕屬性
+  render?: (row: IObject) => boolean; // 條件渲染
 };
 export type IToolsDefault = ToolbarLeft | ToolbarRight | ToolbarTable | IToolsButton;
 
@@ -37,32 +37,32 @@ export interface IOperateData {
 }
 
 export interface ISearchConfig {
-  // 权限前缀(如sys:user，用于组成权限标识)，不提供则不进行权限校验
+  // 許可權字首(如sys:user，用於組成許可權標識)，不提供則不進行許可權校驗
   permPrefix?: string;
-  // 标签冒号(默认：false)
+  // 標籤冒號(預設：false)
   colon?: boolean;
-  // 表单项(默认：[])
+  // 表單項(預設：[])
   formItems?: IFormItems<ISearchComponent>;
-  // 是否开启展开和收缩(默认：true)
+  // 是否開啟展開和收縮(預設：true)
   isExpandable?: boolean;
-  // 默认展示的表单项数量(默认：3)
+  // 預設展示的表單項數量(預設：3)
   showNumber?: number;
-  // 卡片属性
+  // 卡片屬性
   cardAttrs?: Partial<CardProps> & { style?: CSSProperties };
-  // form组件属性
+  // form元件屬性
   form?: IForm;
-  // 自适应网格布局(使用时表单不要添加 style: { width: "200px" })
+  // 自適應網格佈局(使用時表單不要新增 style: { width: "200px" })
   grid?: boolean | "left" | "right";
 }
 
 export interface IContentConfig<T = any> {
-  // 权限前缀(如sys:user，用于组成权限标识)，不提供则不进行权限校验
+  // 許可權字首(如sys:user，用於組成許可權標識)，不提供則不進行許可權校驗
   permPrefix?: string;
-  // table组件属性
+  // table元件屬性
   table?: Omit<TableProps<any>, "data">;
-  // 分页组件位置(默认：left)
+  // 分頁元件位置(預設：left)
   pagePosition?: "left" | "right";
-  // pagination组件属性
+  // pagination元件屬性
   pagination?:
     | boolean
     | Partial<
@@ -71,44 +71,44 @@ export interface IContentConfig<T = any> {
           "v-model:page-size" | "v-model:current-page" | "total" | "currentPage"
         >
       >;
-  // 列表的网络请求函数(需返回promise)
+  // 列表的網路請求函式(需返回promise)
   indexAction: (queryParams: T) => Promise<any>;
-  // 默认的分页相关的请求参数
+  // 預設的分頁相關的請求引數
   request?: {
     pageName: string;
     limitName: string;
   };
-  // 数据格式解析的回调函数
+  // 資料格式解析的回撥函式
   parseData?: (res: any) => {
     total: number;
     list: IObject[];
     [key: string]: any;
   };
-  // 修改属性的网络请求函数(需返回promise)
+  // 修改屬性的網路請求函式(需返回promise)
   modifyAction?: (data: {
     [key: string]: any;
     field: string;
     value: boolean | string | number;
   }) => Promise<any>;
-  // 删除的网络请求函数(需返回promise)
+  // 刪除的網路請求函式(需返回promise)
   deleteAction?: (ids: string) => Promise<any>;
-  // 后端导出的网络请求函数(需返回promise)
+  // 後端匯出的網路請求函式(需返回promise)
   exportAction?: (queryParams: T) => Promise<any>;
-  // 前端全量导出的网络请求函数(需返回promise)
+  // 前端全量匯出的網路請求函式(需返回promise)
   exportsAction?: (queryParams: T) => Promise<IObject[]>;
-  // 导入模板
+  // 匯入模板
   importTemplate?: string | (() => Promise<any>);
-  // 后端导入的网络请求函数(需返回promise)
+  // 後端匯入的網路請求函式(需返回promise)
   importAction?: (file: File) => Promise<any>;
-  // 前端导入的网络请求函数(需返回promise)
+  // 前端匯入的網路請求函式(需返回promise)
   importsAction?: (data: IObject[]) => Promise<any>;
-  // 主键名(默认为id)
+  // 主鍵名(預設為id)
   pk?: string;
-  // 表格工具栏(默认:add,delete,export,也可自定义)
+  // 表格工具欄(預設:add,delete,export,也可自定義)
   toolbar?: Array<ToolbarLeft | IToolsButton>;
-  // 表格工具栏右侧图标(默认:refresh,filter,imports,exports,search)
+  // 表格工具欄右側圖示(預設:refresh,filter,imports,exports,search)
   defaultToolbar?: Array<ToolbarRight | IToolsButton>;
-  // table组件列属性(额外的属性templet,operat,slotName)
+  // table元件列屬性(額外的屬性templet,operat,slotName)
   cols: Array<{
     type?: "default" | "selection" | "index" | "expand";
     label?: string;
@@ -117,7 +117,7 @@ export interface IContentConfig<T = any> {
     align?: "left" | "center" | "right";
     columnKey?: string;
     reserveSelection?: boolean;
-    // 列是否显示
+    // 列是否顯示
     show?: boolean;
     // 模板
     templet?:
@@ -132,92 +132,92 @@ export interface IContentConfig<T = any> {
       | "date"
       | "tool"
       | "custom";
-    // image模板相关参数
+    // image模板相關引數
     imageWidth?: number;
     imageHeight?: number;
-    // list模板相关参数
+    // list模板相關引數
     selectList?: IObject;
-    // switch模板相关参数
+    // switch模板相關引數
     activeValue?: boolean | string | number;
     inactiveValue?: boolean | string | number;
     activeText?: string;
     inactiveText?: string;
-    // input模板相关参数
+    // input模板相關引數
     inputType?: string;
-    // price模板相关参数
+    // price模板相關引數
     priceFormat?: string;
-    // date模板相关参数
+    // date模板相關引數
     dateFormat?: string;
-    // tool模板相关参数
+    // tool模板相關引數
     operat?: Array<ToolbarTable | IToolsButton>;
     // filter值拼接符
     filterJoin?: string;
     [key: string]: any;
-    // 初始化数据函数
+    // 初始化資料函式
     initFn?: (item: IObject) => void;
   }>;
 }
 
 export interface IModalConfig<T = any> {
-  // 权限前缀(如sys:user，用于组成权限标识)，不提供则不进行权限校验
+  // 許可權字首(如sys:user，用於組成許可權標識)，不提供則不進行許可權校驗
   permPrefix?: string;
-  // 标签冒号(默认：false)
+  // 標籤冒號(預設：false)
   colon?: boolean;
-  // 主键名(主要用于编辑数据,默认为id)
+  // 主鍵名(主要用於編輯資料,預設為id)
   pk?: string;
-  // 组件类型(默认：dialog)
+  // 元件型別(預設：dialog)
   component?: "dialog" | "drawer";
-  // dialog组件属性
+  // dialog元件屬性
   dialog?: Partial<Omit<DialogProps, "modelValue">>;
-  // drawer组件属性
+  // drawer元件屬性
   drawer?: Partial<Omit<DrawerProps, "modelValue">>;
-  // form组件属性
+  // form元件屬性
   form?: IForm;
-  // 表单项
+  // 表單項
   formItems: IFormItems<IComponentType>;
-  // 提交之前处理
+  // 提交之前處理
   beforeSubmit?: (data: T) => void;
-  // 提交的网络请求函数(需返回promise)
+  // 提交的網路請求函式(需返回promise)
   formAction?: (data: T) => Promise<any>;
 }
 
 export type IForm = Partial<Omit<FormProps, "model" | "rules">>;
 
-// 表单项
+// 表單項
 export type IFormItems<T = IComponentType> = Array<{
-  // 组件类型(如input,select,radio,custom等)
+  // 元件型別(如input,select,radio,custom等)
   type: T;
-  // 标签提示
+  // 標籤提示
   tips?: string | IObject;
-  // 标签文本
+  // 標籤文字
   label: string;
-  // 键名
+  // 鍵名
   prop: string;
-  // 组件属性
+  // 元件屬性
   attrs?: IObject;
-  // 组件可选项(只适用于select,radio,checkbox组件)
+  // 元件可選項(只適用於select,radio,checkbox元件)
   options?: Array<{ label: string; value: any; [key: string]: any }> | Ref<any[]>;
-  // 验证规则
+  // 驗證規則
   rules?: FormItemRule[];
   // 初始值
   initialValue?: any;
-  // 插槽名(适用于自定义组件，设置类型为custom)
+  // 插槽名(適用於自定義元件，設定型別為custom)
   slotName?: string;
-  // 是否隐藏
+  // 是否隱藏
   hidden?: boolean;
-  // layout组件Col属性
+  // layout元件Col屬性
   col?: Partial<ColProps>;
-  // 组件事件
+  // 元件事件
   events?: Record<string, (...args: any) => void>;
-  // 初始化数据函数扩展
+  // 初始化資料函式擴充套件
   initFn?: (item: IObject) => void;
 }>;
 
 export interface IPageForm {
-  // 主键名(主要用于编辑数据,默认为id)
+  // 主鍵名(主要用於編輯資料,預設為id)
   pk?: string;
-  // form组件属性
+  // form元件屬性
   form?: IForm;
-  // 表单项
+  // 表單項
   formItems: IFormItems<IComponentType>;
 }

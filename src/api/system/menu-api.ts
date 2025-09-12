@@ -2,15 +2,15 @@ import request from "@/utils/request";
 const MENU_BASE_URL = "/api/v1/menus";
 
 const MenuAPI = {
-  /** 获取当前用户的路由列表 */
+  /** 獲取當前使用者的路由列表 */
   getRoutes() {
     return request<any, RouteVO[]>({ url: `${MENU_BASE_URL}/routes`, method: "get" });
   },
-  /** 获取菜单树形列表 */
+  /** 獲取選單樹形列表 */
   getList(queryParams: MenuQuery) {
     return request<any, MenuVO[]>({ url: `${MENU_BASE_URL}`, method: "get", params: queryParams });
   },
-  /** 获取菜单下拉数据源 */
+  /** 獲取選單下拉資料來源 */
   getOptions(onlyParent?: boolean) {
     return request<any, OptionType[]>({
       url: `${MENU_BASE_URL}/options`,
@@ -18,19 +18,19 @@ const MenuAPI = {
       params: { onlyParent },
     });
   },
-  /** 获取菜单表单数据 */
+  /** 獲取選單表單資料 */
   getFormData(id: string) {
     return request<any, MenuForm>({ url: `${MENU_BASE_URL}/${id}/form`, method: "get" });
   },
-  /** 新增菜单 */
+  /** 新增選單 */
   create(data: MenuForm) {
     return request({ url: `${MENU_BASE_URL}`, method: "post", data });
   },
-  /** 修改菜单 */
+  /** 修改選單 */
   update(id: string, data: MenuForm) {
     return request({ url: `${MENU_BASE_URL}/${id}`, method: "put", data });
   },
-  /** 删除菜单 */
+  /** 刪除選單 */
   deleteById(id: string) {
     return request({ url: `${MENU_BASE_URL}/${id}`, method: "delete" });
   },
@@ -39,68 +39,68 @@ const MenuAPI = {
 export default MenuAPI;
 
 export interface MenuQuery {
-  /** 搜索关键字 */
+  /** 搜尋關鍵字 */
   keywords?: string;
 }
-import type { MenuTypeEnum } from "@/enums/system/menu.enum";
+export type MenuTypeEnum = 0 | 1 | 2;
 export interface MenuVO {
-  /** 子菜单 */
+  /** 子選單 */
   children?: MenuVO[];
-  /** 组件路径 */
+  /** 元件路徑 */
   component?: string;
   /** ICON */
   icon?: string;
-  /** 菜单ID */
+  /** 選單ID */
   id?: string;
-  /** 菜单名称 */
+  /** 選單名稱 */
   name?: string;
-  /** 父菜单ID */
+  /** 父選單ID */
   parentId?: string;
-  /** 按钮权限标识 */
+  /** 按鈕許可權標識 */
   perm?: string;
-  /** 跳转路径 */
+  /** 跳轉路徑 */
   redirect?: string;
-  /** 路由名称 */
+  /** 路由名稱 */
   routeName?: string;
-  /** 路由相对路径 */
+  /** 路由相對路徑 */
   routePath?: string;
-  /** 菜单排序(数字越小排名越靠前) */
+  /** 選單排序(數字越小排名越靠前) */
   sort?: number;
-  /** 菜单类型 */
+  /** 選單型別 */
   type?: MenuTypeEnum;
-  /** 是否可见(1:显示;0:隐藏) */
+  /** 是否可見(1:顯示;0:隱藏) */
   visible?: number;
 }
 export interface MenuForm {
-  /** 菜单ID */
+  /** 選單ID */
   id?: string;
-  /** 父菜单ID */
+  /** 父選單ID */
   parentId?: string;
-  /** 菜单名称 */
+  /** 選單名稱 */
   name?: string;
-  /** 是否可见(1-是 0-否) */
+  /** 是否可見(1-是 0-否) */
   visible: number;
   /** ICON */
   icon?: string;
   /** 排序 */
   sort?: number;
-  /** 路由名称 */
+  /** 路由名稱 */
   routeName?: string;
-  /** 路由路径 */
+  /** 路由路徑 */
   routePath?: string;
-  /** 组件路径 */
+  /** 元件路徑 */
   component?: string;
-  /** 跳转路由路径 */
+  /** 跳轉路由路徑 */
   redirect?: string;
-  /** 菜单类型 */
+  /** 選單型別 */
   type?: MenuTypeEnum;
-  /** 权限标识 */
+  /** 許可權標識 */
   perm?: string;
-  /** 【菜单】是否开启页面缓存 */
+  /** 【選單】是否開啟頁面快取 */
   keepAlive?: number;
-  /** 【目录】只有一个子路由是否始终显示 */
+  /** 【目錄】只有一個子路由是否始終顯示 */
   alwaysShow?: number;
-  /** 其他参数 */
+  /** 其他引數 */
   params?: KeyValue[];
 }
 interface KeyValue {
@@ -110,25 +110,25 @@ interface KeyValue {
 export interface RouteVO {
   /** 子路由列表 */
   children: RouteVO[];
-  /** 组件路径 */
+  /** 元件路徑 */
   component?: string;
-  /** 路由属性 */
+  /** 路由屬性 */
   meta?: Meta;
-  /** 路由名称 */
+  /** 路由名稱 */
   name?: string;
-  /** 路由路径 */
+  /** 路由路徑 */
   path?: string;
-  /** 跳转链接 */
+  /** 跳轉連結 */
   redirect?: string;
 }
 export interface Meta {
-  /** 【目录】只有一个子路由是否始终显示 */
+  /** 【目錄】只有一個子路由是否始終顯示 */
   alwaysShow?: boolean;
-  /** 是否隐藏(true-是 false-否) */
+  /** 是否隱藏(true-是 false-否) */
   hidden?: boolean;
   /** ICON */
   icon?: string;
-  /** 【菜单】是否开启页面缓存 */
+  /** 【選單】是否開啟頁面快取 */
   keepAlive?: boolean;
   /** 路由title */
   title?: string;

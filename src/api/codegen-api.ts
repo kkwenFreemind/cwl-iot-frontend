@@ -3,7 +3,7 @@ import request from "@/utils/request";
 const GENERATOR_BASE_URL = "/api/v1/codegen";
 
 const GeneratorAPI = {
-  /** 获取数据表分页列表 */
+  /** 獲取資料表分頁列表 */
   getTablePage(params: TablePageQuery) {
     return request<any, PageResult<TablePageVO[]>>({
       url: `${GENERATOR_BASE_URL}/table/page`,
@@ -12,7 +12,7 @@ const GeneratorAPI = {
     });
   },
 
-  /** 获取代码生成配置 */
+  /** 獲取程式碼生成配置 */
   getGenConfig(tableName: string) {
     return request<any, GenConfigForm>({
       url: `${GENERATOR_BASE_URL}/${tableName}/config`,
@@ -20,7 +20,7 @@ const GeneratorAPI = {
     });
   },
 
-  /** 获取代码生成配置 */
+  /** 獲取程式碼生成配置 */
   saveGenConfig(tableName: string, data: GenConfigForm) {
     return request({
       url: `${GENERATOR_BASE_URL}/${tableName}/config`,
@@ -29,7 +29,7 @@ const GeneratorAPI = {
     });
   },
 
-  /** 获取代码生成预览数据 */
+  /** 獲取程式碼生成預覽資料 */
   getPreviewData(tableName: string, pageType?: "classic" | "curd") {
     return request<any, GeneratorPreviewVO[]>({
       url: `${GENERATOR_BASE_URL}/${tableName}/preview`,
@@ -38,7 +38,7 @@ const GeneratorAPI = {
     });
   },
 
-  /** 重置代码生成配置 */
+  /** 重置程式碼生成配置 */
   resetGenConfig(tableName: string) {
     return request({
       url: `${GENERATOR_BASE_URL}/${tableName}/config`,
@@ -47,7 +47,7 @@ const GeneratorAPI = {
   },
 
   /**
-   * 下载 ZIP 文件
+   * 下載 ZIP 檔案
    * @param url
    * @param fileName
    */
@@ -75,125 +75,125 @@ const GeneratorAPI = {
 
 export default GeneratorAPI;
 
-/** 代码生成预览对象 */
+/** 程式碼生成預覽物件 */
 export interface GeneratorPreviewVO {
-  /** 文件生成路径 */
+  /** 檔案生成路徑 */
   path: string;
-  /** 文件名称 */
+  /** 檔名稱 */
   fileName: string;
-  /** 文件内容 */
+  /** 檔案內容 */
   content: string;
 }
 
-/**  数据表分页查询参数 */
+/**  資料表分頁查詢引數 */
 export interface TablePageQuery extends PageQuery {
-  /** 关键字(表名) */
+  /** 關鍵字(表名) */
   keywords?: string;
 }
 
-/** 数据表分页对象 */
+/** 資料表分頁物件 */
 export interface TablePageVO {
-  /** 表名称 */
+  /** 表名稱 */
   tableName: string;
 
   /** 表描述 */
   tableComment: string;
 
-  /** 存储引擎 */
+  /** 儲存引擎 */
   engine: string;
 
-  /** 字符集排序规则 */
+  /** 字符集排序規則 */
   tableCollation: string;
 
-  /** 创建时间 */
+  /** 建立時間 */
   createTime: string;
 }
 
-/** 代码生成配置表单 */
+/** 程式碼生成配置表單 */
 export interface GenConfigForm {
-  /** 主键 */
+  /** 主鍵 */
   id?: string;
 
   /** 表名 */
   tableName?: string;
 
-  /** 业务名 */
+  /** 業務名 */
   businessName?: string;
 
-  /** 模块名 */
+  /** 模組名 */
   moduleName?: string;
 
   /** 包名 */
   packageName?: string;
 
-  /** 实体名 */
+  /** 實體名 */
   entityName?: string;
 
   /** 作者 */
   author?: string;
 
-  /** 上级菜单 */
+  /** 上級選單 */
   parentMenuId?: string;
 
-  /** 后端应用名 */
+  /** 後端應用名 */
   backendAppName?: string;
-  /** 前端应用名 */
+  /** 前端應用名 */
   frontendAppName?: string;
 
-  /** 字段配置列表 */
+  /** 欄位配置列表 */
   fieldConfigs?: FieldConfig[];
 
-  /** 页面类型 classic|curd */
+  /** 頁面型別 classic|curd */
   pageType?: "classic" | "curd";
 
-  /** 要移除的表前缀，如 sys_ */
+  /** 要移除的表字首，如 sys_ */
   removeTablePrefix?: string;
 }
 
-/** 字段配置 */
+/** 欄位配置 */
 export interface FieldConfig {
-  /** 主键 */
+  /** 主鍵 */
   id?: string;
 
   /** 列名 */
   columnName?: string;
 
-  /** 列类型 */
+  /** 列型別 */
   columnType?: string;
 
-  /** 字段名 */
+  /** 欄位名 */
   fieldName?: string;
 
-  /** 字段类型 */
+  /** 欄位型別 */
   fieldType?: string;
 
-  /** 字段描述 */
+  /** 欄位描述 */
   fieldComment?: string;
 
-  /** 是否在列表显示 */
+  /** 是否在列表顯示 */
   isShowInList?: number;
 
-  /** 是否在表单显示 */
+  /** 是否在表單顯示 */
   isShowInForm?: number;
 
-  /** 是否在查询条件显示 */
+  /** 是否在查詢條件顯示 */
   isShowInQuery?: number;
 
   /** 是否必填 */
   isRequired?: number;
 
-  /** 表单类型 */
+  /** 表單型別 */
   formType?: number;
 
-  /** 查询类型 */
+  /** 查詢型別 */
   queryType?: number;
 
-  /** 字段长度 */
+  /** 欄位長度 */
   maxLength?: number;
 
-  /** 字段排序 */
+  /** 欄位排序 */
   fieldSort?: number;
 
-  /** 字典类型 */
+  /** 字典型別 */
   dictType?: string;
 }

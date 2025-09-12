@@ -3,7 +3,7 @@
     <el-dialog
       v-model="visible"
       :align-center="true"
-      title="导入数据"
+      title="匯入資料"
       width="600px"
       @close="handleClose"
     >
@@ -14,7 +14,7 @@
           :model="importFormData"
           :rules="importFormRules"
         >
-          <el-form-item label="文件名" prop="files">
+          <el-form-item label="檔名" prop="files">
             <el-upload
               ref="uploadRef"
               v-model:file-list="importFormData.files"
@@ -27,19 +27,19 @@
             >
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
-                将文件拖到此处，或
-                <em>点击上传</em>
+                將檔案拖到此處，或
+                <em>點選上傳</em>
               </div>
               <template #tip>
                 <div class="el-upload__tip">
-                  格式为*.xlsx / *.xls，文件不超过一个
+                  格式為*.xlsx / *.xls，檔案不超過一個
                   <el-link
                     type="primary"
                     icon="download"
                     underline="never"
                     @click="handleDownloadTemplate"
                   >
-                    下载模板
+                    下載模板
                   </el-link>
                 </div>
               </template>
@@ -50,29 +50,29 @@
       <template #footer>
         <div style="padding-right: var(--el-dialog-padding-primary)">
           <el-button v-if="resultData.length > 0" type="primary" @click="handleShowResult">
-            错误信息
+            錯誤資訊
           </el-button>
           <el-button
             type="primary"
             :disabled="importFormData.files.length === 0"
             @click="handleUpload"
           >
-            确 定
+            確 定
           </el-button>
           <el-button @click="handleClose">取 消</el-button>
         </div>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="resultVisible" title="导入结果" width="600px">
+    <el-dialog v-model="resultVisible" title="匯入結果" width="600px">
       <el-alert
-        :title="`导入结果：${invalidCount}条无效数据，${validCount}条有效数据`"
+        :title="`匯入結果：${invalidCount}條無效資料，${validCount}條有效資料`"
         type="warning"
         :closable="false"
       />
       <el-table :data="resultData" style="width: 100%; max-height: 400px">
-        <el-table-column prop="index" align="center" width="100" type="index" label="序号" />
-        <el-table-column prop="message" label="错误信息" width="400">
+        <el-table-column prop="index" align="center" width="100" type="index" label="序號" />
+        <el-table-column prop="message" label="錯誤資訊" width="400">
           <template #default="scope">
             {{ scope.row }}
           </template>
@@ -80,7 +80,7 @@
       </el-table>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="handleCloseResult">关闭</el-button>
+          <el-button @click="handleCloseResult">關閉</el-button>
         </div>
       </template>
     </el-dialog>
@@ -123,15 +123,15 @@ watch(visible, (newValue) => {
 });
 
 const importFormRules = {
-  files: [{ required: true, message: "文件不能为空", trigger: "blur" }],
+  files: [{ required: true, message: "檔案不能為空", trigger: "blur" }],
 };
 
-// 文件超出个数限制
+// 檔案超出個數限制
 const handleFileExceed = () => {
-  ElMessage.warning("只能上传一个文件");
+  ElMessage.warning("只能上傳一個檔案");
 };
 
-// 下载导入模板
+// 下載匯入模板
 const handleDownloadTemplate = () => {
   UserAPI.downloadTemplate().then((response: any) => {
     const fileData = response.data;
@@ -154,21 +154,21 @@ const handleDownloadTemplate = () => {
   });
 };
 
-// 上传文件
+// 上傳檔案
 const handleUpload = async () => {
   if (!importFormData.files.length) {
-    ElMessage.warning("请选择文件");
+    ElMessage.warning("請選擇檔案");
     return;
   }
 
   try {
     const result = await UserAPI.import("1", importFormData.files[0].raw as File);
     if (result.code === ResultEnum.SUCCESS && result.invalidCount === 0) {
-      ElMessage.success("导入成功，导入数据：" + result.validCount + "条");
+      ElMessage.success("匯入成功，匯入資料：" + result.validCount + "條");
       emit("import-success");
       handleClose();
     } else {
-      ElMessage.error("上传失败");
+      ElMessage.error("上傳失敗");
       resultVisible.value = true;
       resultData.value = result.messageList;
       invalidCount.value = result.invalidCount;
@@ -176,21 +176,21 @@ const handleUpload = async () => {
     }
   } catch (error: any) {
     console.error(error);
-    ElMessage.error("上传失败：" + error);
+    ElMessage.error("上傳失敗：" + error);
   }
 };
 
-// 显示错误信息
+// 顯示錯誤資訊
 const handleShowResult = () => {
   resultVisible.value = true;
 };
 
-// 关闭错误信息弹窗
+// 關閉錯誤資訊彈窗
 const handleCloseResult = () => {
   resultVisible.value = false;
 };
 
-// 关闭弹窗
+// 關閉彈窗
 const handleClose = () => {
   importFormData.files.length = 0;
   visible.value = false;

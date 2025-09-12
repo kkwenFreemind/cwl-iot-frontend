@@ -1,10 +1,10 @@
 /**
- * 存储工具类
+ * 儲存工具類
  * 提供localStorage和sessionStorage操作方法
  */
 export class Storage {
   /**
-   * localStorage 存储
+   * localStorage 儲存
    */
   static set(key: string, value: any): void {
     localStorage.setItem(key, JSON.stringify(value));
@@ -17,7 +17,7 @@ export class Storage {
     try {
       return JSON.parse(value);
     } catch {
-      // 如果解析失败，返回原始字符串
+      // 如果解析失敗，返回原始字串
       return value as unknown as T;
     }
   }
@@ -27,7 +27,7 @@ export class Storage {
   }
 
   /**
-   * sessionStorage 存储
+   * sessionStorage 儲存
    */
   static sessionSet(key: string, value: any): void {
     sessionStorage.setItem(key, JSON.stringify(value));
@@ -40,7 +40,7 @@ export class Storage {
     try {
       return JSON.parse(value);
     } catch {
-      // 如果解析失败，返回原始字符串
+      // 如果解析失敗，返回原始字串
       return value as unknown as T;
     }
   }

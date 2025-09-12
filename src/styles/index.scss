@@ -8,49 +8,49 @@
   padding: 15px;
 }
 
-// 进度条颜色
+// 進度條顏色
 #nprogress .bar {
   background-color: var(--el-color-primary);
 }
 
-// 混合布局左侧菜单的hover样式
+// 混合佈局左側選單的hover樣式
 .layout-mix .layout__sidebar--left .el-menu {
   .el-menu-item {
     &:hover {
-      // 极简白主题：使用浅灰色背景
+      // 極簡白主題：使用淺灰色背景
       background-color: var(--el-fill-color-light) !important;
     }
   }
 
   .el-sub-menu__title {
     &:hover {
-      // 极简白主题：使用浅灰色背景
+      // 極簡白主題：使用淺灰色背景
       background-color: var(--el-fill-color-light) !important;
     }
   }
 }
 
-// 深色主题或深蓝色侧边栏配色下的左侧菜单hover样式
+// 深色主題或深藍色側邊欄配色下的左側選單hover樣式
 html.dark .layout-mix .layout__sidebar--left .el-menu,
 html.sidebar-color-blue .layout-mix .layout__sidebar--left .el-menu {
   .el-menu-item {
     &:hover {
-      // 深色背景：使用CSS变量
+      // 深色背景：使用CSS變數
       background-color: var(--menu-hover) !important;
     }
   }
 
   .el-sub-menu__title {
     &:hover {
-      // 深色背景：使用CSS变量
+      // 深色背景：使用CSS變數
       background-color: var(--menu-hover) !important;
     }
   }
 }
 
-// 窄屏时隐藏菜单文字，只显示图标
+// 窄屏時隱藏選單文字，只顯示圖示
 .hideSidebar {
-  // Top布局和Mix布局的水平菜单
+  // Top佈局和Mix佈局的水平選單
   &.layout-top .layout__header .el-menu--horizontal,
   &.layout-mix .layout__header .el-menu--horizontal {
     .el-menu-item,
@@ -62,7 +62,7 @@ html.sidebar-color-blue .layout-mix .layout__sidebar--left .el-menu {
     }
   }
 
-  // Mix布局的左侧菜单
+  // Mix佈局的左側選單
   &.layout-mix .layout__sidebar--left .el-menu {
     .el-menu-item,
     .el-sub-menu__title {
@@ -74,7 +74,7 @@ html.sidebar-color-blue .layout-mix .layout__sidebar--left .el-menu {
   }
 }
 
-// 全局搜索区域样式
+// 全域性搜尋區域樣式
 .search-container {
   padding: 18px 16px 0;
   margin-bottom: 16px;
@@ -91,11 +91,11 @@ html.sidebar-color-blue .layout-mix .layout__sidebar--left .el-menu {
   }
 }
 
-// 表格区域样式
+// 表格區域樣式
 .data-table {
   margin-bottom: 16px;
 
-  // 表格工具栏区域
+  // 表格工具欄區域
   &__toolbar {
     display: flex;
     justify-content: space-between;
@@ -108,12 +108,12 @@ html.sidebar-color-blue .layout-mix .layout__sidebar--left .el-menu {
     }
   }
 
-  // 表格内容区域
+  // 表格內容區域
   &__content {
     margin: 8px 0;
   }
 
-  // 分页区域
+  // 分頁區域
   .el-pagination {
     justify-content: flex-end;
     margin-top: 16px;

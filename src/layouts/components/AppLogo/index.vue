@@ -2,7 +2,7 @@
   <div class="logo">
     <transition enter-active-class="animate__animated animate__fadeInLeft">
       <router-link :key="+collapse" class="wh-full flex-center" to="/">
-        <img :src="logo" class="w20px h20px" />
+        <img :src="currentLogo" class="w36px h36px" />
         <span v-if="!collapse" class="title">
           {{ defaultSettings.title }}
         </span>
@@ -13,13 +13,18 @@
 
 <script lang="ts" setup>
 import { defaultSettings } from "@/settings";
-import logo from "@/assets/logo.png";
+import logoWhite from "@/assets/logo-white.png";
 
 defineProps({
   collapse: {
     type: Boolean,
     required: true,
   },
+});
+
+// 固定使用白色 Logo，不隨主題切換
+const currentLogo = computed(() => {
+  return logoWhite; // 始終使用白色 Logo
 });
 </script>
 

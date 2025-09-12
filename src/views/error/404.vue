@@ -4,16 +4,16 @@
     <div class="w-75">
       <div class="oops mb-5 text-[2rem] font-bold">OOPS！</div>
       <div class="info text-gray mb-7 text-[0.8125rem]">
-        该页面无法访问。
+        該頁面無法訪問。
         <el-link type="primary" href="https://www.youlai.tech.com" target="_blank">
-          有来开源官网
+          有來開源官網
         </el-link>
       </div>
-      <div class="headline mb-2.5 text-xl font-bold text-[#222]">抱歉，您访问的页面不存在。</div>
+      <div class="headline mb-2.5 text-xl font-bold text-[#222]">抱歉，您訪問的頁面不存在。</div>
       <div class="info text-gray mb-7 text-[0.8125rem]">
-        请确认您输入的网址是否正确，或者点击下方按钮返回首页。
+        請確認您輸入的網址是否正確，或者點選下方按鈕返回首頁。
       </div>
-      <el-button round type="primary" class="btn h-9 w-28 mb-10" @click="back">返回首页</el-button>
+      <el-button round type="primary" class="btn h-9 w-28 mb-10" @click="back">返回首頁</el-button>
     </div>
   </div>
 </template>

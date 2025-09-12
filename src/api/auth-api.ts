@@ -3,7 +3,7 @@ import request from "@/utils/request";
 const AUTH_BASE_URL = "/api/v1/auth";
 
 const AuthAPI = {
-  /** 登录接口*/
+  /** 登入介面*/
   login(data: LoginFormData) {
     const formData = new FormData();
     formData.append("username", data.username);
@@ -20,7 +20,7 @@ const AuthAPI = {
     });
   },
 
-  /** 刷新 token 接口*/
+  /** 重新整理 token 介面*/
   refreshToken(refreshToken: string) {
     return request<any, LoginResult>({
       url: `${AUTH_BASE_URL}/refresh-token`,
@@ -32,7 +32,7 @@ const AuthAPI = {
     });
   },
 
-  /** 退出登录接口 */
+  /** 退出登入介面 */
   logout() {
     return request({
       url: `${AUTH_BASE_URL}/logout`,
@@ -40,7 +40,7 @@ const AuthAPI = {
     });
   },
 
-  /** 获取验证码接口*/
+  /** 獲取驗證碼介面*/
   getCaptcha() {
     return request<any, CaptchaInfo>({
       url: `${AUTH_BASE_URL}/captcha`,
@@ -51,36 +51,36 @@ const AuthAPI = {
 
 export default AuthAPI;
 
-/** 登录表单数据 */
+/** 登入表單資料 */
 export interface LoginFormData {
-  /** 用户名 */
+  /** 使用者名稱 */
   username: string;
-  /** 密码 */
+  /** 密碼 */
   password: string;
-  /** 验证码缓存key */
+  /** 驗證碼快取key */
   captchaKey: string;
-  /** 验证码 */
+  /** 驗證碼 */
   captchaCode: string;
-  /** 记住我 */
+  /** 記住我 */
   rememberMe: boolean;
 }
 
-/** 登录响应 */
+/** 登入響應 */
 export interface LoginResult {
-  /** 访问令牌 */
+  /** 訪問令牌 */
   accessToken: string;
-  /** 刷新令牌 */
+  /** 重新整理令牌 */
   refreshToken: string;
-  /** 令牌类型 */
+  /** 令牌型別 */
   tokenType: string;
-  /** 过期时间(秒) */
+  /** 過期時間(秒) */
   expiresIn: number;
 }
 
-/** 验证码信息 */
+/** 驗證碼資訊 */
 export interface CaptchaInfo {
-  /** 验证码缓存key */
+  /** 驗證碼快取key */
   captchaKey: string;
-  /** 验证码图片Base64字符串 */
+  /** 驗證碼圖片Base64字串 */
   captchaBase64: string;
 }

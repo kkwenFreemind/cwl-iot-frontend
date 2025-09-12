@@ -1,4 +1,4 @@
-<!-- 菜单组件 -->
+<!-- 選單元件 -->
 <template>
   <el-menu
     ref="menuRef"
@@ -14,7 +14,7 @@
     @open="onMenuOpen"
     @close="onMenuClose"
   >
-    <!-- 菜单项 -->
+    <!-- 選單項 -->
     <MenuItem
       v-for="route in data"
       :key="route.path"
@@ -57,16 +57,16 @@ const settingsStore = useSettingsStore();
 const appStore = useAppStore();
 const currentRoute = useRoute();
 
-// 存储已展开的菜单项索引
+// 儲存已展開的選單項索引
 const expandedMenuIndexes = ref<string[]>([]);
 
-// 获取主题
+// 獲取主題
 const theme = computed(() => settingsStore.theme);
 
-// 获取浅色主题下的侧边栏配色方案
+// 獲取淺色主題下的側邊欄配色方案
 const sidebarColorScheme = computed(() => settingsStore.sidebarColorScheme);
 
-// 菜单主题属性
+// 選單主題屬性
 const menuThemeProps = computed(() => {
   const isDarkOrClassicBlue =
     theme.value === "dark" || sidebarColorScheme.value === SidebarColor.CLASSIC_BLUE;
@@ -78,24 +78,24 @@ const menuThemeProps = computed(() => {
   };
 });
 
-// 计算当前激活的菜单项
+// 計算當前啟用的選單項
 const activeMenuPath = computed((): string => {
   const { meta, path } = currentRoute;
 
-  // 如果路由meta中设置了activeMenu，则使用它（用于处理一些特殊情况，如详情页）
+  // 如果路由meta中設定了activeMenu，則使用它（用於處理一些特殊情況，如詳情頁）
   if (meta?.activeMenu && typeof meta.activeMenu === "string") {
     return meta.activeMenu;
   }
 
-  // 否则使用当前路由路径
+  // 否則使用當前路由路徑
   return path;
 });
 
 /**
- * 获取完整路径
+ * 獲取完整路徑
  *
- * @param routePath 当前路由的相对路径  /user
- * @returns 完整的绝对路径 D://vue3-element-admin/system/user
+ * @param routePath 當前路由的相對路徑  /user
+ * @returns 完整的絕對路徑 D://vue3-element-admin/system/user
  */
 function resolveFullPath(routePath: string) {
   if (isExternal(routePath)) {
@@ -105,35 +105,35 @@ function resolveFullPath(routePath: string) {
     return props.basePath;
   }
 
-  // 如果 basePath 为空（顶部布局），直接返回 routePath
+  // 如果 basePath 為空（頂部佈局），直接返回 routePath
   if (!props.basePath || props.basePath === "") {
     return routePath;
   }
 
-  // 解析路径，生成完整的绝对路径
+  // 解析路徑，生成完整的絕對路徑
   return path.resolve(props.basePath, routePath);
 }
 
 /**
- * 打开菜单
+ * 開啟選單
  *
- * @param index 当前展开的菜单项索引
+ * @param index 當前展開的選單項索引
  */
 const onMenuOpen = (index: string) => {
   expandedMenuIndexes.value.push(index);
 };
 
 /**
- * 关闭菜单
+ * 關閉選單
  *
- * @param index 当前收起的菜单项索引
+ * @param index 當前收起的選單項索引
  */
 const onMenuClose = (index: string) => {
   expandedMenuIndexes.value = expandedMenuIndexes.value.filter((item) => item !== index);
 };
 
 /**
- * 监听展开的菜单项变化，更新父菜单样式
+ * 監聽展開的選單項變化，更新父選單樣式
  */
 watch(
   () => expandedMenuIndexes.value,
@@ -143,8 +143,8 @@ watch(
 );
 
 /**
- * 监听菜单模式变化：当菜单模式切换为水平模式时，关闭所有展开的菜单项，
- * 避免在水平模式下菜单项显示错位。
+ * 監聽選單模式變化：當選單模式切換為水平模式時，關閉所有展開的選單項，
+ * 避免在水平模式下選單項顯示錯位。
  */
 watch(
   () => props.menuMode,
@@ -156,7 +156,7 @@ watch(
 );
 
 /**
- * 监听激活菜单变化，为包含激活子菜单的父菜单添加样式类
+ * 監聽啟用選單變化，為包含啟用子選單的父選單新增樣式類
  */
 watch(
   () => activeMenuPath.value,
@@ -169,7 +169,7 @@ watch(
 );
 
 /**
- * 监听路由变化，确保菜单能随TagsView切换而正确激活
+ * 監聽路由變化，確保選單能隨TagsView切換而正確啟用
  */
 watch(
   () => currentRoute.path,
@@ -181,7 +181,7 @@ watch(
 );
 
 /**
- * 更新父菜单样式 - 为包含激活子菜单的父菜单添加 has-active-child 类
+ * 更新父選單樣式 - 為包含啟用子選單的父選單新增 has-active-child 類
  */
 function updateParentMenuStyles() {
   if (!menuRef.value?.$el) return;
@@ -191,17 +191,17 @@ function updateParentMenuStyles() {
       const menuEl = menuRef.value?.$el as HTMLElement;
       if (!menuEl) return;
 
-      // 移除所有现有的 has-active-child 类
+      // 移除所有現有的 has-active-child 類
       const allSubMenus = menuEl.querySelectorAll(".el-sub-menu");
       allSubMenus.forEach((subMenu) => {
         subMenu.classList.remove("has-active-child");
       });
 
-      // 查找当前激活的菜单项
+      // 查詢當前啟用的選單項
       const activeMenuItem = menuEl.querySelector(".el-menu-item.is-active");
 
       if (activeMenuItem) {
-        // 向上查找父级 el-sub-menu 元素
+        // 向上查詢父級 el-sub-menu 元素
         let parent = activeMenuItem.parentElement;
         while (parent && parent !== menuEl) {
           if (parent.classList.contains("el-sub-menu")) {
@@ -210,19 +210,19 @@ function updateParentMenuStyles() {
           parent = parent.parentElement;
         }
       } else {
-        // 水平模式下可能需要特殊处理
+        // 水平模式下可能需要特殊處理
         if (props.menuMode === "horizontal") {
-          // 对于水平菜单，使用路径匹配来找到父菜单
+          // 對於水平選單，使用路徑匹配來找到父選單
           const currentPath = activeMenuPath.value;
 
-          // 查找所有父菜单项，检查哪个包含当前路径
+          // 查詢所有父選單項，檢查哪個包含當前路徑
           allSubMenus.forEach((subMenu) => {
             const subMenuEl = subMenu as HTMLElement;
             const subMenuPath =
               subMenuEl.getAttribute("data-path") ||
               subMenuEl.querySelector(".el-sub-menu__title")?.getAttribute("data-path");
 
-            // 如果找到包含当前路径的父菜单，则添加激活类
+            // 如果找到包含當前路徑的父選單，則新增啟用類
             if (subMenuPath && currentPath.startsWith(subMenuPath)) {
               subMenuEl.classList.add("has-active-child");
             }
@@ -236,10 +236,10 @@ function updateParentMenuStyles() {
 }
 
 /**
- * 组件挂载后立即更新父菜单样式
+ * 元件掛載後立即更新父選單樣式
  */
 onMounted(() => {
-  // 确保在组件挂载后更新样式，不依赖于异步操作
+  // 確保在元件掛載後更新樣式，不依賴於非同步操作
   updateParentMenuStyles();
 });
 </script>

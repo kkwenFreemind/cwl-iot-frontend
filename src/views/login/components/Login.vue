@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h3 text-center m-0 mb-20px>{{ t("login.login") }}</h3>
+    <!-- <h3 text-center m-0 mb-20px>{{ t("login.login") }}</h3> -->
+    <h1></h1>
     <el-form
       ref="loginFormRef"
       :model="loginFormData"
@@ -8,7 +9,7 @@
       size="large"
       :validate-on-rule-change="false"
     >
-      <!-- 用户名 -->
+      <!-- 使用者名稱 -->
       <el-form-item prop="username">
         <el-input v-model.trim="loginFormData.username" :placeholder="t('login.username')">
           <template #prefix>
@@ -17,7 +18,7 @@
         </el-input>
       </el-form-item>
 
-      <!-- 密码 -->
+      <!-- 密碼 -->
       <el-tooltip :visible="isCapsLock" :content="t('login.capsLock')" placement="right">
         <el-form-item prop="password">
           <el-input
@@ -35,7 +36,7 @@
         </el-form-item>
       </el-tooltip>
 
-      <!-- 验证码 -->
+      <!-- 驗證碼 -->
       <el-form-item prop="captchaCode">
         <div flex>
           <el-input
@@ -70,7 +71,7 @@
         </el-link>
       </div>
 
-      <!-- 登录按钮 -->
+      <!-- 登入按鈕 -->
       <el-form-item>
         <el-button :loading="loading" type="primary" class="w-full" @click="handleLoginSubmit">
           {{ t("login.login") }}
@@ -85,8 +86,8 @@
       </el-link>
     </div>
 
-    <!-- 第三方登录 -->
-    <div class="third-party-login">
+    <!-- 第三方登入 -->
+    <!-- <div class="third-party-login">
       <div class="divider-container">
         <div class="divider-line"></div>
         <span class="divider-text">{{ t("login.otherLoginMethods") }}</span>
@@ -106,7 +107,7 @@
           <div text-20px cursor-pointer class="i-svg:gitee" />
         </CommonWrapper>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script setup lang="ts">
@@ -114,7 +115,6 @@ import type { FormInstance } from "element-plus";
 import AuthAPI, { type LoginFormData } from "@/api/auth-api";
 import router from "@/router";
 import { useUserStore } from "@/store";
-import CommonWrapper from "@/components/CommonWrapper/index.vue";
 import { AuthStorage } from "@/utils/auth";
 
 const { t } = useI18n();
@@ -125,11 +125,11 @@ onMounted(() => getCaptcha());
 
 const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
-// 是否大写锁定
+// 是否大寫鎖定
 const isCapsLock = ref(false);
-// 验证码图片Base64字符串
+// 驗證碼圖片Base64字串
 const captchaBase64 = ref();
-// 记住我
+// 記住我
 const rememberMe = AuthStorage.getRememberMe();
 
 const loginFormData = ref<LoginFormData>({
@@ -171,7 +171,7 @@ const loginRules = computed(() => {
   };
 });
 
-// 获取验证码
+// 獲取驗證碼
 const codeLoading = ref(false);
 function getCaptcha() {
   codeLoading.value = true;
@@ -184,34 +184,34 @@ function getCaptcha() {
 }
 
 /**
- * 登录提交
+ * 登入提交
  */
 async function handleLoginSubmit() {
   try {
-    // 1. 表单验证
+    // 1. 表單驗證
     const valid = await loginFormRef.value?.validate();
     if (!valid) return;
 
     loading.value = true;
 
-    // 2. 执行登录
+    // 2. 執行登入
     await userStore.login(loginFormData.value);
 
     const redirectPath = (route.query.redirect as string) || "/";
 
     await router.push(decodeURIComponent(redirectPath));
   } catch (error) {
-    // 4. 统一错误处理
-    getCaptcha(); // 刷新验证码
-    console.error("登录失败:", error);
+    // 4. 統一錯誤處理
+    getCaptcha(); // 重新整理驗證碼
+    console.error("登入失敗:", error);
   } finally {
     loading.value = false;
   }
 }
 
-// 检查输入大小写
+// 檢查輸入大小寫
 function checkCapsLock(event: KeyboardEvent) {
-  // 防止浏览器密码自动填充时报错
+  // 防止瀏覽器密碼自動填充時報錯
   if (event instanceof KeyboardEvent) {
     isCapsLock.value = event.getModifierState("CapsLock");
   }

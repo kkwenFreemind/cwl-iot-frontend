@@ -3,7 +3,7 @@ import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-rou
 
 export const Layout = () => import("@/layouts/index.vue");
 
-// Static routes
+// 靜態路由
 export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/redirect",
@@ -32,8 +32,8 @@ export const constantRoutes: RouteRecordRaw[] = [
       {
         path: "dashboard",
         component: () => import("@/views/dashboard/index.vue"),
-        // Used for keep-alive functionality, needs to match the component name automatically inferred or explicitly declared in SFC
-        // Reference: https://cn.vuejs.org/guide/built-ins/keep-alive.html#include-exclude
+        // 用於 keep-alive 功能，需要與 SFC 中自動推導或顯式宣告的元件名稱一致
+        // 參考文件: https://cn.vuejs.org/guide/built-ins/keep-alive.html#include-exclude
         name: "Dashboard",
         meta: {
           title: "dashboard",
@@ -56,35 +56,29 @@ export const constantRoutes: RouteRecordRaw[] = [
         path: "profile",
         name: "Profile",
         component: () => import("@/views/profile/index.vue"),
-        meta: { title: "Profile Center", icon: "user", hidden: true },
+        meta: { title: "個人中心", icon: "user", hidden: true },
       },
       {
         path: "my-notice",
         name: "MyNotice",
         component: () => import("@/views/system/notice/components/MyNotice.vue"),
-        meta: { title: "My Notifications", icon: "user", hidden: true },
-      },
-      {
-        path: "/detail/:id(\\d+)",
-        name: "DemoDetail",
-        component: () => import("@/views/demo/detail.vue"),
-        meta: { title: "Detail Page Cache", icon: "user", hidden: true, keepAlive: true },
+        meta: { title: "我的通知", icon: "user", hidden: true },
       },
     ],
   },
 ];
 
 /**
- * Create router
+ * 建立路由
  */
 const router = createRouter({
   history: createWebHashHistory(),
   routes: constantRoutes,
-  // Restore scroll position on refresh
+  // 重新整理時，捲軸位置還原
   scrollBehavior: () => ({ left: 0, top: 0 }),
 });
 
-// Global router registration
+// 全域性註冊 router
 export function setupRouter(app: App<Element>) {
   app.use(router);
 }

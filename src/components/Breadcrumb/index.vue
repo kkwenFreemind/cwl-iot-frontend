@@ -77,7 +77,7 @@ onBeforeMount(() => {
 </script>
 
 <style lang="scss" scoped>
-// 覆盖 element-plus 的样式
+// 覆蓋 element-plus 的樣式
 .el-breadcrumb__inner,
 .el-breadcrumb__inner a {
   font-weight: 400 !important;

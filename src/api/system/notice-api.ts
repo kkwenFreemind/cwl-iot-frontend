@@ -3,7 +3,7 @@ import request from "@/utils/request";
 const NOTICE_BASE_URL = "/api/v1/notices";
 
 const NoticeAPI = {
-  /** 获取通知公告分页数据 */
+  /** 獲取通知公告分頁資料 */
   getPage(queryParams?: NoticePageQuery) {
     return request<any, PageResult<NoticePageVO[]>>({
       url: `${NOTICE_BASE_URL}/page`,
@@ -11,11 +11,11 @@ const NoticeAPI = {
       params: queryParams,
     });
   },
-  /** 获取通知公告表单数据 */
+  /** 獲取通知公告表單資料 */
   getFormData(id: string) {
     return request<any, NoticeForm>({ url: `${NOTICE_BASE_URL}/${id}/form`, method: "get" });
   },
-  /** 添加通知公告 */
+  /** 新增通知公告 */
   create(data: NoticeForm) {
     return request({ url: `${NOTICE_BASE_URL}`, method: "post", data });
   },
@@ -23,11 +23,11 @@ const NoticeAPI = {
   update(id: string, data: NoticeForm) {
     return request({ url: `${NOTICE_BASE_URL}/${id}`, method: "put", data });
   },
-  /** 批量删除通知公告，多个以英文逗号(,)分割 */
+  /** 批次刪除通知公告，多個以英文逗號(,)分割 */
   deleteByIds(ids: string) {
     return request({ url: `${NOTICE_BASE_URL}/${ids}`, method: "delete" });
   },
-  /** 发布通知 */
+  /** 釋出通知 */
   publish(id: string) {
     return request({ url: `${NOTICE_BASE_URL}/${id}/publish`, method: "put" });
   },
@@ -35,15 +35,15 @@ const NoticeAPI = {
   revoke(id: string) {
     return request({ url: `${NOTICE_BASE_URL}/${id}/revoke`, method: "put" });
   },
-  /** 查看通知 */
+  /** 檢視通知 */
   getDetail(id: string) {
     return request<any, NoticeDetailVO>({ url: `${NOTICE_BASE_URL}/${id}/detail`, method: "get" });
   },
-  /** 全部已读 */
+  /** 全部已讀 */
   readAll() {
     return request({ url: `${NOTICE_BASE_URL}/read-all`, method: "put" });
   },
-  /** 获取我的通知分页列表 */
+  /** 獲取我的通知分頁列表 */
   getMyNoticePage(queryParams?: NoticePageQuery) {
     return request<any, PageResult<NoticePageVO[]>>({
       url: `${NOTICE_BASE_URL}/my-page`,
@@ -56,66 +56,66 @@ const NoticeAPI = {
 export default NoticeAPI;
 
 export interface NoticePageQuery extends PageQuery {
-  /** 标题 */
+  /** 標題 */
   title?: string;
-  /** 发布状态(0:草稿;1:已发布;2:已撤回) */
+  /** 釋出狀態(0:草稿;1:已釋出;2:已撤回) */
   publishStatus?: number;
-  /** 是否已读(1:是;0:否) */
+  /** 是否已讀(1:是;0:否) */
   isRead?: number;
 }
 export interface NoticeForm {
   /** 通知ID(新增不填) */
   id?: string;
-  /** 标题 */
+  /** 標題 */
   title?: string;
-  /** 内容 */
+  /** 內容 */
   content?: string;
-  /** 类型 */
+  /** 型別 */
   type?: number;
-  /** 优先级/级别 */
+  /** 優先順序/級別 */
   level?: string;
-  /** 目标类型 */
+  /** 目標型別 */
   targetType?: number;
-  /** 目标用户ID(多个以英文逗号(,)分割) */
+  /** 目標使用者ID(多個以英文逗號(,)分割) */
   targetUserIds?: string;
 }
 export interface NoticePageVO {
   /** 通知ID */
   id: string;
-  /** 标题 */
+  /** 標題 */
   title?: string;
-  /** 内容 */
+  /** 內容 */
   content?: string;
-  /** 类型 */
+  /** 型別 */
   type?: number;
-  /** 发布人ID */
+  /** 釋出人ID */
   publisherId?: bigint;
-  /** 优先级 */
+  /** 優先順序 */
   priority?: number;
-  /** 目标类型 */
+  /** 目標型別 */
   targetType?: number;
-  /** 发布状态 */
+  /** 釋出狀態 */
   publishStatus?: number;
-  /** 发布时间 */
+  /** 釋出時間 */
   publishTime?: Date;
-  /** 撤回时间 */
+  /** 撤回時間 */
   revokeTime?: Date;
 }
 export interface NoticeDetailVO {
   /** 通知ID */
   id?: string;
-  /** 标题 */
+  /** 標題 */
   title?: string;
-  /** 内容 */
+  /** 內容 */
   content?: string;
-  /** 类型 */
+  /** 型別 */
   type?: number;
-  /** 发布人名称 */
+  /** 釋出人名稱 */
   publisherName?: string;
-  /** 优先级/级别 */
+  /** 優先順序/級別 */
   level?: string;
-  /** 发布时间 */
+  /** 釋出時間 */
   publishTime?: Date;
-  /** 发布状态 */
+  /** 釋出狀態 */
   publishStatus?: number;
 }

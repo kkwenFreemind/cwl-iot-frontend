@@ -1,73 +1,73 @@
 import { defaultSettings } from "@/settings";
 
-// 导入 Element Plus 中英文语言包
-import zhCn from "element-plus/es/locale/lang/zh-cn";
+// 匯入 Element Plus 語言包
+import zhTw from "element-plus/es/locale/lang/zh-tw";
 import en from "element-plus/es/locale/lang/en";
 import { store } from "@/store";
 import { DeviceEnum } from "@/enums/settings/device.enum";
 import { SidebarStatus } from "@/enums/settings/layout.enum";
 
 export const useAppStore = defineStore("app", () => {
-  // 设备类型
+  // 裝置型別
   const device = useStorage("device", DeviceEnum.DESKTOP);
-  // 布局大小
+  // 佈局大小
   const size = useStorage("size", defaultSettings.size);
-  // 语言
+  // 語言
   const language = useStorage("language", defaultSettings.language);
-  // 侧边栏状态
+  // 側邊欄狀態
   const sidebarStatus = useStorage("sidebarStatus", SidebarStatus.CLOSED);
   const sidebar = reactive({
     opened: sidebarStatus.value === SidebarStatus.OPENED,
     withoutAnimation: false,
   });
 
-  // 顶部菜单激活路径
+  // 頂部選單啟用路徑
   const activeTopMenuPath = useStorage("activeTopMenuPath", "");
 
   /**
-   * 根据语言标识读取对应的语言包
+   * 根據語言標識讀取對應的語言包
    */
   const locale = computed(() => {
     if (language?.value == "en") {
       return en;
     } else {
-      return zhCn;
+      return zhTw;
     }
   });
 
-  // 切换侧边栏
+  // 切換側邊欄
   function toggleSidebar() {
     sidebar.opened = !sidebar.opened;
     sidebarStatus.value = sidebar.opened ? SidebarStatus.OPENED : SidebarStatus.CLOSED;
   }
 
-  // 关闭侧边栏
+  // 關閉側邊欄
   function closeSideBar() {
     sidebar.opened = false;
     sidebarStatus.value = SidebarStatus.CLOSED;
   }
 
-  // 打开侧边栏
+  // 開啟側邊欄
   function openSideBar() {
     sidebar.opened = true;
     sidebarStatus.value = SidebarStatus.OPENED;
   }
 
-  // 切换设备
+  // 切換裝置
   function toggleDevice(val: string) {
     device.value = val;
   }
 
   /**
-   * 改变布局大小
+   * 改變佈局大小
    *
-   * @param val 布局大小 default | small | large
+   * @param val 佈局大小 default | small | large
    */
   function changeSize(val: string) {
     size.value = val;
   }
   /**
-   * 切换语言
+   * 切換語言
    *
    * @param val
    */
@@ -75,7 +75,7 @@ export const useAppStore = defineStore("app", () => {
     language.value = val;
   }
   /**
-   * 混合模式顶部切换
+   * 混合模式頂部切換
    */
   function activeTopMenu(val: string) {
     activeTopMenuPath.value = val;
@@ -98,8 +98,8 @@ export const useAppStore = defineStore("app", () => {
 });
 
 /**
- * 用于在组件外部（如在Pinia Store 中）使用 Pinia 提供的 store 实例。
- * 官方文档解释了如何在组件外部使用 Pinia Store：
+ * 用於在元件外部（如在Pinia Store 中）使用 Pinia 提供的 store 例項。
+ * 官方文件解釋瞭如何在元件外部使用 Pinia Store：
  * https://pinia.vuejs.org/core-concepts/outside-component-usage.html#using-a-store-outside-of-a-component
  */
 export function useAppStoreHook() {

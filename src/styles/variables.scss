@@ -1,7 +1,7 @@
 @forward "element-plus/theme-chalk/src/common/var.scss" with (
   $colors: (
     "primary": (
-      // 默认主题色 - 修改此值时需同步修改 src/settings.ts 中的 themeColor
+      // 預設主題色 - 修改此值時需同步修改 src/settings.ts 中的 themeColor
       "base": #4080ff,
     ),
     "success": (
@@ -23,31 +23,31 @@
   )
 );
 
-/** 全局SCSS变量 */
+/** 全域性SCSS變數 */
 
 :root {
-  --menu-background: #fff; // 菜单背景色
-  --menu-text: #212121; // 菜单文字颜色 浅色主题-白色侧边栏配色下仅占位，实际颜色由 el-menu-item 组件决定
+  --menu-background: #fff; // 選單背景色
+  --menu-text: #212121; // 選單文字顏色 淺色主題-白色側邊欄配色下僅佔位，實際顏色由 el-menu-item 元件決定
   --menu-active-text: var(
     --el-menu-active-color
-  ); // 菜单激活文字颜色 浅色主题-白色侧边栏配色下仅占位，实际颜色由 el-menu-item 组件决定
+  ); // 選單啟用文字顏色 淺色主題-白色側邊欄配色下僅佔位，實際顏色由 el-menu-item 元件決定
 
-  --menu-hover: #e6f4ff; // 菜单悬停背景色 浅色主题-白色侧边栏配色下仅占位，实际颜色由 el-menu-item 组件决定
-  --sidebar-logo-background: #f5f5f5; // 侧边栏 Logo 背景色
-  --sidebar-logo-text-color: #333; // 侧边栏 Logo 文字颜色
+  --menu-hover: #e6f4ff; // 選單懸停背景色 淺色主題-白色側邊欄配色下僅佔位，實際顏色由 el-menu-item 元件決定
+  --sidebar-logo-background: #f5f5f5; // 側邊欄 Logo 背景色
+  --sidebar-logo-text-color: #333; // 側邊欄 Logo 文字顏色
 }
 
-/** 浅色主题-深蓝色侧边栏配色 */
+/** 淺色主題-深藍色側邊欄配色 */
 html.sidebar-color-blue {
-  --menu-background: #304156; // 菜单背景色
-  --menu-text: #bfcbd9; // 菜单文字颜色
-  --menu-active-text: var(--el-menu-active-color); // 菜单激活文字颜色
-  --menu-hover: #263445; // 菜单悬停背景色
-  --sidebar-logo-background: #2d3748; // 侧边栏 Logo 背景色
-  --sidebar-logo-text-color: #fff; // 侧边栏 Logo 文字颜色
+  --menu-background: #304156; // 選單背景色
+  --menu-text: #bfcbd9; // 選單文字顏色
+  --menu-active-text: var(--el-menu-active-color); // 選單啟用文字顏色
+  --menu-hover: #263445; // 選單懸停背景色
+  --sidebar-logo-background: #2d3748; // 側邊欄 Logo 背景色
+  --sidebar-logo-text-color: #fff; // 側邊欄 Logo 文字顏色
 }
 
-/** 暗黑主题 */
+/** 暗黑主題 */
 html.dark {
   --menu-background: var(--el-bg-color-overlay);
   --menu-text: #fff;
@@ -59,35 +59,35 @@ html.dark {
   /** WangEditor Dark */
   /* Textarea - css vars */
   --w-e-textarea-bg-color: var(--el-bg-color); /* 深色背景 */
-  --w-e-textarea-color: var(--el-text-color-primary); /* 浅色文字 */
-  --w-e-textarea-border-color: var(--el-border-color); /* 较深的边框颜色 */
-  --w-e-textarea-slight-border-color: var(--el-border-color-lighter); /* 更淡一些的边框颜色 */
-  --w-e-textarea-slight-color: var(--el-text-color-secondary); /* 浅灰色，用于不那么重要的元素 */
-  --w-e-textarea-slight-bg-color: var(--el-bg-color-overlay); /* 稍微亮一点的背景色 */
-  --w-e-textarea-selected-border-color: var(--el-color-info-light-5); /* 选中元素时的高亮边框 */
-  --w-e-textarea-handler-bg-color: var(--el-color-primary); /* 工具按钮或交互元素的背景色 */
+  --w-e-textarea-color: var(--el-text-color-primary); /* 淺色文字 */
+  --w-e-textarea-border-color: var(--el-border-color); /* 較深的邊框顏色 */
+  --w-e-textarea-slight-border-color: var(--el-border-color-lighter); /* 更淡一些的邊框顏色 */
+  --w-e-textarea-slight-color: var(--el-text-color-secondary); /* 淺灰色，用於不那麼重要的元素 */
+  --w-e-textarea-slight-bg-color: var(--el-bg-color-overlay); /* 稍微亮一點的背景色 */
+  --w-e-textarea-selected-border-color: var(--el-color-info-light-5); /* 選中元素時的高亮邊框 */
+  --w-e-textarea-handler-bg-color: var(--el-color-primary); /* 工具按鈕或互動元素的背景色 */
 
   /* Toolbar - css vars */
-  --w-e-toolbar-color: var(--el-text-color-regular); /* 工具栏文字颜色 */
-  --w-e-toolbar-bg-color: var(--el-bg-color); /* 工具栏背景颜色 */
-  --w-e-toolbar-active-color: var(--el-text-color-primary); /* 当前激活项的文字颜色 */
-  --w-e-toolbar-active-bg-color: var(--el-fill-color-light); /* 当前激活项的背景颜色 */
-  --w-e-toolbar-disabled-color: var(--el-text-color-secondary); /* 禁用项的颜色 */
-  --w-e-toolbar-border-color: var(--el-border-color-base); /* 工具栏边框颜色 */
+  --w-e-toolbar-color: var(--el-text-color-regular); /* 工具欄文字顏色 */
+  --w-e-toolbar-bg-color: var(--el-bg-color); /* 工具欄背景顏色 */
+  --w-e-toolbar-active-color: var(--el-text-color-primary); /* 當前啟用項的文字顏色 */
+  --w-e-toolbar-active-bg-color: var(--el-fill-color-light); /* 當前啟用項的背景顏色 */
+  --w-e-toolbar-disabled-color: var(--el-text-color-secondary); /* 禁用項的顏色 */
+  --w-e-toolbar-border-color: var(--el-border-color-base); /* 工具欄邊框顏色 */
 
   /*  Modal - css vars */
-  --w-e-modal-button-bg-color: var(--el-bg-color-light-3); /* 弹出框按钮背景色 */
-  --w-e-modal-button-border-color: var(--el-border-color-light); /* 弹出框按钮边框颜色 */
+  --w-e-modal-button-bg-color: var(--el-bg-color-light-3); /* 彈出框按鈕背景色 */
+  --w-e-modal-button-border-color: var(--el-border-color-light); /* 彈出框按鈕邊框顏色 */
 }
 
-$menu-background: var(--menu-background); // 菜单背景色
-$menu-text: var(--menu-text); // 菜单文字颜色
-$menu-active-text: var(--menu-active-text); // 菜单激活文字颜色
-$menu-hover: var(--menu-hover); // 菜单悬停背景色
-$sidebar-logo-background: var(--sidebar-logo-background); // 侧边栏 Logo 背景色
-$sidebar-logo-text-color: var(--sidebar-logo-text-color); // 侧边栏 Logo 文字颜色
+$menu-background: var(--menu-background); // 選單背景色
+$menu-text: var(--menu-text); // 選單文字顏色
+$menu-active-text: var(--menu-active-text); // 選單啟用文字顏色
+$menu-hover: var(--menu-hover); // 選單懸停背景色
+$sidebar-logo-background: var(--sidebar-logo-background); // 側邊欄 Logo 背景色
+$sidebar-logo-text-color: var(--sidebar-logo-text-color); // 側邊欄 Logo 文字顏色
 
-$sidebar-width: 210px; // 侧边栏宽度
-$sidebar-width-collapsed: 54px; // 侧边栏收缩宽度
-$navbar-height: 50px; // 导航栏高度
+$sidebar-width: 210px; // 側邊欄寬度
+$sidebar-width-collapsed: 54px; // 側邊欄收縮寬度
+$navbar-height: 50px; // 導航欄高度
 $tags-view-height: 34px; // TagsView 高度

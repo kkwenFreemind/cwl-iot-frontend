@@ -3,7 +3,7 @@ import request from "@/utils/request";
 const DICT_BASE_URL = "/api/v1/dicts";
 
 const DictAPI = {
-  /** 字典分页列表 */
+  /** 字典分頁列表 */
   getPage(queryParams: DictPageQuery) {
     return request<any, PageResult<DictPageVO[]>>({
       url: `${DICT_BASE_URL}/page`,
@@ -15,7 +15,7 @@ const DictAPI = {
   getList() {
     return request<any, OptionType[]>({ url: `${DICT_BASE_URL}`, method: "get" });
   },
-  /** 字典表单数据 */
+  /** 字典表單資料 */
   getFormData(id: string) {
     return request<any, DictForm>({ url: `${DICT_BASE_URL}/${id}/form`, method: "get" });
   },
@@ -27,12 +27,12 @@ const DictAPI = {
   update(id: string, data: DictForm) {
     return request({ url: `${DICT_BASE_URL}/${id}`, method: "put", data });
   },
-  /** 删除字典 */
+  /** 刪除字典 */
   deleteByIds(ids: string) {
     return request({ url: `${DICT_BASE_URL}/${ids}`, method: "delete" });
   },
 
-  /** 获取字典项分页列表 */
+  /** 獲取字典項分頁列表 */
   getDictItemPage(dictCode: string, queryParams: DictItemPageQuery) {
     return request<any, PageResult<DictItemPageVO[]>>({
       url: `${DICT_BASE_URL}/${dictCode}/items/page`,
@@ -40,29 +40,29 @@ const DictAPI = {
       params: queryParams,
     });
   },
-  /** 获取字典项列表 */
+  /** 獲取字典項列表 */
   getDictItems(dictCode: string) {
     return request<any, DictItemOption[]>({
       url: `${DICT_BASE_URL}/${dictCode}/items`,
       method: "get",
     });
   },
-  /** 新增字典项 */
+  /** 新增字典項 */
   createDictItem(dictCode: string, data: DictItemForm) {
     return request({ url: `${DICT_BASE_URL}/${dictCode}/items`, method: "post", data });
   },
-  /** 获取字典项表单数据 */
+  /** 獲取字典項表單資料 */
   getDictItemFormData(dictCode: string, id: string) {
     return request<any, DictItemForm>({
       url: `${DICT_BASE_URL}/${dictCode}/items/${id}/form`,
       method: "get",
     });
   },
-  /** 修改字典项 */
+  /** 修改字典項 */
   updateDictItem(dictCode: string, id: string, data: DictItemForm) {
     return request({ url: `${DICT_BASE_URL}/${dictCode}/items/${id}`, method: "put", data });
   },
-  /** 删除字典项 */
+  /** 刪除字典項 */
   deleteDictItems(dictCode: string, ids: string) {
     return request({ url: `${DICT_BASE_URL}/${dictCode}/items/${ids}`, method: "delete" });
   },
@@ -71,75 +71,75 @@ const DictAPI = {
 export default DictAPI;
 
 export interface DictPageQuery extends PageQuery {
-  /** 搜索关键字 */
+  /** 搜尋關鍵字 */
   keywords?: string;
-  /** 状态(1:启用;0:禁用) */
+  /** 狀態(1:啟用;0:禁用) */
   status?: number;
 }
 export interface DictPageVO {
   /** 字典ID */
   id: string;
-  /** 字典名称 */
+  /** 字典名稱 */
   name: string;
-  /** 字典编码 */
+  /** 字典編碼 */
   dictCode: string;
-  /** 状态(1:启用;0:禁用) */
+  /** 狀態(1:啟用;0:禁用) */
   status: number;
 }
 export interface DictForm {
   /** 字典ID(新增不填) */
   id?: string;
-  /** 字典名称 */
+  /** 字典名稱 */
   name?: string;
-  /** 字典编码 */
+  /** 字典編碼 */
   dictCode?: string;
-  /** 状态(1:启用;0:禁用) */
+  /** 狀態(1:啟用;0:禁用) */
   status?: number;
-  /** 备注 */
+  /** 備註 */
   remark?: string;
 }
 export interface DictItemPageQuery extends PageQuery {
-  /** 搜索关键字 */
+  /** 搜尋關鍵字 */
   keywords?: string;
-  /** 字典编码 */
+  /** 字典編碼 */
   dictCode?: string;
 }
 export interface DictItemPageVO {
-  /** 字典项ID */
+  /** 字典項ID */
   id: string;
-  /** 字典编码 */
+  /** 字典編碼 */
   dictCode: string;
-  /** 字典项值 */
+  /** 字典項值 */
   value: string;
-  /** 字典项标签 */
+  /** 字典項標籤 */
   label: string;
-  /** 状态(1:启用;0:禁用) */
+  /** 狀態(1:啟用;0:禁用) */
   status: number;
   /** 排序 */
   sort?: number;
 }
 export interface DictItemForm {
-  /** 字典项ID(新增不填) */
+  /** 字典項ID(新增不填) */
   id?: string;
-  /** 字典编码 */
+  /** 字典編碼 */
   dictCode?: string;
-  /** 字典项值 */
+  /** 字典項值 */
   value?: string;
-  /** 字典项标签 */
+  /** 字典項標籤 */
   label?: string;
-  /** 状态(1:启用;0:禁用) */
+  /** 狀態(1:啟用;0:禁用) */
   status?: number;
   /** 排序 */
   sort?: number;
-  /** 标签类型 */
+  /** 標籤型別 */
   tagType?: "success" | "warning" | "info" | "primary" | "danger" | "";
 }
 export interface DictItemOption {
   /** 值 */
   value: number | string;
-  /** 标签 */
+  /** 標籤 */
   label: string;
-  /** 标签类型 */
+  /** 標籤型別 */
   tagType?: "" | "success" | "info" | "warning" | "danger";
   [key: string]: any;
 }

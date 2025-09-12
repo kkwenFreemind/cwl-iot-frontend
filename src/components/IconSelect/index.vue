@@ -4,9 +4,9 @@
       <template #reference>
         <div @click="popoverVisible = !popoverVisible">
           <slot>
-            <el-input v-model="selectedIcon" readonly placeholder="点击选择图标" class="reference">
+            <el-input v-model="selectedIcon" readonly placeholder="點選選擇圖示" class="reference">
               <template #prepend>
-                <!-- 根据图标类型展示 -->
+                <!-- 根據圖示型別展示 -->
                 <el-icon v-if="isElementIcon">
                   <component :is="selectedIcon.replace('el-icon-', '')" />
                 </el-icon>
@@ -15,7 +15,7 @@
                 </template>
               </template>
               <template #suffix>
-                <!-- 清空按钮 -->
+                <!-- 清空按鈕 -->
                 <el-icon
                   v-if="selectedIcon"
                   style="margin-right: 8px"
@@ -38,11 +38,11 @@
         </div>
       </template>
 
-      <!-- 图标选择弹窗 -->
+      <!-- 圖示選擇彈窗 -->
       <div ref="popoverContentRef">
-        <el-input v-model="filterText" placeholder="搜索图标" clearable @input="filterIcons" />
+        <el-input v-model="filterText" placeholder="搜尋圖示" clearable @input="filterIcons" />
         <el-tabs v-model="activeTab" @tab-click="handleTabClick">
-          <el-tab-pane label="SVG 图标" name="svg">
+          <el-tab-pane label="SVG 圖示" name="svg">
             <el-scrollbar height="300px">
               <ul class="icon-grid">
                 <li
@@ -58,7 +58,7 @@
               </ul>
             </el-scrollbar>
           </el-tab-pane>
-          <el-tab-pane label="Element 图标" name="element">
+          <el-tab-pane label="Element 圖示" name="element">
             <el-scrollbar height="300px">
               <ul class="icon-grid">
                 <li
@@ -159,7 +159,7 @@ onClickOutside(iconSelectRef, () => (popoverVisible.value = false), {
 });
 
 /**
- * 清空已选图标
+ * 清空已選圖示
  */
 function clearSelectedIcon() {
   selectedIcon.value = "";

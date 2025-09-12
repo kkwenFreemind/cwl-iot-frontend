@@ -28,7 +28,7 @@ defineProps({
 });
 
 const langOptions = [
-  { label: "中文", value: LanguageEnum.ZH_CN },
+  { label: "繁體中文", value: LanguageEnum.ZH_TW },
   { label: "English", value: LanguageEnum.EN },
 ];
 

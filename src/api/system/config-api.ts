@@ -3,7 +3,7 @@ import request from "@/utils/request";
 const CONFIG_BASE_URL = "/api/v1/config";
 
 const ConfigAPI = {
-  /** 获取配置分页数据 */
+  /** 獲取配置分頁資料 */
   getPage(queryParams?: ConfigPageQuery) {
     return request<any, PageResult<ConfigPageVO[]>>({
       url: `${CONFIG_BASE_URL}/page`,
@@ -11,7 +11,7 @@ const ConfigAPI = {
       params: queryParams,
     });
   },
-  /** 获取配置表单数据 */
+  /** 獲取配置表單資料 */
   getFormData(id: string) {
     return request<any, ConfigForm>({
       url: `${CONFIG_BASE_URL}/${id}/form`,
@@ -26,11 +26,11 @@ const ConfigAPI = {
   update(id: string, data: ConfigForm) {
     return request({ url: `${CONFIG_BASE_URL}/${id}`, method: "put", data });
   },
-  /** 删除配置 */
+  /** 刪除配置 */
   deleteById(id: string) {
     return request({ url: `${CONFIG_BASE_URL}/${id}`, method: "delete" });
   },
-  /** 刷新配置缓存 */
+  /** 重新整理配置快取 */
   refreshCache() {
     return request({ url: `${CONFIG_BASE_URL}/refresh`, method: "PUT" });
   },
@@ -39,32 +39,32 @@ const ConfigAPI = {
 export default ConfigAPI;
 
 export interface ConfigPageQuery extends PageQuery {
-  /** 搜索关键字 */
+  /** 搜尋關鍵字 */
   keywords?: string;
 }
 
 export interface ConfigForm {
-  /** 主键 */
+  /** 主鍵 */
   id?: string;
-  /** 配置名称 */
+  /** 配置名稱 */
   configName?: string;
-  /** 配置键 */
+  /** 配置鍵 */
   configKey?: string;
   /** 配置值 */
   configValue?: string;
-  /** 描述、备注 */
+  /** 描述、備註 */
   remark?: string;
 }
 
 export interface ConfigPageVO {
-  /** 主键 */
+  /** 主鍵 */
   id?: string;
-  /** 配置名称 */
+  /** 配置名稱 */
   configName?: string;
-  /** 配置键 */
+  /** 配置鍵 */
   configKey?: string;
   /** 配置值 */
   configValue?: string;
-  /** 描述、备注 */
+  /** 描述、備註 */
   remark?: string;
 }

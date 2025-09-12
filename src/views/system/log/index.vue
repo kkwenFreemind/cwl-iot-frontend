@@ -1,32 +1,32 @@
 <template>
   <div class="app-container">
-    <!-- 搜索区域 -->
+    <!-- 搜尋區域 -->
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item prop="keywords" label="关键字">
+        <el-form-item prop="keywords" label="關鍵字">
           <el-input
             v-model="queryParams.keywords"
-            placeholder="日志内容"
+            placeholder="日誌內容"
             clearable
             @keyup.enter="handleQuery"
           />
         </el-form-item>
 
-        <el-form-item prop="createTime" label="操作时间">
+        <el-form-item prop="createTime" label="操作時間">
           <el-date-picker
             v-model="queryParams.createTime"
             :editable="false"
             type="daterange"
             range-separator="~"
-            start-placeholder="开始时间"
-            end-placeholder="截止时间"
+            start-placeholder="開始時間"
+            end-placeholder="截止時間"
             value-format="YYYY-MM-DD"
             style="width: 200px"
           />
         </el-form-item>
 
         <el-form-item class="search-buttons">
-          <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
+          <el-button type="primary" icon="search" @click="handleQuery">搜尋</el-button>
           <el-button icon="refresh" @click="handleResetQuery">重置</el-button>
         </el-form-item>
       </el-form>
@@ -40,15 +40,15 @@
         border
         class="data-table__content"
       >
-        <el-table-column label="操作时间" prop="createTime" width="180" />
+        <el-table-column label="操作時間" prop="createTime" width="180" />
         <el-table-column label="操作人" prop="operator" width="120" />
-        <el-table-column label="日志模块" prop="module" width="100" />
-        <el-table-column label="日志内容" prop="content" min-width="200" />
+        <el-table-column label="日誌模組" prop="module" width="100" />
+        <el-table-column label="日誌內容" prop="content" min-width="200" />
         <el-table-column label="IP 地址" prop="ip" width="150" />
-        <el-table-column label="地区" prop="region" width="150" />
-        <el-table-column label="浏览器" prop="browser" width="150" />
-        <el-table-column label="终端系统" prop="os" width="200" show-overflow-tooltip />
-        <el-table-column label="执行时间(ms)" prop="executionTime" width="150" />
+        <el-table-column label="地區" prop="region" width="150" />
+        <el-table-column label="瀏覽器" prop="browser" width="150" />
+        <el-table-column label="終端系統" prop="os" width="200" show-overflow-tooltip />
+        <el-table-column label="執行時間(ms)" prop="executionTime" width="150" />
       </el-table>
 
       <pagination
@@ -82,10 +82,10 @@ const queryParams = reactive<LogPageQuery>({
   createTime: ["", ""],
 });
 
-// 日志表格数据
+// 日誌表格資料
 const pageData = ref<LogPageVO[]>();
 
-/** 获取数据 */
+/** 獲取資料 */
 function fetchData() {
   loading.value = true;
   LogAPI.getPage(queryParams)
@@ -98,13 +98,13 @@ function fetchData() {
     });
 }
 
-/** 查询（重置页码后获取数据） */
+/** 查詢（重置頁碼後獲取資料） */
 function handleQuery() {
   queryParams.pageNum = 1;
   fetchData();
 }
 
-/** 重置查询 */
+/** 重置查詢 */
 function handleResetQuery() {
   queryFormRef.value.resetFields();
   queryParams.pageNum = 1;

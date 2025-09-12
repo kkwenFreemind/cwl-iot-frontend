@@ -1,23 +1,17 @@
 import request from "@/utils/request";
 
 const FileAPI = {
-  /** 上传文件 （传入 FormData，上传进度回调） */
-  upload(formData: FormData, onProgress?: (percent: number) => void) {
+  /** 上傳檔案 */
+  upload(formData: FormData) {
     return request<any, FileInfo>({
       url: "/api/v1/files",
       method: "post",
       data: formData,
       headers: { "Content-Type": "multipart/form-data" },
-      onUploadProgress: (progressEvent) => {
-        if (progressEvent.total) {
-          const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          onProgress?.(percent);
-        }
-      },
     });
   },
 
-  /** 上传文件（传入 File） */
+  /** 上傳檔案（傳入 File） */
   uploadFile(file: File) {
     const formData = new FormData();
     formData.append("file", file);
@@ -29,7 +23,7 @@ const FileAPI = {
     });
   },
 
-  /** 删除文件 */
+  /** 刪除檔案 */
   delete(filePath?: string) {
     return request({
       url: "/api/v1/files",
@@ -38,7 +32,7 @@ const FileAPI = {
     });
   },
 
-  /** 下载文件 */
+  /** 下載檔案 */
   download(url: string, fileName?: string) {
     return request({
       url,
@@ -49,7 +43,7 @@ const FileAPI = {
       const a = document.createElement("a");
       const urlObject = window.URL.createObjectURL(blob);
       a.href = urlObject;
-      a.download = fileName || "下载文件";
+      a.download = fileName || "下載檔案";
       a.click();
       window.URL.revokeObjectURL(urlObject);
     });

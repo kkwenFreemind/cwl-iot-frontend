@@ -1,15 +1,15 @@
 import type { App } from "vue";
 import VXETable from "vxe-table"; // https://vxetable.cn/v4.6/#/table/start/install
 
-// 全局默认参数
+// 全域性預設引數
 VXETable.setConfig({
-  // 全局尺寸
+  // 全域性尺寸
   size: "medium",
-  // 全局 zIndex 起始值，如果项目的的 z-index 样式值过大时就需要跟随设置更大，避免被遮挡
+  // 全域性 zIndex 起始值，如果專案的的 z-index 樣式值過大時就需要跟隨設定更大，避免被遮擋
   zIndex: 9999,
-  // 版本号，对于某些带数据缓存的功能有用到，上升版本号可以用于重置数据
+  // 版本號，對於某些帶資料快取的功能有用到，上升版本號可以用於重置資料
   version: 0,
-  // 全局 loading 提示内容，如果为 null 则不显示文本
+  // 全域性 loading 提示內容，如果為 null 則不顯示文字
   loadingText: null,
   table: {
     showHeader: true,
@@ -19,11 +19,11 @@ VXETable.setConfig({
     // stripe: false,
     border: "inner",
     // round: false,
-    emptyText: "暂无数据",
+    emptyText: "暫無資料",
     rowConfig: {
       isHover: true,
       isCurrent: true,
-      // 行数据的唯一主键字段名
+      // 行資料的唯一主鍵欄位名
       keyField: "_VXE_ID",
     },
     columnConfig: {
@@ -34,7 +34,7 @@ VXETable.setConfig({
   },
   pager: {
     // size: "medium",
-    // 配套的样式
+    // 配套的樣式
     perfect: false,
     pageSize: 10,
     pagerCount: 7,
@@ -65,6 +65,6 @@ VXETable.setConfig({
 });
 
 export function setupVxeTable(app: App) {
-  // Vxe Table 组件完整引入
+  // Vxe Table 元件完整引入
   app.use(VXETable);
 }

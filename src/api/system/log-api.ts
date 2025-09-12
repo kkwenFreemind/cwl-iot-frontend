@@ -3,7 +3,7 @@ import request from "@/utils/request";
 const LOG_BASE_URL = "/api/v1/logs";
 
 const LogAPI = {
-  /** 获取日志分页列表 */
+  /** 獲取日誌分頁列表 */
   getPage(queryParams: LogPageQuery) {
     return request<any, PageResult<LogPageVO[]>>({
       url: `${LOG_BASE_URL}/page`,
@@ -11,7 +11,7 @@ const LogAPI = {
       params: queryParams,
     });
   },
-  /** 获取访问趋势 */
+  /** 獲取訪問趨勢 */
   getVisitTrend(queryParams: VisitTrendQuery) {
     return request<any, VisitTrendVO>({
       url: `${LOG_BASE_URL}/visit-trend`,
@@ -19,7 +19,7 @@ const LogAPI = {
       params: queryParams,
     });
   },
-  /** 获取访问统计 */
+  /** 獲取訪問統計 */
   getVisitStats() {
     return request<any, VisitStatsVO>({ url: `${LOG_BASE_URL}/visit-stats`, method: "get" });
   },
@@ -28,31 +28,31 @@ const LogAPI = {
 export default LogAPI;
 
 export interface LogPageQuery extends PageQuery {
-  /** 搜索关键字 */
+  /** 搜尋關鍵字 */
   keywords?: string;
-  /** 操作时间 */
+  /** 操作時間 */
   createTime?: [string, string];
 }
 export interface LogPageVO {
-  /** 主键 */
+  /** 主鍵 */
   id: string;
-  /** 日志模块 */
+  /** 日誌模組 */
   module: string;
-  /** 日志内容 */
+  /** 日誌內容 */
   content: string;
-  /** 请求路径 */
+  /** 請求路徑 */
   requestUri: string;
-  /** 请求方法 */
+  /** 請求方法 */
   method: string;
   /** IP 地址 */
   ip: string;
-  /** 地区 */
+  /** 地區 */
   region: string;
-  /** 浏览器 */
+  /** 瀏覽器 */
   browser: string;
-  /** 终端系统 */
+  /** 終端系統 */
   os: string;
-  /** 执行时间(毫秒) */
+  /** 執行時間(毫秒) */
   executionTime: number;
   /** 操作人 */
   operator: string;
@@ -60,30 +60,30 @@ export interface LogPageVO {
 export interface VisitTrendVO {
   /** 日期列表 */
   dates: string[];
-  /** 浏览量(PV) */
+  /** 瀏覽量(PV) */
   pvList: number[];
-  /** 访客数(UV) */
+  /** 訪客數(UV) */
   uvList: number[];
-  /** IP数 */
+  /** IP數 */
   ipList: number[];
 }
 export interface VisitTrendQuery {
-  /** 开始日期 */
+  /** 開始日期 */
   startDate: string;
-  /** 结束日期 */
+  /** 結束日期 */
   endDate: string;
 }
 export interface VisitStatsVO {
-  /** 今日访客数(UV) */
+  /** 今日訪客數(UV) */
   todayUvCount: number;
-  /** 总访客数 */
+  /** 總訪客數 */
   totalUvCount: number;
-  /** 访客数同比增长率（相对于昨天同一时间段的增长率） */
+  /** 訪客數同比增長率（相對於昨天同一時間段的增長率） */
   uvGrowthRate: number;
-  /** 今日浏览量(PV) */
+  /** 今日瀏覽量(PV) */
   todayPvCount: number;
-  /** 总浏览量 */
+  /** 總瀏覽量 */
   totalPvCount: number;
-  /** 同比增长率（相对于昨天同一时间段的增长率） */
+  /** 同比增長率（相對於昨天同一時間段的增長率） */
   pvGrowthRate: number;
 }

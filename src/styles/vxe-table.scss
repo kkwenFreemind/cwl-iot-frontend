@@ -1,7 +1,7 @@
-// 自定义 Vxe Table 样式
+// 自定義 Vxe Table 樣式
 
 .vxe-grid {
-  // 表单
+  // 表單
   &--form-wrapper {
     .vxe-form {
       padding: 10px 20px;
@@ -9,21 +9,21 @@
     }
   }
 
-  // 工具栏
+  // 工具欄
   &--toolbar-wrapper {
     .vxe-toolbar {
       padding: 20px;
     }
   }
 
-  // 分页
+  // 分頁
   &--pager-wrapper {
     .vxe-pager {
       height: 70px;
       padding: 0 20px;
 
       &--wrapper {
-        // 参考 Bootstrap 的响应式设计 WIDTH = 768
+        // 參考 Bootstrap 的響應式設計 WIDTH = 768
         @media screen and (width <= 768px) {
           .vxe-pager--total,
           .vxe-pager--sizes,

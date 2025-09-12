@@ -1,6 +1,6 @@
 declare global {
   /**
-   * 响应数据
+   * 響應資料
    */
   interface ApiResponse<T = any> {
     code: string;
@@ -9,7 +9,7 @@ declare global {
   }
 
   /**
-   * 分页查询参数
+   * 分頁查詢引數
    */
   interface PageQuery {
     pageNum: number;
@@ -17,92 +17,92 @@ declare global {
   }
 
   /**
-   * 分页响应对象
+   * 分頁響應物件
    */
   interface PageResult<T> {
-    /** 数据列表 */
+    /** 資料列表 */
     list: T;
-    /** 总数 */
+    /** 總數 */
     total: number;
   }
 
   /**
-   * 页签对象
+   * 頁籤物件
    */
   interface TagView {
-    /** 页签名称 */
+    /** 頁簽名稱 */
     name: string;
-    /** 页签标题 */
+    /** 頁籤標題 */
     title: string;
-    /** 页签路由路径 */
+    /** 頁籤路由路徑 */
     path: string;
-    /** 页签路由完整路径 */
+    /** 頁籤路由完整路徑 */
     fullPath: string;
-    /** 页签图标 */
+    /** 頁籤圖示 */
     icon?: string;
-    /** 是否固定页签 */
+    /** 是否固定頁籤 */
     affix?: boolean;
-    /** 是否开启缓存 */
+    /** 是否開啟快取 */
     keepAlive?: boolean;
-    /** 路由查询参数 */
+    /** 路由查詢引數 */
     query?: any;
   }
 
   /**
-   * 系统设置
+   * 系統設定
    */
   interface AppSettings {
-    /** 系统标题 */
+    /** 系統標題 */
     title: string;
-    /** 系统版本 */
+    /** 系統版本 */
     version: string;
-    /** 是否显示设置 */
+    /** 是否顯示設定 */
     showSettings: boolean;
-    /** 是否显示多标签导航 */
+    /** 是否顯示多標籤導航 */
     showTagsView: boolean;
-    /** 是否显示应用Logo */
+    /** 是否顯示應用Logo */
     showAppLogo: boolean;
-    /** 导航栏布局(left|top|mix) */
+    /** 導航欄佈局(left|top|mix) */
     layout: "left" | "top" | "mix";
-    /** 主题颜色 */
+    /** 主題顏色 */
     themeColor: string;
-    /** 主题模式(dark|light) */
+    /** 主題模式(dark|light) */
     theme: import("@/enums/settings/theme.enum").ThemeMode;
-    /** 布局大小(default |large |small) */
+    /** 佈局大小(default |large |small) */
     size: string;
-    /** 语言( zh-cn| en) */
+    /** 語言( zh-cn| en) */
     language: string;
-    /** 是否显示水印 */
+    /** 是否顯示水印 */
     showWatermark: boolean;
-    /** 水印内容 */
+    /** 水印內容 */
     watermarkContent: string;
-    /** 侧边栏配色方案 */
+    /** 側邊欄配色方案 */
     sidebarColorScheme: "classic-blue" | "minimal-white";
   }
 
   /**
-   * 下拉选项数据类型
+   * 下拉選項資料型別
    */
   interface OptionType {
     /** 值 */
     value: string | number;
-    /** 文本 */
+    /** 文字 */
     label: string;
     /** 子列表  */
     children?: OptionType[];
   }
 
   /**
-   * 导入结果
+   * 匯入結果
    */
   interface ExcelResult {
-    /** 状态码 */
+    /** 狀態碼 */
     code: string;
-    /** 无效数据条数 */
+    /** 無效資料條數 */
     invalidCount: number;
-    /** 有效数据条数 */
+    /** 有效資料條數 */
     validCount: number;
-    /** 错误信息 */
+    /** 錯誤資訊 */
     messageList: Array<string>;
   }
 }

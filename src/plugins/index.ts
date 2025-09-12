@@ -12,23 +12,23 @@ import { setupVxeTable } from "./vxeTable";
 
 export default {
   install(app: App<Element>) {
-    // 自定义指令(directive)
+    // 自定義指令(directive)
     setupDirective(app);
     // 路由(router)
     setupRouter(app);
-    // 状态管理(store)
+    // 狀態管理(store)
     setupStore(app);
-    // 国际化
+    // 國際化
     setupI18n(app);
-    // Element-plus图标
+    // Element-plus圖示
     setupElIcons(app);
-    // 路由守卫
+    // 路由守衛
     setupPermission();
-    // WebSocket服务
+    // WebSocket服務
     setupWebSocket();
     // vxe-table
     setupVxeTable(app);
-    // 注册 CodeMirror
+    // 註冊 CodeMirror
     app.use(InstallCodeMirror);
   },
 };

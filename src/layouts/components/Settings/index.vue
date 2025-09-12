@@ -107,35 +107,40 @@
     </div>
 
     <!-- 操作按钮区域 - 固定到底部 -->
-    <template #footer>
-      <div class="action-buttons">
-        <el-tooltip
-          content="复制配置将生成当前设置的代码，覆盖 src/settings.ts 下的 defaultSettings 变量"
-          placement="top"
-        >
-          <el-button
-            type="primary"
-            size="default"
-            :icon="copyIcon"
-            :loading="copyLoading"
-            @click="handleCopySettings"
+    <div class="action-footer">
+      <div class="action-divider"></div>
+      <div class="action-card">
+        <div class="action-buttons">
+          <el-tooltip
+            content="复制配置将生成当前设置的代码，覆盖 src/settings.ts 下的 defaultSettings 变量"
+            placement="top"
           >
-            {{ copyLoading ? "复制中..." : t("settings.copyConfig") }}
-          </el-button>
-        </el-tooltip>
-        <el-tooltip content="重置将恢复所有设置为默认值" placement="top">
-          <el-button
-            type="warning"
-            size="default"
-            :icon="resetIcon"
-            :loading="resetLoading"
-            @click="handleResetSettings"
-          >
-            {{ resetLoading ? "重置中..." : t("settings.resetConfig") }}
-          </el-button>
-        </el-tooltip>
+            <el-button
+              type="primary"
+              size="default"
+              :icon="copyIcon"
+              :loading="copyLoading"
+              class="action-btn"
+              @click="handleCopySettings"
+            >
+              {{ copyLoading ? "复制中..." : t("settings.copyConfig") }}
+            </el-button>
+          </el-tooltip>
+          <el-tooltip content="重置将恢复所有设置为默认值" placement="top">
+            <el-button
+              type="warning"
+              size="default"
+              :icon="resetIcon"
+              :loading="resetLoading"
+              class="action-btn"
+              @click="handleResetSettings"
+            >
+              {{ resetLoading ? "重置中..." : t("settings.resetConfig") }}
+            </el-button>
+          </el-tooltip>
+        </div>
       </div>
-    </template>
+    </div>
   </el-drawer>
 </template>
 
@@ -321,22 +326,47 @@ const handleCloseDrawer = () => {
 .settings-content {
   height: calc(100vh - 120px); /* 减去头部和底部按钮的高度 */
   padding: 20px;
+  padding-bottom: 20px;
   overflow-y: auto;
 }
 
 /* 底部操作区域样式 */
-.action-buttons {
-  display: flex;
+.action-footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  padding: 0;
+  background: var(--el-bg-color);
+  border-top: 1px solid var(--el-border-color-light);
 
-  & > .el-button {
-    flex: 1;
-    font-size: 14px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+  .action-divider {
+    display: none; /* 移除重复的分割线 */
+  }
 
-    &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transform: translateY(-2px);
+  .action-card {
+    padding: 16px 20px;
+    margin: 0;
+    background: var(--el-fill-color-extra-light);
+    border: none;
+    border-radius: 0;
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+
+      .action-btn {
+        flex: 1;
+        font-size: 14px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          transform: translateY(-2px);
+        }
+      }
     }
   }
 }

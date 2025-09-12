@@ -1,20 +1,22 @@
 <template>
   <div class="app-container">
-    <!-- 搜索区域 -->
+    <!-- 搜尋區域 -->
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item prop="keywords" label="关键字">
+        <el-form-item prop="keywords" :label="$t('role.keywords')">
           <el-input
             v-model="queryParams.keywords"
-            placeholder="角色名称"
+            :placeholder="$t('role.roleNamePlaceholder')"
             clearable
             @keyup.enter="handleQuery"
           />
         </el-form-item>
 
         <el-form-item class="search-buttons">
-          <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
-          <el-button icon="refresh" @click="handleResetQuery">重置</el-button>
+          <el-button type="primary" icon="search" @click="handleQuery">
+            {{ $t("common.search") }}
+          </el-button>
+          <el-button icon="refresh" @click="handleResetQuery">{{ $t("common.reset") }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -22,14 +24,16 @@
     <el-card shadow="hover" class="data-table">
       <div class="data-table__toolbar">
         <div class="data-table__toolbar--actions">
-          <el-button type="success" icon="plus" @click="handleOpenDialog()">新增</el-button>
+          <el-button type="success" icon="plus" @click="handleOpenDialog()">
+            {{ $t("common.add") }}
+          </el-button>
           <el-button
             type="danger"
             :disabled="ids.length === 0"
             icon="delete"
             @click="handleDelete()"
           >
-            删除
+            {{ $t("common.delete") }}
           </el-button>
         </div>
       </div>
@@ -44,19 +48,19 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="角色名称" prop="name" min-width="100" />
-        <el-table-column label="角色编码" prop="code" width="150" />
+        <el-table-column :label="$t('role.roleName')" prop="name" min-width="80" />
+        <el-table-column :label="$t('role.roleCode')" prop="code" width="150" />
 
-        <el-table-column label="状态" align="center" width="100">
+        <el-table-column :label="$t('common.status')" align="center" width="150">
           <template #default="scope">
-            <el-tag v-if="scope.row.status === 1" type="success">正常</el-tag>
-            <el-tag v-else type="info">禁用</el-tag>
+            <el-tag v-if="scope.row.status === 1" type="success">{{ $t("common.normal") }}</el-tag>
+            <el-tag v-else type="info">{{ $t("common.disabled") }}</el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column label="排序" align="center" width="80" prop="sort" />
+        <el-table-column :label="$t('role.sort')" align="center" width="100" prop="sort" />
 
-        <el-table-column fixed="right" label="操作" width="220">
+        <el-table-column fixed="right" :label="$t('common.operation')" width="300">
           <template #default="scope">
             <el-button
               type="primary"
@@ -65,7 +69,7 @@
               icon="position"
               @click="handleOpenAssignPermDialog(scope.row)"
             >
-              分配权限
+              {{ $t("role.assignPermission") }}
             </el-button>
             <el-button
               type="primary"
@@ -74,7 +78,7 @@
               icon="edit"
               @click="handleOpenDialog(scope.row.id)"
             >
-              编辑
+              {{ $t("common.edit") }}
             </el-button>
             <el-button
               type="danger"
@@ -83,7 +87,7 @@
               icon="delete"
               @click="handleDelete(scope.row.id)"
             >
-              删除
+              {{ $t("common.delete") }}
             </el-button>
           </template>
         </el-table-column>
@@ -98,7 +102,7 @@
       />
     </el-card>
 
-    <!-- 角色表单弹窗 -->
+    <!-- 角色表單彈窗 -->
     <el-dialog
       v-model="dialog.visible"
       :title="dialog.title"
@@ -106,31 +110,31 @@
       @close="handleCloseDialog"
     >
       <el-form ref="roleFormRef" :model="formData" :rules="rules" label-width="100px">
-        <el-form-item label="角色名称" prop="name">
-          <el-input v-model="formData.name" placeholder="请输入角色名称" />
+        <el-form-item :label="$t('role.form.name')" prop="name">
+          <el-input v-model="formData.name" :placeholder="$t('role.form.namePlaceholder')" />
         </el-form-item>
 
-        <el-form-item label="角色编码" prop="code">
-          <el-input v-model="formData.code" placeholder="请输入角色编码" />
+        <el-form-item :label="$t('role.form.code')" prop="code">
+          <el-input v-model="formData.code" :placeholder="$t('role.form.codePlaceholder')" />
         </el-form-item>
 
-        <el-form-item label="数据权限" prop="dataScope">
+        <el-form-item :label="$t('role.form.dataScope')" prop="dataScope">
           <el-select v-model="formData.dataScope">
-            <el-option :key="1" label="全部数据" :value="1" />
-            <el-option :key="2" label="部门及子部门数据" :value="2" />
-            <el-option :key="3" label="本部门数据" :value="3" />
-            <el-option :key="4" label="本人数据" :value="4" />
+            <el-option :key="1" :label="$t('role.dataScopeOptions.all')" :value="1" />
+            <el-option :key="2" :label="$t('role.dataScopeOptions.deptAndSub')" :value="2" />
+            <el-option :key="3" :label="$t('role.dataScopeOptions.dept')" :value="3" />
+            <el-option :key="4" :label="$t('role.dataScopeOptions.self')" :value="4" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="状态" prop="status">
+        <el-form-item :label="$t('role.form.status')" prop="status">
           <el-radio-group v-model="formData.status">
-            <el-radio :value="1">正常</el-radio>
-            <el-radio :value="0">停用</el-radio>
+            <el-radio :value="1">{{ $t("common.normal") }}</el-radio>
+            <el-radio :value="0">{{ $t("common.disabled") }}</el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="排序" prop="sort">
+        <el-form-item :label="$t('role.form.sort')" prop="sort">
           <el-input-number
             v-model="formData.sort"
             controls-position="right"
@@ -142,20 +146,16 @@
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="handleSubmit">确 定</el-button>
-          <el-button @click="handleCloseDialog">取 消</el-button>
+          <el-button type="primary" @click="handleSubmit">{{ $t("common.confirm") }}</el-button>
+          <el-button @click="handleCloseDialog">{{ $t("common.cancel") }}</el-button>
         </div>
       </template>
     </el-dialog>
 
-    <!-- 分配权限弹窗 -->
-    <el-drawer
-      v-model="assignPermDialogVisible"
-      :title="'【' + checkedRole.name + '】权限分配'"
-      :size="drawerSize"
-    >
+    <!-- 分配許可權彈窗 -->
+    <el-drawer v-model="assignPermDialogVisible" :title="assignPermDialogTitle" :size="drawerSize">
       <div class="flex-x-between">
-        <el-input v-model="permKeywords" clearable class="w-[150px]" placeholder="菜单权限名称">
+        <el-input v-model="permKeywords" clearable class="w-[150px]" placeholder="選單許可權名稱">
           <template #prefix>
             <Search />
           </template>
@@ -166,19 +166,19 @@
             <template #icon>
               <Switch />
             </template>
-            {{ isExpanded ? "收缩" : "展开" }}
+            {{ isExpanded ? "收縮" : "展開" }}
           </el-button>
           <el-checkbox
             v-model="parentChildLinked"
             class="ml-5"
             @change="handleparentChildLinkedChange"
           >
-            父子联动
+            父子聯動
           </el-checkbox>
 
           <el-tooltip placement="bottom">
             <template #content>
-              如果只需勾选菜单权限，不需要勾选子菜单或者按钮权限，请关闭父子联动
+              如果只需勾選選單許可權，不需要勾選子選單或者按鈕許可權，請關閉父子聯動
             </template>
             <el-icon class="ml-1 color-[--el-color-primary] inline-block cursor-pointer">
               <QuestionFilled />
@@ -203,8 +203,10 @@
       </el-tree>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="handleAssignPermSubmit">确 定</el-button>
-          <el-button @click="assignPermDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleAssignPermSubmit">
+            {{ $t("common.confirm") }}
+          </el-button>
+          <el-button @click="assignPermDialogVisible = false">{{ $t("common.cancel") }}</el-button>
         </div>
       </template>
     </el-drawer>
@@ -224,6 +226,7 @@ defineOptions({
 });
 
 const appStore = useAppStore();
+const { t } = useI18n();
 
 const queryFormRef = ref();
 const roleFormRef = ref();
@@ -238,33 +241,42 @@ const queryParams = reactive<RolePageQuery>({
   pageSize: 10,
 });
 
-// 角色表格数据
+// 角色表格資料
 const roleList = ref<RolePageVO[]>();
-// 菜单权限下拉
+// 選單許可權下拉
 const menuPermOptions = ref<OptionType[]>([]);
 
-// 弹窗
+// 彈窗
 const dialog = reactive({
   title: "",
   visible: false,
 });
 
 const drawerSize = computed(() => (appStore.device === DeviceEnum.DESKTOP ? "600px" : "90%"));
+const assignPermDialogTitle = computed(
+  () => `【${checkedRole.value.name}】${t("role.assignPermission")}`
+);
 
-// 角色表单
+// 角色表單
 const formData = reactive<RoleForm>({
   sort: 1,
   status: 1,
 });
 
 const rules = reactive({
-  name: [{ required: true, message: "请输入角色名称", trigger: "blur" }],
-  code: [{ required: true, message: "请输入角色编码", trigger: "blur" }],
-  dataScope: [{ required: true, message: "请选择数据权限", trigger: "blur" }],
-  status: [{ required: true, message: "请选择状态", trigger: "blur" }],
+  name: [
+    { required: true, message: computed(() => t("role.validation.nameRequired")), trigger: "blur" },
+  ],
+  code: [
+    { required: true, message: computed(() => t("role.validation.codeRequired")), trigger: "blur" },
+  ],
+  dataScope: [
+    { required: true, message: computed(() => t("common.pleaseSelect")), trigger: "blur" },
+  ],
+  status: [{ required: true, message: computed(() => t("common.pleaseSelect")), trigger: "blur" }],
 });
 
-// 选中的角色
+// 選中的角色
 interface CheckedRole {
   id?: string;
   name?: string;
@@ -277,7 +289,7 @@ const isExpanded = ref(true);
 
 const parentChildLinked = ref(true);
 
-// 获取数据
+// 獲取資料
 function fetchData() {
   loading.value = true;
   RoleAPI.getPage(queryParams)
@@ -290,38 +302,38 @@ function fetchData() {
     });
 }
 
-// 查询（重置页码后获取数据）
+// 查詢（重置頁碼後獲取資料）
 function handleQuery() {
   queryParams.pageNum = 1;
   fetchData();
 }
 
-// 重置查询
+// 重置查詢
 function handleResetQuery() {
   queryFormRef.value.resetFields();
   queryParams.pageNum = 1;
   fetchData();
 }
 
-// 行复选框选中
+// 行復選框選中
 function handleSelectionChange(selection: any) {
   ids.value = selection.map((item: any) => item.id);
 }
 
-// 打开角色弹窗
+// 開啟角色彈窗
 function handleOpenDialog(roleId?: string) {
   dialog.visible = true;
   if (roleId) {
-    dialog.title = "修改角色";
+    dialog.title = t("role.form.title.edit");
     RoleAPI.getFormData(roleId).then((data) => {
       Object.assign(formData, data);
     });
   } else {
-    dialog.title = "新增角色";
+    dialog.title = t("role.form.title.add");
   }
 }
 
-// 提交角色表单
+// 提交角色表單
 function handleSubmit() {
   roleFormRef.value.validate((valid: any) => {
     if (valid) {
@@ -348,7 +360,7 @@ function handleSubmit() {
   });
 }
 
-// 关闭弹窗
+// 關閉彈窗
 function handleCloseDialog() {
   dialog.visible = false;
 
@@ -360,16 +372,16 @@ function handleCloseDialog() {
   formData.status = 1;
 }
 
-// 删除角色
+// 刪除角色
 function handleDelete(roleId?: number) {
   const roleIds = [roleId || ids.value].join(",");
   if (!roleIds) {
-    ElMessage.warning("请勾选删除项");
+    ElMessage.warning("請勾選刪除項");
     return;
   }
 
-  ElMessageBox.confirm("确认删除已选中的数据项?", "警告", {
-    confirmButtonText: "确定",
+  ElMessageBox.confirm("確認刪除已選中的資料項?", "警告", {
+    confirmButtonText: "確定",
     cancelButtonText: "取消",
     type: "warning",
   }).then(
@@ -377,18 +389,18 @@ function handleDelete(roleId?: number) {
       loading.value = true;
       RoleAPI.deleteByIds(roleIds)
         .then(() => {
-          ElMessage.success("删除成功");
+          ElMessage.success("刪除成功");
           handleResetQuery();
         })
         .finally(() => (loading.value = false));
     },
     () => {
-      ElMessage.info("已取消删除");
+      ElMessage.info("已取消刪除");
     }
   );
 }
 
-// 打开分配菜单权限弹窗
+// 開啟分配選單許可權彈窗
 async function handleOpenAssignPermDialog(row: RolePageVO) {
   const roleId = row.id;
   if (roleId) {
@@ -398,10 +410,10 @@ async function handleOpenAssignPermDialog(row: RolePageVO) {
     checkedRole.value.id = roleId;
     checkedRole.value.name = row.name;
 
-    // 获取所有的菜单
+    // 獲取所有的選單
     menuPermOptions.value = await MenuAPI.getOptions();
 
-    // 回显角色已拥有的菜单
+    // 回顯角色已擁有的選單
     RoleAPI.getRoleMenuIds(roleId)
       .then((data) => {
         const checkedMenuIds = data;
@@ -413,7 +425,7 @@ async function handleOpenAssignPermDialog(row: RolePageVO) {
   }
 }
 
-// 分配菜单权限提交
+// 分配選單許可權提交
 function handleAssignPermSubmit() {
   const roleId = checkedRole.value.id;
   if (roleId) {
@@ -424,7 +436,7 @@ function handleAssignPermSubmit() {
     loading.value = true;
     RoleAPI.updateRoleMenus(roleId, checkedMenuIds)
       .then(() => {
-        ElMessage.success("分配权限成功");
+        ElMessage.success("分配許可權成功");
         assignPermDialogVisible.value = false;
         handleResetQuery();
       })
@@ -434,7 +446,7 @@ function handleAssignPermSubmit() {
   }
 }
 
-// 展开/收缩 菜单权限树
+// 展開/收縮 選單許可權樹
 function togglePermTree() {
   isExpanded.value = !isExpanded.value;
   if (permTreeRef.value) {
@@ -448,7 +460,7 @@ function togglePermTree() {
   }
 }
 
-// 权限筛选
+// 許可權篩選
 watch(permKeywords, (val) => {
   permTreeRef.value!.filter(val);
 });
@@ -463,7 +475,7 @@ function handlePermFilter(
   return data.label.includes(value);
 }
 
-// 父子菜单节点是否联动
+// 父子選單節點是否聯動
 function handleparentChildLinkedChange(val: any) {
   parentChildLinked.value = val;
 }

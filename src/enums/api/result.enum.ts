@@ -1,5 +1,5 @@
 /**
- * 响应码枚举
+ * 響應碼列舉
  */
 export const enum ResultEnum {
   /**
@@ -7,17 +7,17 @@ export const enum ResultEnum {
    */
   SUCCESS = "00000",
   /**
-   * 错误
+   * 錯誤
    */
   ERROR = "B0001",
 
   /**
-   * 访问令牌无效或过期
+   * 訪問令牌無效或過期
    */
   ACCESS_TOKEN_INVALID = "A0230",
 
   /**
-   * 刷新令牌无效或过期
+   * 重新整理令牌無效或過期
    */
   REFRESH_TOKEN_INVALID = "A0231",
 }

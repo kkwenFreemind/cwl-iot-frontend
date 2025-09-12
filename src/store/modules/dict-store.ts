@@ -2,28 +2,28 @@ import { store } from "@/store";
 import DictAPI, { type DictItemOption } from "@/api/system/dict-api";
 
 export const useDictStore = defineStore("dict", () => {
-  // 字典数据缓存
+  // 字典資料快取
   const dictCache = useStorage<Record<string, DictItemOption[]>>("dict_cache", {});
 
-  // 请求队列（防止重复请求）
+  // 請求佇列（防止重複請求）
   const requestQueue: Record<string, Promise<void>> = {};
 
   /**
-   * 缓存字典数据
-   * @param dictCode 字典编码
-   * @param data 字典项列表
+   * 快取字典資料
+   * @param dictCode 字典編碼
+   * @param data 字典項列表
    */
   const cacheDictItems = (dictCode: string, data: DictItemOption[]) => {
     dictCache.value[dictCode] = data;
   };
 
   /**
-   * 加载字典数据（如果缓存中没有则请求）
-   * @param dictCode 字典编码
+   * 載入字典資料（如果快取中沒有則請求）
+   * @param dictCode 字典編碼
    */
   const loadDictItems = async (dictCode: string) => {
     if (dictCache.value[dictCode]) return;
-    // 防止重复请求
+    // 防止重複請求
     if (!requestQueue[dictCode]) {
       requestQueue[dictCode] = DictAPI.getDictItems(dictCode).then((data) => {
         cacheDictItems(dictCode, data);
@@ -34,17 +34,17 @@ export const useDictStore = defineStore("dict", () => {
   };
 
   /**
-   * 获取字典项列表
-   * @param dictCode 字典编码
-   * @returns 字典项列表
+   * 獲取字典項列表
+   * @param dictCode 字典編碼
+   * @returns 字典項列表
    */
   const getDictItems = (dictCode: string): DictItemOption[] => {
     return dictCache.value[dictCode] || [];
   };
 
   /**
-   * 移除指定字典项
-   * @param dictCode 字典编码
+   * 移除指定字典項
+   * @param dictCode 字典編碼
    */
   const removeDictItem = (dictCode: string) => {
     if (dictCache.value[dictCode]) {
@@ -53,7 +53,7 @@ export const useDictStore = defineStore("dict", () => {
   };
 
   /**
-   * 清空字典缓存
+   * 清空字典快取
    */
   const clearDictCache = () => {
     dictCache.value = {};

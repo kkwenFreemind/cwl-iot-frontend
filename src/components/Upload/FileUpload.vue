@@ -6,6 +6,7 @@
       :style="props.style"
       :before-upload="handleBeforeUpload"
       :http-request="handleUpload"
+      :on-progress="handleProgress"
       :on-success="handleSuccess"
       :on-error="handleError"
       :accept="props.accept"
@@ -19,24 +20,25 @@
 
       <!-- 文件列表 -->
       <template #file="{ file }">
-        <template v-if="file.status === 'success'">
-          <div class="el-upload-list__item-info">
-            <a class="el-upload-list__item-name" @click="handleDownload(file)">
-              <el-icon><Document /></el-icon>
-              <span class="el-upload-list__item-file-name">{{ file.name }}</span>
-              <span class="el-icon--close" @click.stop="handleRemove(file.url!)">
-                <el-icon><Close /></el-icon>
-              </span>
-            </a>
-          </div>
-        </template>
-        <template v-else>
-          <div class="el-upload-list__item-info">
-            <el-progress style="display: inline-flex" :percentage="file.percentage" />
-          </div>
-        </template>
+        <div class="el-upload-list__item-info">
+          <a class="el-upload-list__item-name" @click="handleDownload(file)">
+            <el-icon><Document /></el-icon>
+            <span class="el-upload-list__item-file-name">{{ file.name }}</span>
+            <span class="el-icon--close" @click.stop="handleRemove(file.url!)">
+              <el-icon><Close /></el-icon>
+            </span>
+          </a>
+        </div>
       </template>
     </el-upload>
+
+    <el-progress
+      :style="{
+        display: showProgress ? 'inline-flex' : 'none',
+        width: '100%',
+      }"
+      :percentage="progressPercent"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -45,6 +47,7 @@ import {
   UploadUserFile,
   UploadFile,
   UploadFiles,
+  UploadProgressEvent,
   UploadRequestOptions,
 } from "element-plus";
 
@@ -108,6 +111,7 @@ const props = defineProps({
     },
   },
 });
+
 const modelValue = defineModel("modelValue", {
   type: [Array] as PropType<FileInfo[]>,
   required: true,
@@ -115,6 +119,9 @@ const modelValue = defineModel("modelValue", {
 });
 
 const fileList = ref([] as UploadFile[]);
+
+const showProgress = ref(false);
+const progressPercent = ref(0);
 
 // 监听 modelValue 转换用于显示的 fileList
 watch(
@@ -153,6 +160,7 @@ function handleBeforeUpload(file: UploadRawFile) {
 function handleUpload(options: UploadRequestOptions) {
   return new Promise((resolve, reject) => {
     const file = options.file;
+
     const formData = new FormData();
     formData.append(props.name, file);
 
@@ -160,21 +168,25 @@ function handleUpload(options: UploadRequestOptions) {
     Object.keys(props.data).forEach((key) => {
       formData.append(key, props.data[key]);
     });
-    FileAPI.upload(formData, (percent) => {
-      const uid = file.uid;
-      const fileItem = fileList.value.find((file) => file.uid === uid);
-      if (fileItem) {
-        fileItem.percentage = percent;
-      }
-    })
-      .then((res) => {
-        resolve(res);
+
+    FileAPI.upload(formData)
+      .then((data) => {
+        resolve(data);
       })
-      .catch((err) => {
-        reject(err);
+      .catch((error) => {
+        reject(error);
       });
   });
 }
+
+/**
+ * 上传进度
+ *
+ * @param event
+ */
+const handleProgress = (event: UploadProgressEvent) => {
+  progressPercent.value = event.percent;
+};
 
 /**
  * 上传成功

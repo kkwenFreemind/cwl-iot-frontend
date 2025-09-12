@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
-    <!-- 搜索区域 -->
+    <!-- 搜尋區域 -->
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item label="通知标题" prop="title">
+        <el-form-item label="通知標題" prop="title">
           <el-input
             v-model="queryParams.title"
-            placeholder="关键字"
+            placeholder="關鍵字"
             clearable
             @keyup.enter="handleQuery()"
           />
@@ -17,7 +17,7 @@
             <template #icon>
               <Search />
             </template>
-            搜索
+            搜尋
           </el-button>
           <el-button @click="handleResetQuery()">
             <template #icon>
@@ -37,15 +37,15 @@
         highlight-current-row
         class="data-table__content"
       >
-        <el-table-column type="index" label="序号" width="60" />
-        <el-table-column label="通知标题" prop="title" min-width="200" />
-        <el-table-column align="center" label="通知类型" width="150">
+        <el-table-column type="index" label="序號" width="60" />
+        <el-table-column label="通知標題" prop="title" min-width="200" />
+        <el-table-column align="center" label="通知型別" width="150">
           <template #default="scope">
             <DictLabel v-model="scope.row.type" code="notice_type" />
           </template>
         </el-table-column>
-        <el-table-column align="center" label="发布人" prop="publisherName" width="100" />
-        <el-table-column align="center" label="通知等级" width="100">
+        <el-table-column align="center" label="釋出人" prop="publisherName" width="100" />
+        <el-table-column align="center" label="通知等級" width="100">
           <template #default="scope">
             <DictLabel v-model="scope.row.level" code="notice_level" />
           </template>
@@ -53,22 +53,22 @@
         <el-table-column
           key="releaseTime"
           align="center"
-          label="发布时间"
+          label="釋出時間"
           prop="publishTime"
           width="150"
         />
 
-        <el-table-column align="center" label="发布人" prop="publisherName" width="150" />
-        <el-table-column align="center" label="状态" width="100">
+        <el-table-column align="center" label="釋出人" prop="publisherName" width="150" />
+        <el-table-column align="center" label="狀態" width="100">
           <template #default="scope">
-            <el-tag v-if="scope.row.isRead == 1" type="success">已读</el-tag>
-            <el-tag v-else type="info">未读</el-tag>
+            <el-tag v-if="scope.row.isRead == 1" type="success">已讀</el-tag>
+            <el-tag v-else type="info">未讀</el-tag>
           </template>
         </el-table-column>
         <el-table-column align="center" fixed="right" label="操作" width="80">
           <template #default="scope">
             <el-button type="primary" size="small" link @click="handleReadNotice(scope.row.id)">
-              查看
+              檢視
             </el-button>
           </template>
         </el-table-column>
@@ -85,7 +85,7 @@
 
     <el-dialog
       v-model="noticeDialogVisible"
-      :title="noticeDetail?.title ?? '通知详情'"
+      :title="noticeDetail?.title ?? '通知詳情'"
       width="800px"
       custom-class="notice-detail"
     >
@@ -131,7 +131,7 @@ const queryParams = reactive<NoticePageQuery>({
 const noticeDialogVisible = ref(false);
 const noticeDetail = ref<NoticeDetailVO | null>(null);
 
-// 查询通知公告
+// 查詢通知公告
 function handleQuery() {
   loading.value = true;
   NoticeAPI.getMyNoticePage(queryParams)
@@ -144,14 +144,14 @@ function handleQuery() {
     });
 }
 
-// 重置通知公告查询
+// 重置通知公告查詢
 function handleResetQuery() {
   queryFormRef.value!.resetFields();
   queryParams.pageNum = 1;
   handleQuery();
 }
 
-// 阅读通知公告
+// 閱讀通知公告
 function handleReadNotice(id: string) {
   NoticeAPI.getDetail(id).then((data) => {
     noticeDialogVisible.value = true;

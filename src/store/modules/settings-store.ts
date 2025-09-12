@@ -4,32 +4,32 @@ import type { LayoutMode } from "@/enums/settings/layout.enum";
 import { applyTheme, generateThemeColors, toggleDarkMode, toggleSidebarColor } from "@/utils/theme";
 import { SETTINGS_KEYS } from "@/constants";
 
-// 🎯 设置项类型定义
+// 🎯 設定項型別定義
 interface SettingsState {
-  // 界面显示设置
+  // 介面顯示設定
   settingsVisible: boolean;
   showTagsView: boolean;
   showAppLogo: boolean;
   showWatermark: boolean;
 
-  // 布局设置
+  // 佈局設定
   layout: LayoutMode;
   sidebarColorScheme: string;
 
-  // 主题设置
+  // 主題設定
   theme: ThemeMode;
   themeColor: string;
 }
 
-// 🎯 可变更的设置项类型
+// 🎯 可變更的設定項型別
 type MutableSetting = Exclude<keyof SettingsState, "settingsVisible">;
 type SettingValue<K extends MutableSetting> = SettingsState[K];
 
 export const useSettingsStore = defineStore("setting", () => {
-  // 🎯 基础设置 - 非持久化
+  // 🎯 基礎設定 - 非持久化
   const settingsVisible = ref<boolean>(false);
 
-  // 🎯 持久化设置 - 使用分组常量
+  // 🎯 持久化設定 - 使用分組常量
   const showTagsView = useStorage<boolean>(
     SETTINGS_KEYS.SHOW_TAGS_VIEW,
     defaultSettings.showTagsView
@@ -53,7 +53,7 @@ export const useSettingsStore = defineStore("setting", () => {
 
   const theme = useStorage<ThemeMode>(SETTINGS_KEYS.THEME, defaultSettings.theme);
 
-  // 🎯 设置项映射
+  // 🎯 設定項對映
   const settingsMap = {
     showTagsView,
     showAppLogo,
@@ -62,7 +62,7 @@ export const useSettingsStore = defineStore("setting", () => {
     layout,
   } as const;
 
-  // 🎯 监听器 - 主题变化
+  // 🎯 監聽器 - 主題變化
   watch(
     [theme, themeColor],
     ([newTheme, newThemeColor]) => {
@@ -73,7 +73,7 @@ export const useSettingsStore = defineStore("setting", () => {
     { immediate: true }
   );
 
-  // 🎯 监听器 - 侧边栏配色方案变化
+  // 🎯 監聽器 - 側邊欄配色方案變化
   watch(
     [sidebarColorScheme],
     ([newSidebarColorScheme]) => {
@@ -82,7 +82,7 @@ export const useSettingsStore = defineStore("setting", () => {
     { immediate: true }
   );
 
-  // 🎯 统一的设置更新方法 - 类型安全
+  // 🎯 統一的設定更新方法 - 型別安全
   function updateSetting<K extends keyof typeof settingsMap>(key: K, value: SettingValue<K>): void {
     const setting = settingsMap[key];
     if (setting) {
@@ -90,7 +90,7 @@ export const useSettingsStore = defineStore("setting", () => {
     }
   }
 
-  // 🎯 主题相关的专用更新方法
+  // 🎯 主題相關的專用更新方法
   function updateTheme(newTheme: ThemeMode): void {
     theme.value = newTheme;
   }
@@ -107,7 +107,7 @@ export const useSettingsStore = defineStore("setting", () => {
     layout.value = newLayout;
   }
 
-  // 🎯 设置面板显示控制
+  // 🎯 設定面板顯示控制
   function toggleSettingsPanel(): void {
     settingsVisible.value = !settingsVisible.value;
   }
@@ -120,7 +120,7 @@ export const useSettingsStore = defineStore("setting", () => {
     settingsVisible.value = false;
   }
 
-  // 🎯 批量重置设置
+  // 🎯 批次重置設定
   function resetSettings(): void {
     showTagsView.value = defaultSettings.showTagsView;
     showAppLogo.value = defaultSettings.showAppLogo;
@@ -132,7 +132,7 @@ export const useSettingsStore = defineStore("setting", () => {
   }
 
   return {
-    // 状态
+    // 狀態
     settingsVisible,
     showTagsView,
     showAppLogo,

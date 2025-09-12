@@ -1,28 +1,28 @@
 <template>
   <BaseLayout>
-    <!-- 顶部菜单栏 -->
+    <!-- 頂部選單欄 -->
     <div class="layout__header">
       <div class="layout__header-content">
-        <!-- Logo区域 -->
+        <!-- Logo區域 -->
         <div v-if="isShowLogo" class="layout__header-logo">
           <AppLogo :collapse="isLogoCollapsed" />
         </div>
 
-        <!-- 顶部菜单区域 -->
+        <!-- 頂部選單區域 -->
         <div class="layout__header-menu">
           <MixTopMenu />
         </div>
 
-        <!-- 右侧操作区域 -->
+        <!-- 右側操作區域 -->
         <div class="layout__header-actions">
           <NavbarActions />
         </div>
       </div>
     </div>
 
-    <!-- 主内容区容器 -->
+    <!-- 主內容區容器 -->
     <div class="layout__container">
-      <!-- 左侧菜单栏 -->
+      <!-- 左側選單欄 -->
       <div class="layout__sidebar--left" :class="{ 'layout__sidebar--collapsed': !isSidebarOpen }">
         <el-scrollbar>
           <el-menu
@@ -42,13 +42,13 @@
             />
           </el-menu>
         </el-scrollbar>
-        <!-- 侧边栏切换按钮 -->
+        <!-- 側邊欄切換按鈕 -->
         <div class="layout__sidebar-toggle">
           <Hamburger :is-active="isSidebarOpen" @toggle-click="toggleSidebar" />
         </div>
       </div>
 
-      <!-- 主内容区 -->
+      <!-- 主內容區 -->
       <div :class="{ hasTagsView: isShowTagsView }" class="layout__main">
         <TagsView v-if="isShowTagsView" />
         <AppMain />
@@ -77,22 +77,22 @@ import { useAppStore, usePermissionStore } from "@/store";
 
 const route = useRoute();
 
-// 布局相关参数
+// 佈局相關引數
 const { isShowTagsView, isShowLogo, isSidebarOpen, toggleSidebar } = useLayout();
 
-// 菜单相关
+// 選單相關
 const { sideMenuRoutes, activeTopMenuPath } = useLayoutMenu();
 
-// 响应式窗口尺寸
+// 響應式視窗尺寸
 const { width } = useWindowSize();
 
-// 只有在小屏设备（移动设备）时才折叠Logo（只显示图标，隐藏文字）
+// 只有在小屏裝置（移動裝置）時才摺疊Logo（只顯示圖示，隱藏文字）
 const isLogoCollapsed = computed(() => width.value < 768);
 
-// 当前激活的菜单
+// 當前啟用的選單
 const activeLeftMenuPath = computed(() => {
   const { meta, path } = route;
-  // 如果设置了activeMenu，则使用
+  // 如果設定了activeMenu，則使用
   if (meta?.activeMenu && typeof meta.activeMenu === "string") {
     return meta.activeMenu;
   }
@@ -100,8 +100,8 @@ const activeLeftMenuPath = computed(() => {
 });
 
 /**
- * 解析路径 - 混合模式下，左侧菜单是从顶级菜单下的子菜单开始的
- * 所以需要拼接顶级菜单路径
+ * 解析路徑 - 混合模式下，左側選單是從頂級選單下的子選單開始的
+ * 所以需要拼接頂級選單路徑
  */
 function resolvePath(routePath: string) {
   if (isExternal(routePath)) {
@@ -114,21 +114,21 @@ function resolvePath(routePath: string) {
   return `${activeTopMenuPath.value}/${routePath}`;
 }
 
-// 监听路由变化，确保左侧菜单能随TagsView切换而正确激活
+// 監聽路由變化，確保左側選單能隨TagsView切換而正確啟用
 watch(
   () => route.path,
   (newPath) => {
     console.log("📍 Route changed in MixLayout:", newPath);
 
-    // 获取顶级路径
+    // 獲取頂級路徑
     const topMenuPath =
       newPath.split("/").filter(Boolean).length > 1 ? newPath.match(/^\/[^/]+/)?.[0] || "/" : "/";
 
-    // 如果当前路径属于当前激活的顶部菜单
+    // 如果當前路徑屬於當前啟用的頂部選單
     if (newPath.startsWith(activeTopMenuPath.value)) {
       console.log("📍 Route is under active top menu, ensuring menu item is activated");
     }
-    // 如果路径改变了顶级菜单，确保顶部菜单和左侧菜单都更新
+    // 如果路徑改變了頂級選單，確保頂部選單和左側選單都更新
     else if (topMenuPath !== activeTopMenuPath.value) {
       console.log(
         "📍 Top menu changed, updating active menu from:",
@@ -137,7 +137,7 @@ watch(
         topMenuPath
       );
 
-      // 主动更新顶部菜单和左侧菜单
+      // 主動更新頂部選單和左側選單
       const appStore = useAppStore();
       const permissionStore = usePermissionStore();
 
@@ -265,7 +265,7 @@ watch(
   }
 }
 
-/* 移动端样式 */
+/* 移動端樣式 */
 :deep(.mobile) {
   .layout__container {
     .layout__sidebar--left {

@@ -1,19 +1,19 @@
-<!-- 字典项 -->
+<!-- 字典項 -->
 <template>
   <div class="app-container">
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item label="关键字" prop="keywords">
+        <el-form-item label="關鍵字" prop="keywords">
           <el-input
             v-model="queryParams.keywords"
-            placeholder="字典标签/字典值"
+            placeholder="字典標籤/字典值"
             clearable
             @keyup.enter="handleQuery"
           />
         </el-form-item>
 
         <el-form-item class="search-buttons">
-          <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
+          <el-button type="primary" icon="search" @click="handleQuery">搜尋</el-button>
           <el-button icon="refresh" @click="handleResetQuery">重置</el-button>
         </el-form-item>
       </el-form>
@@ -29,7 +29,7 @@
             icon="delete"
             @click="handleDelete()"
           >
-            删除
+            刪除
           </el-button>
         </div>
       </div>
@@ -42,13 +42,13 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="字典项标签" prop="label" />
-        <el-table-column label="字典项值" prop="value" />
+        <el-table-column label="字典項標籤" prop="label" />
+        <el-table-column label="字典項值" prop="value" />
         <el-table-column label="排序" prop="sort" />
-        <el-table-column label="状态">
+        <el-table-column label="狀態">
           <template #default="scope">
             <el-tag :type="scope.row.status === 1 ? 'success' : 'info'">
-              {{ scope.row.status === 1 ? "启用" : "禁用" }}
+              {{ scope.row.status === 1 ? "啟用" : "禁用" }}
             </el-tag>
           </template>
         </el-table-column>
@@ -62,7 +62,7 @@
               icon="edit"
               @click.stop="handleOpenDialog(scope.row)"
             >
-              编辑
+              編輯
             </el-button>
             <el-button
               type="danger"
@@ -71,7 +71,7 @@
               icon="delete"
               @click.stop="handleDelete(scope.row.id)"
             >
-              删除
+              刪除
             </el-button>
           </template>
         </el-table-column>
@@ -86,7 +86,7 @@
       />
     </el-card>
 
-    <!--字典项弹窗-->
+    <!--字典項彈窗-->
     <el-dialog
       v-model="dialog.visible"
       :title="dialog.title"
@@ -94,15 +94,15 @@
       @close="handleCloseDialog"
     >
       <el-form ref="dataFormRef" :model="formData" :rules="computedRules" label-width="100px">
-        <el-form-item label="字典项标签" prop="label">
-          <el-input v-model="formData.label" placeholder="请输入字典标签" />
+        <el-form-item label="字典項標籤" prop="label">
+          <el-input v-model="formData.label" placeholder="請輸入字典標籤" />
         </el-form-item>
-        <el-form-item label="字典项值" prop="value">
-          <el-input v-model="formData.value" placeholder="请输入字典值" />
+        <el-form-item label="字典項值" prop="value">
+          <el-input v-model="formData.value" placeholder="請輸入字典值" />
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="狀態">
           <el-radio-group v-model="formData.status">
-            <el-radio :value="1">启用</el-radio>
+            <el-radio :value="1">啟用</el-radio>
             <el-radio :value="0">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -112,9 +112,9 @@
         <el-form-item>
           <template #label>
             <div class="flex-y-center">
-              标签类型
+              標籤型別
               <el-tooltip>
-                <template #content>回显样式，为空时则显示 '文本'</template>
+                <template #content>回顯樣式，為空時則顯示 '文字'</template>
                 <el-icon class="ml-1 cursor-pointer">
                   <QuestionFilled />
                 </el-icon>
@@ -123,19 +123,19 @@
           </template>
           <el-select
             v-model="formData.tagType"
-            placeholder="请选择标签类型"
+            placeholder="請選擇標籤型別"
             clearable
             @clear="formData.tagType = ''"
           >
             <template #label="{ value }">
               <el-tag v-if="value" :type="value">
-                {{ formData.label ? formData.label : "字典标签" }}
+                {{ formData.label ? formData.label : "字典標籤" }}
               </el-tag>
             </template>
-            <!-- <el-option label="默认文本" value="" /> -->
+            <!-- <el-option label="預設文字" value="" /> -->
             <el-option v-for="type in tagType" :key="type" :label="type" :value="type">
               <div flex-y-center gap-10px>
-                <el-tag :type="type">{{ formData.label ?? "字典标签" }}</el-tag>
+                <el-tag :type="type">{{ formData.label ?? "字典標籤" }}</el-tag>
                 <span>{{ type }}</span>
               </div>
             </el-option>
@@ -145,7 +145,7 @@
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="handleSubmitClick">确 定</el-button>
+          <el-button type="primary" @click="handleSubmitClick">確 定</el-button>
           <el-button @click="handleCloseDialog">取 消</el-button>
         </div>
       </template>
@@ -182,19 +182,19 @@ const dialog = reactive({
 
 const formData = reactive<DictItemForm>({});
 
-// 标签类型
+// 標籤型別
 const tagType: TagProps["type"][] = ["primary", "success", "info", "warning", "danger"];
 
 const computedRules = computed(() => {
   const rules: Partial<Record<string, any>> = {
-    value: [{ required: true, message: "请输入字典值", trigger: "blur" }],
-    label: [{ required: true, message: "请输入字典标签", trigger: "blur" }],
+    value: [{ required: true, message: "請輸入字典值", trigger: "blur" }],
+    label: [{ required: true, message: "請輸入字典標籤", trigger: "blur" }],
   };
 
   return rules;
 });
 
-// 获取数据
+// 獲取資料
 function fetchData() {
   loading.value = true;
   DictAPI.getDictItemPage(dictCode.value, queryParams)
@@ -207,28 +207,28 @@ function fetchData() {
     });
 }
 
-// 查询（重置页码后获取数据）
+// 查詢（重置頁碼後獲取資料）
 function handleQuery() {
   queryParams.pageNum = 1;
   fetchData();
 }
 
-// 重置查询
+// 重置查詢
 function handleResetQuery() {
   queryFormRef.value.resetFields();
   queryParams.pageNum = 1;
   fetchData();
 }
 
-// 行选择
+// 行選擇
 function handleSelectionChange(selection: any) {
   ids.value = selection.map((item: any) => item.id);
 }
 
-// 打开弹窗
+// 開啟彈窗
 function handleOpenDialog(row?: DictItemPageVO) {
   dialog.visible = true;
-  dialog.title = row ? "编辑字典项" : "新增字典项";
+  dialog.title = row ? "編輯字典項" : "新增字典項";
 
   if (row?.id) {
     DictAPI.getDictItemFormData(dictCode.value, row.id).then((data) => {
@@ -237,7 +237,7 @@ function handleOpenDialog(row?: DictItemPageVO) {
   }
 }
 
-// 提交表单
+// 提交表單
 function handleSubmitClick() {
   dataFormRef.value.validate((isValid: boolean) => {
     if (isValid) {
@@ -266,7 +266,7 @@ function handleSubmitClick() {
   });
 }
 
-// 关闭弹窗
+// 關閉彈窗
 function handleCloseDialog() {
   dataFormRef.value.resetFields();
   dataFormRef.value.clearValidate();
@@ -279,7 +279,7 @@ function handleCloseDialog() {
   dialog.visible = false;
 }
 /**
- * 删除字典
+ * 刪除字典
  *
  * @param id 字典ID
  */
@@ -287,23 +287,23 @@ function handleDelete(id?: number) {
   const itemIds = [id || ids.value].join(",");
 
   if (!itemIds) {
-    ElMessage.warning("请勾选删除项");
+    ElMessage.warning("請勾選刪除項");
 
     return;
   }
-  ElMessageBox.confirm("确认删除已选中的数据项?", "警告", {
-    confirmButtonText: "确定",
+  ElMessageBox.confirm("確認刪除已選中的資料項?", "警告", {
+    confirmButtonText: "確定",
     cancelButtonText: "取消",
     type: "warning",
   }).then(
     () => {
       DictAPI.deleteDictItems(dictCode.value, itemIds).then(() => {
-        ElMessage.success("删除成功");
+        ElMessage.success("刪除成功");
         handleResetQuery();
       });
     },
     () => {
-      ElMessage.info("已取消删除");
+      ElMessage.info("已取消刪除");
     }
   );
 }

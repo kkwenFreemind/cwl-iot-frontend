@@ -83,30 +83,30 @@ const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
 
-// 是否为桌面设备
+// 是否為桌面設備
 const isDesktop = computed(() => appStore.device === DeviceEnum.DESKTOP);
 
 /**
- * 打开个人中心页面
+ * 打開個人中心頁面
  */
 function handleProfileClick() {
   router.push({ name: "Profile" });
 }
 
-// 根据主题和侧边栏配色方案选择样式类
+// 根據主題和側邊欄配色方案選擇樣式類
 const navbarActionsClass = computed(() => {
   const { theme, sidebarColorScheme, layout } = settingStore;
 
-  // 暗黑主题下，所有布局都使用白色文字
+  // 暗黑主題下，所有佈局都使用白色文字
   if (theme === ThemeMode.DARK) {
     return "navbar-actions--white-text";
   }
 
-  // 明亮主题下
+  // 明亮主題下
   if (theme === ThemeMode.LIGHT) {
-    // 顶部布局和混合布局的顶部区域：
-    // - 如果侧边栏是经典蓝色，使用白色文字
-    // - 如果侧边栏是极简白色，使用深色文字
+    // 頂部佈局和混合佈局的頂部區域：
+    // - 如果側邊欄是經典藍色，使用白色文字
+    // - 如果側邊欄是極簡白色，使用深色文字
     if (layout === LayoutMode.TOP || layout === LayoutMode.MIX) {
       if (sidebarColorScheme === SidebarColor.CLASSIC_BLUE) {
         return "navbar-actions--white-text";
@@ -120,11 +120,11 @@ const navbarActionsClass = computed(() => {
 });
 
 /**
- * 退出登录
+ * 退出登錄
  */
 function logout() {
-  ElMessageBox.confirm("确定注销并退出系统吗？", "提示", {
-    confirmButtonText: "确定",
+  ElMessageBox.confirm("確定註銷並退出系統嗎？", "提示", {
+    confirmButtonText: "確定",
     cancelButtonText: "取消",
     type: "warning",
     lockScroll: false,

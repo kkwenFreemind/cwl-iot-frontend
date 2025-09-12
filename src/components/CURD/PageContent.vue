@@ -2,9 +2,9 @@
   <div
     class="rounded bg-[var(--el-bg-color)] border border-[var(--el-border-color)] p-5 h-full md:flex flex-1 flex-col md:overflow-auto"
   >
-    <!-- 表格工具栏 -->
+    <!-- 表格工具欄 -->
     <div class="flex flex-col md:flex-row justify-between gap-y-2.5 mb-2.5">
-      <!-- 左侧工具栏 -->
+      <!-- 左側工具欄 -->
       <div class="toolbar-left flex gap-y-2.5 gap-x-2 md:gap-x-3 flex-wrap">
         <template v-for="(btn, index) in toolbarLeftBtn" :key="index">
           <el-button
@@ -17,7 +17,7 @@
           </el-button>
         </template>
       </div>
-      <!-- 右侧工具栏 -->
+      <!-- 右側工具欄 -->
       <div class="toolbar-right flex gap-y-2.5 gap-x-2 md:gap-x-3 flex-wrap">
         <template v-for="(btn, index) in toolbarRightBtn" :key="index">
           <el-popover v-if="btn.name === 'filter'" placement="bottom" trigger="click">
@@ -54,7 +54,7 @@
       <template v-for="col in cols" :key="col.prop">
         <el-table-column v-if="col.show" v-bind="col">
           <template #default="scope">
-            <!-- 显示图片 -->
+            <!-- 顯示圖片 -->
             <template v-if="col.templet === 'image'">
               <template v-if="col.prop">
                 <template v-if="Array.isArray(scope.row[col.prop])">
@@ -78,13 +78,13 @@
                 </template>
               </template>
             </template>
-            <!-- 根据行的selectList属性返回对应列表值 -->
+            <!-- 根據行的selectList屬性返回對應列表值 -->
             <template v-else-if="col.templet === 'list'">
               <template v-if="col.prop">
                 {{ (col.selectList ?? {})[scope.row[col.prop]] }}
               </template>
             </template>
-            <!-- 格式化显示链接 -->
+            <!-- 格式化顯示連結 -->
             <template v-else-if="col.templet === 'url'">
               <template v-if="col.prop">
                 <el-link type="primary" :href="scope.row[col.prop]" target="_blank">
@@ -92,10 +92,10 @@
                 </el-link>
               </template>
             </template>
-            <!-- 生成开关组件 -->
+            <!-- 生成開關元件 -->
             <template v-else-if="col.templet === 'switch'">
               <template v-if="col.prop">
-                <!-- pageData.length>0: 解决el-switch组件会在表格初始化的时候触发一次change事件 -->
+                <!-- pageData.length>0: 解決el-switch元件會在表格初始化的時候觸發一次change事件 -->
                 <el-switch
                   v-model="scope.row[col.prop]"
                   :active-value="col.activeValue ?? 1"
@@ -111,7 +111,7 @@
                 />
               </template>
             </template>
-            <!-- 生成输入框组件 -->
+            <!-- 生成輸入框元件 -->
             <template v-else-if="col.templet === 'input'">
               <template v-if="col.prop">
                 <el-input
@@ -122,17 +122,17 @@
                 />
               </template>
             </template>
-            <!-- 格式化为价格 -->
+            <!-- 格式化為價格 -->
             <template v-else-if="col.templet === 'price'">
               <template v-if="col.prop">
                 {{ `${col.priceFormat ?? "￥"}${scope.row[col.prop]}` }}
               </template>
             </template>
-            <!-- 格式化为百分比 -->
+            <!-- 格式化為百分比 -->
             <template v-else-if="col.templet === 'percent'">
               <template v-if="col.prop">{{ scope.row[col.prop] }}%</template>
             </template>
-            <!-- 显示图标 -->
+            <!-- 顯示圖示 -->
             <template v-else-if="col.templet === 'icon'">
               <template v-if="col.prop">
                 <template v-if="scope.row[col.prop].startsWith('el-icon-')">
@@ -145,7 +145,7 @@
                 </template>
               </template>
             </template>
-            <!-- 格式化时间 -->
+            <!-- 格式化時間 -->
             <template v-else-if="col.templet === 'date'">
               <template v-if="col.prop">
                 {{
@@ -156,7 +156,7 @@
                 }}
               </template>
             </template>
-            <!-- 列操作栏 -->
+            <!-- 列操作欄 -->
             <template v-else-if="col.templet === 'tool'">
               <template v-for="(btn, index) in tableToolbarBtn" :key="index">
                 <el-button
@@ -176,7 +176,7 @@
                 </el-button>
               </template>
             </template>
-            <!-- 自定义 -->
+            <!-- 自定義 -->
             <template v-else-if="col.templet === 'custom'">
               <slot :name="col.slotName ?? col.prop" :prop="col.prop" v-bind="scope" />
             </template>
@@ -185,7 +185,7 @@
       </template>
     </el-table>
 
-    <!-- 分页 -->
+    <!-- 分頁 -->
     <div v-if="showPagination" class="mt-4">
       <el-scrollbar :class="['h-8!', { 'flex-x-end': contentConfig?.pagePosition === 'right' }]">
         <el-pagination
@@ -196,46 +196,46 @@
       </el-scrollbar>
     </div>
 
-    <!-- 导出弹窗 -->
+    <!-- 匯出彈窗 -->
     <el-dialog
       v-model="exportsModalVisible"
       :align-center="true"
-      title="导出数据"
+      title="匯出資料"
       width="600px"
       style="padding-right: 0"
       @close="handleCloseExportsModal"
     >
-      <!-- 滚动 -->
+      <!-- 滾動 -->
       <el-scrollbar max-height="60vh">
-        <!-- 表单 -->
+        <!-- 表單 -->
         <el-form
           ref="exportsFormRef"
           style="padding-right: var(--el-dialog-padding-primary)"
           :model="exportsFormData"
           :rules="exportsFormRules"
         >
-          <el-form-item label="文件名" prop="filename">
+          <el-form-item label="檔名" prop="filename">
             <el-input v-model="exportsFormData.filename" clearable />
           </el-form-item>
           <el-form-item label="工作表名" prop="sheetname">
             <el-input v-model="exportsFormData.sheetname" clearable />
           </el-form-item>
-          <el-form-item label="数据源" prop="origin">
+          <el-form-item label="資料來源" prop="origin">
             <el-select v-model="exportsFormData.origin">
-              <el-option label="当前数据 (当前页的数据)" :value="ExportsOriginEnum.CURRENT" />
+              <el-option label="當前資料 (當前頁的資料)" :value="ExportsOriginEnum.CURRENT" />
               <el-option
-                label="选中数据 (所有选中的数据)"
+                label="選中資料 (所有選中的資料)"
                 :value="ExportsOriginEnum.SELECTED"
                 :disabled="selectionData.length <= 0"
               />
               <el-option
-                label="全量数据 (所有分页的数据)"
+                label="全量資料 (所有分頁的資料)"
                 :value="ExportsOriginEnum.REMOTE"
                 :disabled="contentConfig.exportsAction === undefined"
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="字段" prop="fields">
+          <el-form-item label="欄位" prop="fields">
             <el-checkbox-group v-model="exportsFormData.fields">
               <template v-for="col in cols" :key="col.prop">
                 <el-checkbox v-if="col.prop" :value="col.prop" :label="col.label" />
@@ -244,33 +244,33 @@
           </el-form-item>
         </el-form>
       </el-scrollbar>
-      <!-- 弹窗底部操作按钮 -->
+      <!-- 彈窗底部操作按鈕 -->
       <template #footer>
         <div style="padding-right: var(--el-dialog-padding-primary)">
-          <el-button type="primary" @click="handleExportsSubmit">确 定</el-button>
+          <el-button type="primary" @click="handleExportsSubmit">確 定</el-button>
           <el-button @click="handleCloseExportsModal">取 消</el-button>
         </div>
       </template>
     </el-dialog>
-    <!-- 导入弹窗 -->
+    <!-- 匯入彈窗 -->
     <el-dialog
       v-model="importModalVisible"
       :align-center="true"
-      title="导入数据"
+      title="匯入資料"
       width="600px"
       style="padding-right: 0"
       @close="handleCloseImportModal"
     >
-      <!-- 滚动 -->
+      <!-- 滾動 -->
       <el-scrollbar max-height="60vh">
-        <!-- 表单 -->
+        <!-- 表單 -->
         <el-form
           ref="importFormRef"
           style="padding-right: var(--el-dialog-padding-primary)"
           :model="importFormData"
           :rules="importFormRules"
         >
-          <el-form-item label="文件名" prop="files">
+          <el-form-item label="檔名" prop="files">
             <el-upload
               ref="uploadRef"
               v-model:file-list="importFormData.files"
@@ -283,8 +283,8 @@
             >
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
-                <span>将文件拖到此处，或</span>
-                <em>点击上传</em>
+                <span>將檔案拖到此處，或</span>
+                <em>點選上傳</em>
               </div>
               <template #tip>
                 <div class="el-upload__tip">
@@ -296,7 +296,7 @@
                     underline="never"
                     @click="handleDownloadTemplate"
                   >
-                    下载模板
+                    下載模板
                   </el-link>
                 </div>
               </template>
@@ -304,7 +304,7 @@
           </el-form-item>
         </el-form>
       </el-scrollbar>
-      <!-- 弹窗底部操作按钮 -->
+      <!-- 彈窗底部操作按鈕 -->
       <template #footer>
         <div style="padding-right: var(--el-dialog-padding-primary)">
           <el-button
@@ -312,7 +312,7 @@
             :disabled="importFormData.files.length === 0"
             @click="handleImportSubmit"
           >
-            确 定
+            確 定
           </el-button>
           <el-button @click="handleCloseImportModal">取 消</el-button>
         </div>
@@ -338,9 +338,9 @@ import { reactive, ref, computed } from "vue";
 import type { IContentConfig, IObject, IOperateData } from "./types";
 import type { IToolsButton } from "./types";
 
-// 定义接收的属性
+// 定義接收的屬性
 const props = defineProps<{ contentConfig: IContentConfig }>();
-// 定义自定义事件
+// 定義自定義事件
 const emit = defineEmits<{
   addClick: [];
   exportClick: [];
@@ -351,46 +351,46 @@ const emit = defineEmits<{
   operateClick: [data: IOperateData];
 }>();
 
-// 表格工具栏按钮配置
+// 表格工具欄按鈕配置
 const config = computed(() => props.contentConfig);
 const buttonConfig = reactive<Record<string, IObject>>({
   add: { text: "新增", attrs: { icon: "plus", type: "success" }, perm: "add" },
-  delete: { text: "删除", attrs: { icon: "delete", type: "danger" }, perm: "delete" },
-  import: { text: "导入", attrs: { icon: "upload", type: "" }, perm: "import" },
-  export: { text: "导出", attrs: { icon: "download", type: "" }, perm: "export" },
-  refresh: { text: "刷新", attrs: { icon: "refresh", type: "" }, perm: "*:*:*" },
-  filter: { text: "筛选列", attrs: { icon: "operation", type: "" }, perm: "*:*:*" },
-  search: { text: "搜索", attrs: { icon: "search", type: "" }, perm: "search" },
-  imports: { text: "批量导入", attrs: { icon: "upload", type: "" }, perm: "imports" },
-  exports: { text: "批量导出", attrs: { icon: "download", type: "" }, perm: "exports" },
-  view: { text: "查看", attrs: { icon: "view", type: "primary" }, perm: "view" },
-  edit: { text: "编辑", attrs: { icon: "edit", type: "primary" }, perm: "edit" },
+  delete: { text: "刪除", attrs: { icon: "delete", type: "danger" }, perm: "delete" },
+  import: { text: "匯入", attrs: { icon: "upload", type: "" }, perm: "import" },
+  export: { text: "匯出", attrs: { icon: "download", type: "" }, perm: "export" },
+  refresh: { text: "重新整理", attrs: { icon: "refresh", type: "" }, perm: "*:*:*" },
+  filter: { text: "篩選列", attrs: { icon: "operation", type: "" }, perm: "*:*:*" },
+  search: { text: "搜尋", attrs: { icon: "search", type: "" }, perm: "search" },
+  imports: { text: "批次匯入", attrs: { icon: "upload", type: "" }, perm: "imports" },
+  exports: { text: "批次匯出", attrs: { icon: "download", type: "" }, perm: "exports" },
+  view: { text: "檢視", attrs: { icon: "view", type: "primary" }, perm: "view" },
+  edit: { text: "編輯", attrs: { icon: "edit", type: "primary" }, perm: "edit" },
 });
 
-// 主键
+// 主鍵
 const pk = props.contentConfig.pk ?? "id";
-// 权限名称前缀
+// 許可權名稱字首
 const authPrefix = computed(() => props.contentConfig.permPrefix);
 
-// 获取按钮权限标识
+// 獲取按鈕許可權標識
 function getButtonPerm(action: string): string | null {
-  // 如果action已经包含完整路径(包含冒号)，则直接使用
+  // 如果action已經包含完整路徑(包含冒號)，則直接使用
   if (action.includes(":")) {
     return action;
   }
-  // 否则使用权限前缀组合
+  // 否則使用許可權字首組合
   return authPrefix.value ? `${authPrefix.value}:${action}` : null;
 }
 
-// 检查是否有权限
+// 檢查是否有許可權
 function hasButtonPerm(action: string): boolean {
   const perm = getButtonPerm(action);
-  // 如果没有设置权限标识，则默认具有权限
+  // 如果沒有設定許可權標識，則預設具有許可權
   if (!perm) return true;
   return hasAuth(perm);
 }
 
-// 创建工具栏按钮
+// 建立工具欄按鈕
 function createToolbar(toolbar: Array<string | IToolsButton>, attr = {}) {
   return toolbar.map((item) => {
     const isString = typeof item === "string";
@@ -411,19 +411,19 @@ function createToolbar(toolbar: Array<string | IToolsButton>, attr = {}) {
   });
 }
 
-// 左侧工具栏按钮
+// 左側工具欄按鈕
 const toolbarLeftBtn = computed(() => {
   if (!config.value.toolbar || config.value.toolbar.length === 0) return [];
   return createToolbar(config.value.toolbar, {});
 });
 
-// 右侧工具栏按钮
+// 右側工具欄按鈕
 const toolbarRightBtn = computed(() => {
   if (!config.value.defaultToolbar || config.value.defaultToolbar.length === 0) return [];
   return createToolbar(config.value.defaultToolbar, { circle: true });
 });
 
-// 表格操作工具栏
+// 表格操作工具欄
 const tableToolbar = config.value.cols[config.value.cols.length - 1].operat ?? ["edit", "delete"];
 const tableToolbarBtn = createToolbar(tableToolbar, { link: true, size: "small" });
 
@@ -444,19 +444,19 @@ const cols = ref(
       col.reserveSelection === undefined &&
       col["reserve-selection"] === undefined
     ) {
-      // 配合表格row-key实现跨页多选
+      // 配合表格row-key實現跨頁多選
       col.reserveSelection = true;
     }
     return col;
   })
 );
-// 加载状态
+// 載入狀態
 const loading = ref(false);
-// 列表数据
+// 列表資料
 const pageData = ref<IObject[]>([]);
-// 显示分页
+// 顯示分頁
 const showPagination = props.contentConfig.pagination !== false;
-// 分页配置
+// 分頁配置
 const defaultPagination = {
   background: true,
   layout: "total, sizes, prev, pager, next, jumper",
@@ -470,7 +470,7 @@ const pagination = reactive(
     ? { ...defaultPagination, ...props.contentConfig.pagination }
     : defaultPagination
 );
-// 分页相关的请求参数
+// 分頁相關的請求引數
 const request = props.contentConfig.request ?? {
   pageName: "pageNum",
   limitName: "pageSize",
@@ -478,35 +478,35 @@ const request = props.contentConfig.request ?? {
 
 const tableRef = ref<TableInstance>();
 
-// 行选中
+// 行選中
 const selectionData = ref<IObject[]>([]);
-// 删除ID集合 用于批量删除
+// 刪除ID集合 用於批次刪除
 const removeIds = ref<(number | string)[]>([]);
 function handleSelectionChange(selection: any[]) {
   selectionData.value = selection;
   removeIds.value = selection.map((item) => item[pk]);
 }
 
-// 获取行选中
+// 獲取行選中
 function getSelectionData() {
   return selectionData.value;
 }
 
-// 刷新
+// 重新整理
 function handleRefresh(isRestart = false) {
   fetchPageData(lastFormData, isRestart);
 }
 
-// 删除
+// 刪除
 function handleDelete(id?: number | string) {
   const ids = [id || removeIds.value].join(",");
   if (!ids) {
-    ElMessage.warning("请勾选删除项");
+    ElMessage.warning("請勾選刪除項");
     return;
   }
 
-  ElMessageBox.confirm("确认删除?", "警告", {
-    confirmButtonText: "确定",
+  ElMessageBox.confirm("確認刪除?", "警告", {
+    confirmButtonText: "確定",
     cancelButtonText: "取消",
     type: "warning",
   })
@@ -515,9 +515,9 @@ function handleDelete(id?: number | string) {
         props.contentConfig
           .deleteAction(ids)
           .then(() => {
-            ElMessage.success("删除成功");
+            ElMessage.success("刪除成功");
             removeIds.value = [];
-            //清空选中项
+            //清空選中項
             tableRef.value?.clearSelection();
             handleRefresh(true);
           })
@@ -529,7 +529,7 @@ function handleDelete(id?: number | string) {
     .catch(() => {});
 }
 
-// 导出表单
+// 匯出表單
 const fields: string[] = [];
 cols.value.forEach((item) => {
   if (item.prop !== undefined) {
@@ -550,14 +550,14 @@ const exportsFormData = reactive({
   origin: ExportsOriginEnum.CURRENT,
 });
 const exportsFormRules: FormRules = {
-  fields: [{ required: true, message: "请选择字段" }],
-  origin: [{ required: true, message: "请选择数据源" }],
+  fields: [{ required: true, message: "請選擇欄位" }],
+  origin: [{ required: true, message: "請選擇資料來源" }],
 };
-// 打开导出弹窗
+// 開啟匯出彈窗
 function handleOpenExportsModal() {
   exportsModalVisible.value = true;
 }
-// 导出确认
+// 匯出確認
 const handleExportsSubmit = useThrottleFn(() => {
   exportsFormRef.value?.validate((valid: boolean) => {
     if (valid) {
@@ -566,7 +566,7 @@ const handleExportsSubmit = useThrottleFn(() => {
     }
   });
 }, 3000);
-// 关闭导出弹窗
+// 關閉匯出彈窗
 function handleCloseExportsModal() {
   exportsModalVisible.value = false;
   exportsFormRef.value?.resetFields();
@@ -574,7 +574,7 @@ function handleCloseExportsModal() {
     exportsFormRef.value?.clearValidate();
   });
 }
-// 导出
+// 匯出
 function handleExports() {
   const filename = exportsFormData.filename
     ? exportsFormData.filename
@@ -616,7 +616,7 @@ function handleExports() {
   }
 }
 
-// 导入表单
+// 匯入表單
 let isFileImport = false;
 const uploadRef = ref<UploadInstance>();
 const importModalVisible = ref(false);
@@ -627,21 +627,21 @@ const importFormData = reactive<{
   files: [],
 });
 const importFormRules: FormRules = {
-  files: [{ required: true, message: "请选择文件" }],
+  files: [{ required: true, message: "請選擇檔案" }],
 };
-// 打开导入弹窗
+// 開啟匯入彈窗
 function handleOpenImportModal(isFile: boolean = false) {
   importModalVisible.value = true;
   isFileImport = isFile;
 }
-// 覆盖前一个文件
+// 覆蓋前一個檔案
 function handleFileExceed(files: File[]) {
   uploadRef.value!.clearFiles();
   const file = files[0] as UploadRawFile;
   file.uid = genFileId();
   uploadRef.value!.handleStart(file);
 }
-// 下载导入模板
+// 下載匯入模板
 function handleDownloadTemplate() {
   const importTemplate = props.contentConfig.importTemplate;
   if (typeof importTemplate === "string") {
@@ -658,7 +658,7 @@ function handleDownloadTemplate() {
     ElMessage.error("未配置importTemplate");
   }
 }
-// 导入确认
+// 匯入確認
 const handleImportSubmit = useThrottleFn(() => {
   importFormRef.value?.validate((valid: boolean) => {
     if (valid) {
@@ -670,7 +670,7 @@ const handleImportSubmit = useThrottleFn(() => {
     }
   });
 }, 3000);
-// 关闭导入弹窗
+// 關閉匯入彈窗
 function handleCloseImportModal() {
   importModalVisible.value = false;
   importFormRef.value?.resetFields();
@@ -678,7 +678,7 @@ function handleCloseImportModal() {
     importFormRef.value?.clearValidate();
   });
 }
-// 文件导入
+// 檔案匯入
 function handleImport() {
   const importAction = props.contentConfig.importAction;
   if (importAction === undefined) {
@@ -686,74 +686,74 @@ function handleImport() {
     return;
   }
   importAction(importFormData.files[0].raw as File).then(() => {
-    ElMessage.success("导入数据成功");
+    ElMessage.success("匯入資料成功");
     handleCloseImportModal();
     handleRefresh(true);
   });
 }
-// 导入
+// 匯入
 function handleImports() {
   const importsAction = props.contentConfig.importsAction;
   if (importsAction === undefined) {
     ElMessage.error("未配置importsAction");
     return;
   }
-  // 获取选择的文件
+  // 獲取選擇的檔案
   const file = importFormData.files[0].raw as File;
-  // 创建Workbook实例
+  // 建立Workbook例項
   const workbook = new ExcelJS.Workbook();
-  // 使用FileReader对象来读取文件内容
+  // 使用FileReader物件來讀取檔案內容
   const fileReader = new FileReader();
-  // 二进制字符串的形式加载文件
+  // 二進位制字串的形式載入檔案
   fileReader.readAsArrayBuffer(file);
   fileReader.onload = (ev) => {
     if (ev.target !== null && ev.target.result !== null) {
       const result = ev.target.result as ArrayBuffer;
-      // 从 buffer中加载数据解析
+      // 從 buffer中載入資料解析
       workbook.xlsx
         .load(result)
         .then((workbook) => {
-          // 解析后的数据
+          // 解析後的資料
           const data = [];
-          // 获取第一个worksheet内容
+          // 獲取第一個worksheet內容
           const worksheet = workbook.getWorksheet(1);
           if (worksheet) {
-            // 获取第一行的标题
+            // 獲取第一行的標題
             const fields: any[] = [];
             worksheet.getRow(1).eachCell((cell) => {
               fields.push(cell.value);
             });
-            // 遍历工作表的每一行（从第二行开始，因为第一行通常是标题行）
+            // 遍歷工作表的每一行（從第二行開始，因為第一行通常是標題行）
             for (let rowNumber = 2; rowNumber <= worksheet.rowCount; rowNumber++) {
               const rowData: IObject = {};
               const row = worksheet.getRow(rowNumber);
-              // 遍历当前行的每个单元格
+              // 遍歷當前行的每個單元格
               row.eachCell((cell, colNumber) => {
-                // 获取标题对应的键，并将当前单元格的值存储到相应的属性名中
+                // 獲取標題對應的鍵，並將當前單元格的值儲存到相應的屬性名中
                 rowData[fields[colNumber - 1]] = cell.value;
               });
-              // 将当前行的数据对象添加到数组中
+              // 將當前行的資料物件新增到陣列中
               data.push(rowData);
             }
           }
           if (data.length === 0) {
-            ElMessage.error("未解析到数据");
+            ElMessage.error("未解析到資料");
             return;
           }
           importsAction(data).then(() => {
-            ElMessage.success("导入数据成功");
+            ElMessage.success("匯入資料成功");
             handleCloseImportModal();
             handleRefresh(true);
           });
         })
         .catch((error) => console.log(error));
     } else {
-      ElMessage.error("读取文件失败");
+      ElMessage.error("讀取檔案失敗");
     }
   };
 }
 
-// 操作栏
+// 操作欄
 function handleToolbar(name: string) {
   switch (name) {
     case "refresh":
@@ -802,7 +802,7 @@ function handleOperate(data: IOperateData) {
   }
 }
 
-// 属性修改
+// 屬性修改
 function handleModify(field: string, value: boolean | string | number, row: Record<string, any>) {
   if (props.contentConfig.modifyAction) {
     props.contentConfig.modifyAction({
@@ -815,7 +815,7 @@ function handleModify(field: string, value: boolean | string | number, row: Reco
   }
 }
 
-// 分页切换
+// 分頁切換
 function handleSizeChange(value: number) {
   pagination.pageSize = value;
   handleRefresh();
@@ -825,7 +825,7 @@ function handleCurrentChange(value: number) {
   handleRefresh();
 }
 
-// 远程数据筛选
+// 遠端資料篩選
 let filterParams: IObject = {};
 function handleFilterChange(newFilters: any) {
   const filters: IObject = {};
@@ -843,18 +843,18 @@ function handleFilterChange(newFilters: any) {
   emit("filterChange", filterParams);
 }
 
-// 获取筛选条件
+// 獲取篩選條件
 function getFilterParams() {
   return filterParams;
 }
 
-// 获取分页数据
+// 獲取分頁資料
 let lastFormData = {};
 function fetchPageData(formData: IObject = {}, isRestart = false) {
   loading.value = true;
-  // 上一次搜索条件
+  // 上一次搜尋條件
   lastFormData = formData;
-  // 重置页码
+  // 重置頁碼
   if (isRestart) {
     pagination.currentPage = 1;
   }
@@ -885,7 +885,7 @@ function fetchPageData(formData: IObject = {}, isRestart = false) {
 }
 fetchPageData();
 
-// 导出Excel
+// 匯出Excel
 function exportPageData(formData: IObject = {}) {
   if (props.contentConfig.exportAction) {
     props.contentConfig.exportAction(formData).then((response) => {
@@ -900,7 +900,7 @@ function exportPageData(formData: IObject = {}) {
   }
 }
 
-// 浏览器保存文件
+// 瀏覽器儲存檔案
 function saveXlsx(fileData: any, fileName: string) {
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8";
@@ -919,7 +919,7 @@ function saveXlsx(fileData: any, fileName: string) {
   window.URL.revokeObjectURL(downloadUrl);
 }
 
-// 暴露的属性和方法
+// 暴露的屬性和方法
 defineExpose({ fetchPageData, exportPageData, getFilterParams, getSelectionData, handleRefresh });
 </script>
 

@@ -1,7 +1,7 @@
-<!-- 部门树 -->
+<!-- 部門樹 -->
 <template>
   <el-card shadow="never">
-    <el-input v-model="deptName" placeholder="部门名称" clearable>
+    <el-input v-model="deptName" placeholder="部門名稱" clearable>
       <template #prefix>
         <el-icon><Search /></el-icon>
       </template>
@@ -29,9 +29,9 @@ const props = defineProps({
   },
 });
 
-const deptList = ref<OptionType[]>(); // 部门列表
-const deptTreeRef = ref(); // 部门树
-const deptName = ref(); // 部门名称
+const deptList = ref<OptionType[]>(); // 部門列表
+const deptTreeRef = ref(); // 部門樹
+const deptName = ref(); // 部門名稱
 
 const emits = defineEmits(["node-click"]);
 
@@ -42,12 +42,12 @@ watchEffect(
     deptTreeRef.value.filter(deptName.value);
   },
   {
-    flush: "post", // watchEffect会在DOM挂载或者更新之前就会触发，此属性控制在DOM元素更新后运行
+    flush: "post", // watchEffect會在DOM掛載或者更新之前就會觸發，此屬性控制在DOM元素更新後執行
   }
 );
 
 /**
- * 部门筛选
+ * 部門篩選
  */
 function handleFilter(value: string, data: any) {
   if (!value) {
@@ -56,7 +56,7 @@ function handleFilter(value: string, data: any) {
   return data.label.indexOf(value) !== -1;
 }
 
-/** 部门树节点 Click */
+/** 部門樹節點 Click */
 function handleNodeClick(data: { [key: string]: any }) {
   deptId.value = data.value;
   emits("node-click");

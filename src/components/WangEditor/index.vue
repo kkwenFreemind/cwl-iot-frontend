@@ -1,23 +1,23 @@
 <!--
- * 基于 wangEditor-next 的富文本编辑器组件二次封装
- * 版权所有 © 2021-present 有来开源组织
+ * 基於 wangEditor-next 的富文字編輯器元件二次封裝
+ * 版權所有 © 2021-present 有來開源組織
  *
- * 开源协议：https://opensource.org/licenses/MIT
- * 项目地址：https://gitee.com/youlaiorg/vue3-element-admin
+ * 開源協議：https://opensource.org/licenses/MIT
+ * 專案地址：https://gitee.com/youlaiorg/vue3-element-admin
  *
- * 在使用时，请保留此注释，感谢您对开源的支持！
+ * 在使用時，請保留此註釋，感謝您對開源的支援！
 -->
 
 <template>
   <div style="z-index: 999; border: 1px solid var(--el-border-color)">
-    <!-- 工具栏 -->
+    <!-- 工具欄 -->
     <Toolbar
       :editor="editorRef"
       mode="simple"
       :default-config="toolbarConfig"
       style="border-bottom: 1px solid var(--el-border-color)"
     />
-    <!-- 编辑器 -->
+    <!-- 編輯器 -->
     <Editor
       v-model="modelValue"
       :style="{ height: height, overflowY: 'hidden' }"
@@ -33,10 +33,10 @@ import "@wangeditor-next/editor/dist/css/style.css";
 import { Toolbar, Editor } from "@wangeditor-next/editor-for-vue";
 import { IToolbarConfig, IEditorConfig } from "@wangeditor-next/editor";
 
-// 文件上传 API
+// 檔案上傳 API
 import FileAPI from "@/api/file-api";
 
-// 上传图片回调函数类型
+// 上傳圖片回撥函式型別
 type InsertFnType = (_url: string, _alt: string, _href: string) => void;
 
 defineProps({
@@ -45,27 +45,27 @@ defineProps({
     default: "500px",
   },
 });
-// 双向绑定
+// 雙向繫結
 const modelValue = defineModel("modelValue", {
   type: String,
   required: false,
 });
 
-// 编辑器实例，必须用 shallowRef，重要！
+// 編輯器例項，必須用 shallowRef，重要！
 const editorRef = shallowRef();
 
-// 工具栏配置
+// 工具欄配置
 const toolbarConfig = ref<Partial<IToolbarConfig>>({});
 
-// 编辑器配置
+// 編輯器配置
 const editorConfig = ref<Partial<IEditorConfig>>({
-  placeholder: "请输入内容...",
+  placeholder: "請輸入內容...",
   MENU_CONF: {
     uploadImage: {
       customUpload(file: File, insertFn: InsertFnType) {
-        // 上传图片
+        // 上傳圖片
         FileAPI.uploadFile(file).then((res) => {
-          // 插入图片
+          // 插入圖片
           insertFn(res.url, res.name, res.url);
         });
       },
@@ -73,12 +73,12 @@ const editorConfig = ref<Partial<IEditorConfig>>({
   },
 });
 
-// 记录 editor 实例，重要！
+// 記錄 editor 例項，重要！
 const handleCreated = (editor: any) => {
   editorRef.value = editor;
 };
 
-// 组件销毁时，也及时销毁编辑器，重要！
+// 元件銷燬時，也及時銷燬編輯器，重要！
 onBeforeUnmount(() => {
   const editor = editorRef.value;
   if (editor == null) return;

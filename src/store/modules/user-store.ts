@@ -10,13 +10,13 @@ import { useTagsViewStore } from "@/store";
 import { cleanupWebSocket } from "@/plugins/websocket";
 
 export const useUserStore = defineStore("user", () => {
-  // 用户信息
+  // 使用者資訊
   const userInfo = ref<UserInfo>({} as UserInfo);
-  // 记住我状态
+  // 記住我狀態
   const rememberMe = ref(AuthStorage.getRememberMe());
 
   /**
-   * 登录
+   * 登入
    *
    * @param {LoginFormData}
    * @returns
@@ -26,7 +26,7 @@ export const useUserStore = defineStore("user", () => {
       AuthAPI.login(LoginFormData)
         .then((data) => {
           const { accessToken, refreshToken } = data;
-          // 保存记住我状态和token
+          // 儲存記住我狀態和token
           rememberMe.value = LoginFormData.rememberMe;
           AuthStorage.setTokens(accessToken, refreshToken, rememberMe.value);
           resolve();
@@ -38,9 +38,9 @@ export const useUserStore = defineStore("user", () => {
   }
 
   /**
-   * 获取用户信息
+   * 獲取使用者資訊
    *
-   * @returns {UserInfo} 用户信息
+   * @returns {UserInfo} 使用者資訊
    */
   function getUserInfo() {
     return new Promise<UserInfo>((resolve, reject) => {
@@ -66,7 +66,7 @@ export const useUserStore = defineStore("user", () => {
     return new Promise<void>((resolve, reject) => {
       AuthAPI.logout()
         .then(() => {
-          // 重置所有系统状态
+          // 重置所有系統狀態
           resetAllState();
           resolve();
         })
@@ -77,22 +77,22 @@ export const useUserStore = defineStore("user", () => {
   }
 
   /**
-   * 重置所有系统状态
-   * 统一处理所有清理工作，包括用户凭证、路由、缓存等
+   * 重置所有系統狀態
+   * 統一處理所有清理工作，包括使用者憑證、路由、快取等
    */
   function resetAllState() {
-    // 1. 重置用户状态
+    // 1. 重置使用者狀態
     resetUserState();
 
-    // 2. 重置其他模块状态
+    // 2. 重置其他模組狀態
     // 重置路由
     usePermissionStoreHook().resetRouter();
-    // 清除字典缓存
+    // 清除字典快取
     useDictStoreHook().clearDictCache();
-    // 清除标签视图
+    // 清除標籤檢視
     useTagsViewStore().delAllViews();
 
-    // 3. 清理 WebSocket 连接
+    // 3. 清理 WebSocket 連線
     cleanupWebSocket();
     console.log("[UserStore] WebSocket connections cleaned up");
 
@@ -100,36 +100,36 @@ export const useUserStore = defineStore("user", () => {
   }
 
   /**
-   * 重置用户状态
-   * 仅处理用户模块内的状态
+   * 重置使用者狀態
+   * 僅處理使用者模組內的狀態
    */
   function resetUserState() {
-    // 清除用户凭证
+    // 清除使用者憑證
     AuthStorage.clearAuth();
-    // 重置用户信息
+    // 重置使用者資訊
     userInfo.value = {} as UserInfo;
   }
 
   /**
-   * 刷新 token
+   * 重新整理 token
    */
   function refreshToken() {
     const refreshToken = AuthStorage.getRefreshToken();
 
     if (!refreshToken) {
-      return Promise.reject(new Error("没有有效的刷新令牌"));
+      return Promise.reject(new Error("沒有有效的重新整理令牌"));
     }
 
     return new Promise<void>((resolve, reject) => {
       AuthAPI.refreshToken(refreshToken)
         .then((data) => {
           const { accessToken, refreshToken: newRefreshToken } = data;
-          // 更新令牌，保持当前记住我状态
+          // 更新令牌，保持當前記住我狀態
           AuthStorage.setTokens(accessToken, newRefreshToken, AuthStorage.getRememberMe());
           resolve();
         })
         .catch((error) => {
-          console.log(" refreshToken  刷新失败", error);
+          console.log(" refreshToken  重新整理失敗", error);
           reject(error);
         });
     });
@@ -149,7 +149,7 @@ export const useUserStore = defineStore("user", () => {
 });
 
 /**
- * 在组件外部使用UserStore的钩子函数
+ * 在元件外部使用UserStore的鉤子函式
  * @see https://pinia.vuejs.org/core-concepts/outside-component-usage.html
  */
 export function useUserStoreHook() {
