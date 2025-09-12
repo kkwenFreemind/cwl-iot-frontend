@@ -322,6 +322,94 @@ export default {
       permsRequired: "權限標識不能為空",
     },
   },
+  // 個人資料國際化
+  profile: {
+    title: "個人資料",
+    accountInfo: "賬號資訊",
+    securitySettings: "安全設定",
+    personalInfo: "個人資訊",
+    avatar: "頭像",
+    nickname: "暱稱",
+    username: "使用者名稱",
+    mobile: "手機號碼",
+    email: "郵箱",
+    department: "部門",
+    createTime: "建立時間",
+    gender: "性別",
+    role: "角色",
+
+    // 統計資訊
+    stats: {
+      todos: "待辦",
+      messages: "訊息",
+      notifications: "通知",
+    },
+
+    // 對話框標題
+    dialogs: {
+      accountData: "賬號資料",
+      changePassword: "修改密碼",
+      bindMobile: "繫結手機",
+      bindEmail: "繫結郵箱",
+    },
+
+    // 表單欄位
+    forms: {
+      oldPassword: "原密碼",
+      newPassword: "新密碼",
+      confirmPassword: "確認密碼",
+      verificationCode: "驗證碼",
+      sendCode: "傳送驗證碼",
+      resendAfter: "s後重新傳送",
+    },
+
+    // 按鈕文字
+    actions: {
+      edit: "編輯",
+      change: "更換",
+      bind: "繫結",
+      modify: "修改",
+      upload: "上傳",
+      cancel: "取消",
+      confirm: "確定",
+    },
+
+    // 狀態文字
+    status: {
+      bound: "已繫結",
+      unbound: "未繫結",
+    },
+
+    // 安全設定
+    security: {
+      accountPassword: "賬戶密碼",
+      passwordDesc: "定期修改密碼有助於保護賬戶安全",
+    },
+
+    // 驗證訊息
+    validation: {
+      oldPasswordRequired: "請輸入原密碼",
+      newPasswordRequired: "請輸入新密碼",
+      confirmPasswordRequired: "請再次輸入新密碼",
+      passwordMismatch: "兩次輸入的密碼不一致",
+      mobileRequired: "請輸入手機號",
+      mobileInvalid: "手機號格式不正確",
+      emailRequired: "請輸入郵箱",
+      emailInvalid: "郵箱格式不正確",
+      verificationCodeRequired: "請輸入驗證碼",
+    },
+
+    // 成功訊息
+    messages: {
+      avatarUploadSuccess: "頭像上傳成功",
+      avatarUploadFailed: "頭像上傳失敗",
+      profileUpdateSuccess: "賬號資料修改成功",
+      passwordChangeSuccess: "密碼修改成功",
+      mobileBindSuccess: "手機號繫結成功",
+      emailBindSuccess: "郵箱繫結成功",
+      codeSuccess: "驗證碼傳送成功",
+    },
+  },
   // 通用翻譯
   common: {
     confirm: "確定",

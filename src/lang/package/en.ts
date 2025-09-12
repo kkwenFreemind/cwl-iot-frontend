@@ -323,6 +323,94 @@ export default {
       permsRequired: "Permission is required",
     },
   },
+  // Profile Internationalization
+  profile: {
+    title: "User Profile",
+    accountInfo: "Account Information",
+    securitySettings: "Security Settings",
+    personalInfo: "Personal Information",
+    avatar: "Avatar",
+    nickname: "Nickname",
+    username: "Username",
+    mobile: "Mobile",
+    email: "Email",
+    department: "Department",
+    createTime: "Create Time",
+    gender: "Gender",
+    role: "Role",
+
+    // Statistics
+    stats: {
+      todos: "Todos",
+      messages: "Messages",
+      notifications: "Notifications",
+    },
+
+    // Dialog titles
+    dialogs: {
+      accountData: "Account Data",
+      changePassword: "Change Password",
+      bindMobile: "Bind Mobile",
+      bindEmail: "Bind Email",
+    },
+
+    // Form fields
+    forms: {
+      oldPassword: "Current Password",
+      newPassword: "New Password",
+      confirmPassword: "Confirm Password",
+      verificationCode: "Verification Code",
+      sendCode: "Send Code",
+      resendAfter: "s resend",
+    },
+
+    // Action buttons
+    actions: {
+      edit: "Edit",
+      change: "Change",
+      bind: "Bind",
+      modify: "Modify",
+      upload: "Upload",
+      cancel: "Cancel",
+      confirm: "Confirm",
+    },
+
+    // Status text
+    status: {
+      bound: "Bound",
+      unbound: "Unbound",
+    },
+
+    // Security settings
+    security: {
+      accountPassword: "Account Password",
+      passwordDesc: "Regular password changes help protect account security",
+    },
+
+    // Validation messages
+    validation: {
+      oldPasswordRequired: "Please enter current password",
+      newPasswordRequired: "Please enter new password",
+      confirmPasswordRequired: "Please confirm new password",
+      passwordMismatch: "Password confirmation does not match",
+      mobileRequired: "Please enter mobile number",
+      mobileInvalid: "Invalid mobile number format",
+      emailRequired: "Please enter email",
+      emailInvalid: "Invalid email format",
+      verificationCodeRequired: "Please enter verification code",
+    },
+
+    // Success messages
+    messages: {
+      avatarUploadSuccess: "Avatar uploaded successfully",
+      avatarUploadFailed: "Avatar upload failed",
+      profileUpdateSuccess: "Profile updated successfully",
+      passwordChangeSuccess: "Password changed successfully",
+      mobileBindSuccess: "Mobile bound successfully",
+      emailBindSuccess: "Email bound successfully",
+      codeSuccess: "Verification code sent successfully",
+    },
+  },
   // Common Translations
   common: {
     confirm: "Confirm",

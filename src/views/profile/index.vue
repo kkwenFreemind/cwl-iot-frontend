@@ -35,15 +35,15 @@
           <div class="user-stats">
             <div class="stat-item">
               <div class="stat-value">0</div>
-              <div class="stat-label">待辦</div>
+              <div class="stat-label">{{ t("profile.stats.todos") }}</div>
             </div>
             <div class="stat-item">
               <div class="stat-value">0</div>
-              <div class="stat-label">訊息</div>
+              <div class="stat-label">{{ t("profile.stats.messages") }}</div>
             </div>
             <div class="stat-item">
               <div class="stat-value">0</div>
-              <div class="stat-label">通知</div>
+              <div class="stat-label">{{ t("profile.stats.notifications") }}</div>
             </div>
           </div>
         </el-card>
@@ -54,11 +54,11 @@
         <el-card class="info-card">
           <template #header>
             <div class="card-header">
-              <span>賬號資訊</span>
+              <span>{{ t("profile.accountInfo") }}</span>
             </div>
           </template>
           <el-descriptions :column="1" border>
-            <el-descriptions-item label="使用者名稱">
+            <el-descriptions-item :label="t('profile.username')">
               {{ userProfile.username }}
               <el-icon v-if="userProfile.gender === 1" class="gender-icon male">
                 <Male />
@@ -67,15 +67,15 @@
                 <Female />
               </el-icon>
             </el-descriptions-item>
-            <el-descriptions-item label="手機號碼">
-              {{ userProfile.mobile || "未繫結" }}
+            <el-descriptions-item :label="t('profile.mobile')">
+              {{ userProfile.mobile || t("profile.status.unbound") }}
               <el-button
                 v-if="userProfile.mobile"
                 type="primary"
                 link
                 @click="() => handleOpenDialog(DialogType.MOBILE)"
               >
-                更換
+                {{ t("profile.actions.change") }}
               </el-button>
               <el-button
                 v-else
@@ -83,18 +83,18 @@
                 link
                 @click="() => handleOpenDialog(DialogType.MOBILE)"
               >
-                繫結
+                {{ t("profile.actions.bind") }}
               </el-button>
             </el-descriptions-item>
-            <el-descriptions-item label="郵箱">
-              {{ userProfile.email || "未繫結" }}
+            <el-descriptions-item :label="t('profile.email')">
+              {{ userProfile.email || t("profile.status.unbound") }}
               <el-button
                 v-if="userProfile.email"
                 type="primary"
                 link
                 @click="() => handleOpenDialog(DialogType.EMAIL)"
               >
-                更換
+                {{ t("profile.actions.change") }}
               </el-button>
               <el-button
                 v-else
@@ -102,13 +102,13 @@
                 link
                 @click="() => handleOpenDialog(DialogType.EMAIL)"
               >
-                繫結
+                {{ t("profile.actions.bind") }}
               </el-button>
             </el-descriptions-item>
-            <el-descriptions-item label="部門">
+            <el-descriptions-item :label="t('profile.department')">
               {{ userProfile.deptName }}
             </el-descriptions-item>
-            <el-descriptions-item label="建立時間">
+            <el-descriptions-item :label="t('profile.createTime')">
               {{ userProfile.createTime }}
             </el-descriptions-item>
           </el-descriptions>
@@ -117,16 +117,16 @@
         <el-card class="security-card">
           <template #header>
             <div class="card-header">
-              <span>安全設定</span>
+              <span>{{ t("profile.securitySettings") }}</span>
             </div>
           </template>
           <div class="security-item">
             <div class="security-info">
-              <div class="security-title">賬戶密碼</div>
-              <div class="security-desc">定期修改密碼有助於保護賬戶安全</div>
+              <div class="security-title">{{ t("profile.security.accountPassword") }}</div>
+              <div class="security-desc">{{ t("profile.security.passwordDesc") }}</div>
             </div>
             <el-button type="primary" link @click="() => handleOpenDialog(DialogType.PASSWORD)">
-              修改
+              {{ t("profile.actions.modify") }}
             </el-button>
           </div>
         </el-card>
@@ -142,10 +142,10 @@
         :model="userProfileForm"
         :label-width="100"
       >
-        <el-form-item label="暱稱">
+        <el-form-item :label="t('profile.nickname')">
           <el-input v-model="userProfileForm.nickname" />
         </el-form-item>
-        <el-form-item label="性別">
+        <el-form-item :label="t('profile.gender')">
           <Dict v-model="userProfileForm.gender" code="gender" />
         </el-form-item>
       </el-form>
@@ -158,13 +158,13 @@
         :rules="passwordChangeRules"
         :label-width="100"
       >
-        <el-form-item label="原密碼" prop="oldPassword">
+        <el-form-item :label="t('profile.forms.oldPassword')" prop="oldPassword">
           <el-input v-model="passwordChangeForm.oldPassword" type="password" show-password />
         </el-form-item>
-        <el-form-item label="新密碼" prop="newPassword">
+        <el-form-item :label="t('profile.forms.newPassword')" prop="newPassword">
           <el-input v-model="passwordChangeForm.newPassword" type="password" show-password />
         </el-form-item>
-        <el-form-item label="確認密碼" prop="confirmPassword">
+        <el-form-item :label="t('profile.forms.confirmPassword')" prop="confirmPassword">
           <el-input v-model="passwordChangeForm.confirmPassword" type="password" show-password />
         </el-form-item>
       </el-form>
@@ -177,14 +177,18 @@
         :rules="mobileBindingRules"
         :label-width="100"
       >
-        <el-form-item label="手機號碼" prop="mobile">
+        <el-form-item :label="t('profile.mobile')" prop="mobile">
           <el-input v-model="mobileUpdateForm.mobile" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="驗證碼" prop="code">
+        <el-form-item :label="t('profile.forms.verificationCode')" prop="code">
           <el-input v-model="mobileUpdateForm.code" style="width: 250px">
             <template #append>
               <el-button :disabled="mobileCountdown > 0" @click="handleSendMobileCode">
-                {{ mobileCountdown > 0 ? `${mobileCountdown}s後重新傳送` : "傳送驗證碼" }}
+                {{
+                  mobileCountdown > 0
+                    ? `${mobileCountdown}${t("profile.forms.resendAfter")}`
+                    : t("profile.forms.sendCode")
+                }}
               </el-button>
             </template>
           </el-input>
@@ -199,14 +203,18 @@
         :rules="emailBindingRules"
         :label-width="100"
       >
-        <el-form-item label="郵箱" prop="email">
+        <el-form-item :label="t('profile.email')" prop="email">
           <el-input v-model="emailUpdateForm.email" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="驗證碼" prop="code">
+        <el-form-item :label="t('profile.forms.verificationCode')" prop="code">
           <el-input v-model="emailUpdateForm.code" style="width: 250px">
             <template #append>
               <el-button :disabled="emailCountdown > 0" @click="handleSendEmailCode">
-                {{ emailCountdown > 0 ? `${emailCountdown}s後重新傳送` : "傳送驗證碼" }}
+                {{
+                  emailCountdown > 0
+                    ? `${emailCountdown}${t("profile.forms.resendAfter")}`
+                    : t("profile.forms.sendCode")
+                }}
               </el-button>
             </template>
           </el-input>
@@ -215,8 +223,10 @@
 
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="handleCancel">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">確定</el-button>
+          <el-button @click="handleCancel">{{ t("profile.actions.cancel") }}</el-button>
+          <el-button type="primary" @click="handleSubmit">
+            {{ t("profile.actions.confirm") }}
+          </el-button>
         </span>
       </template>
     </el-dialog>
@@ -237,6 +247,7 @@ import { useUserStoreHook } from "@/store";
 
 import { Camera } from "@element-plus/icons-vue";
 
+const { t } = useI18n();
 const userStore = useUserStoreHook();
 
 const userProfile = ref<UserProfileVO>({});
@@ -270,37 +281,47 @@ const emailCountdown = ref(0);
 const emailTimer = ref();
 
 // 修改密碼校驗規則
-const passwordChangeRules = {
-  oldPassword: [{ required: true, message: "請輸入原密碼", trigger: "blur" }],
-  newPassword: [{ required: true, message: "請輸入新密碼", trigger: "blur" }],
-  confirmPassword: [{ required: true, message: "請再次輸入新密碼", trigger: "blur" }],
-};
+const passwordChangeRules = computed(() => ({
+  oldPassword: [
+    { required: true, message: t("profile.validation.oldPasswordRequired"), trigger: "blur" },
+  ],
+  newPassword: [
+    { required: true, message: t("profile.validation.newPasswordRequired"), trigger: "blur" },
+  ],
+  confirmPassword: [
+    { required: true, message: t("profile.validation.confirmPasswordRequired"), trigger: "blur" },
+  ],
+}));
 
 // 手機號校驗規則
-const mobileBindingRules = {
+const mobileBindingRules = computed(() => ({
   mobile: [
-    { required: true, message: "請輸入手機號", trigger: "blur" },
+    { required: true, message: t("profile.validation.mobileRequired"), trigger: "blur" },
     {
       pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-      message: "請輸入正確的手機號碼",
+      message: t("profile.validation.mobileInvalid"),
       trigger: "blur",
     },
   ],
-  code: [{ required: true, message: "請輸入驗證碼", trigger: "blur" }],
-};
+  code: [
+    { required: true, message: t("profile.validation.verificationCodeRequired"), trigger: "blur" },
+  ],
+}));
 
 // 郵箱校驗規則
-const emailBindingRules = {
+const emailBindingRules = computed(() => ({
   email: [
-    { required: true, message: "請輸入郵箱", trigger: "blur" },
+    { required: true, message: t("profile.validation.emailRequired"), trigger: "blur" },
     {
       pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/,
-      message: "請輸入正確的郵箱地址",
+      message: t("profile.validation.emailInvalid"),
       trigger: "blur",
     },
   ],
-  code: [{ required: true, message: "請輸入驗證碼", trigger: "blur" }],
-};
+  code: [
+    { required: true, message: t("profile.validation.verificationCodeRequired"), trigger: "blur" },
+  ],
+}));
 
 /**
  * 開啟彈窗
@@ -311,20 +332,20 @@ const handleOpenDialog = (type: DialogType) => {
   dialog.visible = true;
   switch (type) {
     case DialogType.ACCOUNT:
-      dialog.title = "賬號資料";
+      dialog.title = t("profile.dialogs.accountData");
       // 初始化表單資料
       userProfileForm.id = userProfile.value.id;
       userProfileForm.nickname = userProfile.value.nickname;
       userProfileForm.gender = userProfile.value.gender;
       break;
     case DialogType.PASSWORD:
-      dialog.title = "修改密碼";
+      dialog.title = t("profile.dialogs.changePassword");
       break;
     case DialogType.MOBILE:
-      dialog.title = "繫結手機";
+      dialog.title = t("profile.dialogs.bindMobile");
       break;
     case DialogType.EMAIL:
-      dialog.title = "繫結郵箱";
+      dialog.title = t("profile.dialogs.bindEmail");
       break;
   }
 };
@@ -334,18 +355,18 @@ const handleOpenDialog = (type: DialogType) => {
  */
 function handleSendMobileCode() {
   if (!mobileUpdateForm.mobile) {
-    ElMessage.error("請輸入手機號");
+    ElMessage.error(t("profile.validation.mobileRequired"));
     return;
   }
   // 驗證手機號格式
   const reg = /^1[3-9]\d{9}$/;
   if (!reg.test(mobileUpdateForm.mobile)) {
-    ElMessage.error("手機號格式不正確");
+    ElMessage.error(t("profile.validation.mobileInvalid"));
     return;
   }
   // 傳送簡訊驗證碼
   UserAPI.sendMobileCode(mobileUpdateForm.mobile).then(() => {
-    ElMessage.success("驗證碼傳送成功");
+    ElMessage.success(t("profile.messages.codeSuccess"));
 
     // 倒計時 60s 重新傳送
     mobileCountdown.value = 60;
@@ -364,19 +385,19 @@ function handleSendMobileCode() {
  */
 function handleSendEmailCode() {
   if (!emailUpdateForm.email) {
-    ElMessage.error("請輸入郵箱");
+    ElMessage.error(t("profile.validation.emailRequired"));
     return;
   }
   // 驗證郵箱格式
   const reg = /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
   if (!reg.test(emailUpdateForm.email)) {
-    ElMessage.error("郵箱格式不正確");
+    ElMessage.error(t("profile.validation.emailInvalid"));
     return;
   }
 
   // 傳送郵箱驗證碼
   UserAPI.sendEmailCode(emailUpdateForm.email).then(() => {
-    ElMessage.success("驗證碼傳送成功");
+    ElMessage.success(t("profile.messages.codeSuccess"));
     // 倒計時 60s 重新傳送
     emailCountdown.value = 60;
     emailTimer.value = setInterval(() => {
@@ -395,28 +416,28 @@ function handleSendEmailCode() {
 const handleSubmit = async () => {
   if (dialog.type === DialogType.ACCOUNT) {
     UserAPI.updateProfile(userProfileForm).then(() => {
-      ElMessage.success("賬號資料修改成功");
+      ElMessage.success(t("profile.messages.profileUpdateSuccess"));
       dialog.visible = false;
       loadUserProfile();
     });
   } else if (dialog.type === DialogType.PASSWORD) {
     if (passwordChangeForm.newPassword !== passwordChangeForm.confirmPassword) {
-      ElMessage.error("兩次輸入的密碼不一致");
+      ElMessage.error(t("profile.validation.passwordMismatch"));
       return;
     }
     UserAPI.changePassword(passwordChangeForm).then(() => {
-      ElMessage.success("密碼修改成功");
+      ElMessage.success(t("profile.messages.passwordChangeSuccess"));
       dialog.visible = false;
     });
   } else if (dialog.type === DialogType.MOBILE) {
     UserAPI.bindOrChangeMobile(mobileUpdateForm).then(() => {
-      ElMessage.success("手機號繫結成功");
+      ElMessage.success(t("profile.messages.mobileBindSuccess"));
       dialog.visible = false;
       loadUserProfile();
     });
   } else if (dialog.type === DialogType.EMAIL) {
     UserAPI.bindOrChangeEmail(emailUpdateForm).then(() => {
-      ElMessage.success("郵箱繫結成功");
+      ElMessage.success(t("profile.messages.emailBindSuccess"));
       dialog.visible = false;
       loadUserProfile();
     });
@@ -458,9 +479,10 @@ const handleFileChange = async (event: Event) => {
       });
       // 更新使用者頭像
       userStore.userInfo.avatar = data.url;
+      ElMessage.success(t("profile.messages.avatarUploadSuccess"));
     } catch (error) {
       console.error("頭像上傳失敗：" + error);
-      ElMessage.error("頭像上傳失敗");
+      ElMessage.error(t("profile.messages.avatarUploadFailed"));
     }
   }
 };
