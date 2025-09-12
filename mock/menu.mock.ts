@@ -105,7 +105,7 @@ export default defineMock([
               meta: {
                 title: "字典项",
                 icon: "",
-                hidden: true,
+                hidden: false,
                 keepAlive: true,
                 alwaysShow: false,
                 params: null,

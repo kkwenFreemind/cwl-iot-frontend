@@ -22,20 +22,12 @@ export const usePermissionStore = defineStore("permission", () => {
    */
   async function generateRoutes(): Promise<RouteRecordRaw[]> {
     try {
-      console.log("🛠️ [Permission Store] Fetching routes from API...");
       const data = await MenuAPI.getRoutes(); // 獲取當前登入人擁有的選單路由
-      console.log(`✅ [Permission Store] Received ${data.length} routes from API`);
-
-      console.log("🔄 [Permission Store] Parsing dynamic routes...");
       const dynamicRoutes = parseDynamicRoutes(data);
-      console.log(`✅ [Permission Store] Parsed ${dynamicRoutes.length} dynamic routes`);
 
       routes.value = [...constantRoutes, ...dynamicRoutes];
-      console.log(`📋 [Permission Store] Total routes after merge: ${routes.value.length}`);
-
       setAllCacheRoutes(routes.value);
       isDynamicRoutesGenerated.value = true;
-      console.log("✅ [Permission Store] Dynamic routes generation completed");
 
       return dynamicRoutes;
     } catch (error) {
