@@ -65,7 +65,7 @@ const rules = computed(() => ({
   @media (max-width: 768px) {
     width: 100px !important;
   }
-  
+
   @media (min-width: 769px) and (max-width: 1024px) {
     width: 120px !important;
   }
