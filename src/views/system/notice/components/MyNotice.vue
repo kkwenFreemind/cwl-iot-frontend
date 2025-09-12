@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
-    <!-- 搜尋區域 -->
+    <!-- Search area -->
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item label="通知標題" prop="title">
+        <el-form-item :label="t('notice.search.title')" prop="title">
           <el-input
             v-model="queryParams.title"
-            placeholder="關鍵字"
+            :placeholder="t('notice.search.titlePlaceholder')"
             clearable
             @keyup.enter="handleQuery()"
           />
@@ -17,13 +17,13 @@
             <template #icon>
               <Search />
             </template>
-            搜尋
+            {{ t("notice.actions.search") }}
           </el-button>
           <el-button @click="handleResetQuery()">
             <template #icon>
               <Refresh />
             </template>
-            重置
+            {{ t("notice.actions.reset") }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -37,38 +37,38 @@
         highlight-current-row
         class="data-table__content"
       >
-        <el-table-column type="index" label="序號" width="60" />
-        <el-table-column label="通知標題" prop="title" min-width="200" />
-        <el-table-column align="center" label="通知型別" width="150">
+        <el-table-column type="index" :label="t('common.serialNumber')" width="60" />
+        <el-table-column :label="t('notice.table.title')" prop="title" min-width="250" />
+        <el-table-column align="center" :label="t('notice.table.type')" width="120">
           <template #default="scope">
             <DictLabel v-model="scope.row.type" code="notice_type" />
           </template>
         </el-table-column>
-        <el-table-column align="center" label="釋出人" prop="publisherName" width="100" />
-        <el-table-column align="center" label="通知等級" width="100">
-          <template #default="scope">
-            <DictLabel v-model="scope.row.level" code="notice_level" />
-          </template>
-        </el-table-column>
+        <el-table-column
+          align="center"
+          :label="t('notice.table.publishUser')"
+          prop="publisherName"
+          width="100"
+        />
         <el-table-column
           key="releaseTime"
           align="center"
-          label="釋出時間"
+          :label="t('notice.table.publishTime')"
           prop="publishTime"
-          width="150"
+          width="160"
         />
-
-        <el-table-column align="center" label="釋出人" prop="publisherName" width="150" />
-        <el-table-column align="center" label="狀態" width="100">
+        <el-table-column align="center" :label="t('common.status')" width="80">
           <template #default="scope">
-            <el-tag v-if="scope.row.isRead == 1" type="success">已讀</el-tag>
-            <el-tag v-else type="info">未讀</el-tag>
+            <el-tag v-if="scope.row.isRead == 1" type="success" size="small">
+              {{ t("notice.status.read") }}
+            </el-tag>
+            <el-tag v-else type="info" size="small">{{ t("notice.status.unread") }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" fixed="right" label="操作" width="80">
+        <el-table-column align="center" fixed="right" :label="t('common.operation')" width="70">
           <template #default="scope">
             <el-button type="primary" size="small" link @click="handleReadNotice(scope.row.id)">
-              檢視
+              {{ t("notice.actions.detail") }}
             </el-button>
           </template>
         </el-table-column>
@@ -85,7 +85,7 @@
 
     <el-dialog
       v-model="noticeDialogVisible"
-      :title="noticeDetail?.title ?? '通知詳情'"
+      :title="noticeDetail?.title ?? t('notice.detail.title')"
       width="800px"
       custom-class="notice-detail"
     >
@@ -110,12 +110,22 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @fileoverview My Notice Component
+ * @description User interface for viewing and reading personal notifications
+ * @author System Administrator
+ * @created 2024-01-15
+ * @updated 2024-01-15
+ */
+
 defineOptions({
   name: "MyNotice",
   inheritAttrs: false,
 });
 
 import NoticeAPI, { NoticePageVO, NoticePageQuery, NoticeDetailVO } from "@/api/system/notice-api";
+
+const { t } = useI18n();
 
 const queryFormRef = ref();
 const pageData = ref<NoticePageVO[]>([]);
@@ -131,7 +141,7 @@ const queryParams = reactive<NoticePageQuery>({
 const noticeDialogVisible = ref(false);
 const noticeDetail = ref<NoticeDetailVO | null>(null);
 
-// 查詢通知公告
+// Get user's notice list
 function handleQuery() {
   loading.value = true;
   NoticeAPI.getMyNoticePage(queryParams)
@@ -144,14 +154,14 @@ function handleQuery() {
     });
 }
 
-// 重置通知公告查詢
+// Reset query form
 function handleResetQuery() {
   queryFormRef.value!.resetFields();
   queryParams.pageNum = 1;
   handleQuery();
 }
 
-// 閱讀通知公告
+// Read notice detail
 function handleReadNotice(id: string) {
   NoticeAPI.getDetail(id).then((data) => {
     noticeDialogVisible.value = true;

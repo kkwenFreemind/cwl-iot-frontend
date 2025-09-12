@@ -1,3 +1,21 @@
+<!-- 
+  @author youlaitech
+  @since 2024-08-27
+ 
+  @author Chang Xiu-Wen, AI-Enhanced
+  @since 2025-09-12
+
+  Notice Management Component
+  
+  This component provides comprehensive notice management functionality including:
+  - Notice creation, editing, and deletion with rich text editor support
+  - Real-time notice publishing and revocation capabilities
+  - Advanced search and filtering by title and publish status
+  - Target audience management (All users or specific users)
+  - Notice level and type categorization with dictionary support
+  - Detailed notice viewing with formatted content display
+  - Multilingual support (Traditional Chinese / English) with dynamic language switching
+-->
 <template>
   <div class="app-container">
     <!-- 搜尋區域 -->
@@ -59,54 +77,91 @@
         class="data-table__content"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column type="index" label="序號" width="60" />
-        <el-table-column label="通知標題" prop="title" min-width="200" />
-        <el-table-column align="center" label="通知型別" width="150">
+        <el-table-column type="selection" width="50" align="center" />
+        <el-table-column type="index" :label="$t('notice.table.index')" width="60" />
+        <el-table-column
+          :label="$t('notice.table.noticeTitle')"
+          prop="title"
+          min-width="300"
+          show-overflow-tooltip
+        />
+        <el-table-column align="center" :label="$t('notice.table.noticeType')" width="120">
           <template #default="scope">
             <DictLabel v-model="scope.row.type" :code="'notice_type'" />
           </template>
         </el-table-column>
-        <el-table-column align="center" label="釋出人" prop="publisherName" width="150" />
-        <el-table-column align="center" label="通知等級" width="100">
+        <el-table-column
+          align="center"
+          :label="$t('notice.table.publisher')"
+          prop="publisherName"
+          width="100"
+        />
+        <el-table-column align="center" :label="$t('notice.table.noticeLevel')" width="90">
           <template #default="scope">
             <DictLabel v-model="scope.row.level" code="notice_level" />
           </template>
         </el-table-column>
-        <el-table-column align="center" label="通告目標型別" prop="targetType" min-width="100">
+        <el-table-column
+          align="center"
+          :label="$t('notice.table.targetType')"
+          prop="targetType"
+          width="100"
+        >
           <template #default="scope">
-            <el-tag v-if="scope.row.targetType == 1" type="warning">全體</el-tag>
-            <el-tag v-if="scope.row.targetType == 2" type="success">指定</el-tag>
+            <el-tag v-if="scope.row.targetType == 1" type="warning">
+              {{ $t("notice.table.targetTypeAll") }}
+            </el-tag>
+            <el-tag v-if="scope.row.targetType == 2" type="success">
+              {{ $t("notice.table.targetTypeSpecific") }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="釋出狀態" min-width="100">
+        <el-table-column align="center" :label="$t('notice.table.publishStatus')" width="90">
           <template #default="scope">
-            <el-tag v-if="scope.row.publishStatus == 0" type="info">未釋出</el-tag>
-            <el-tag v-if="scope.row.publishStatus == 1" type="success">已釋出</el-tag>
-            <el-tag v-if="scope.row.publishStatus == -1" type="warning">已撤回</el-tag>
+            <el-tag v-if="scope.row.publishStatus == 0" type="info" size="small">
+              {{ $t("notice.publishStatusUnpublished") }}
+            </el-tag>
+            <el-tag v-if="scope.row.publishStatus == 1" type="success" size="small">
+              {{ $t("notice.publishStatusPublished") }}
+            </el-tag>
+            <el-tag v-if="scope.row.publishStatus == -1" type="warning" size="small">
+              {{ $t("notice.publishStatusWithdrawn") }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作時間" width="250">
+        <el-table-column :label="$t('notice.table.operationTime')" width="300">
           <template #default="scope">
-            <div class="flex-x-start">
-              <span>建立時間：</span>
-              <span>{{ scope.row.createTime || "-" }}</span>
-            </div>
-
-            <div v-if="scope.row.publishStatus === 1" class="flex-x-start">
-              <span>釋出時間：</span>
-              <span>{{ scope.row.publishTime || "-" }}</span>
-            </div>
-            <div v-else-if="scope.row.publishStatus === -1" class="flex-x-start">
-              <span>撤回時間：</span>
-              <span>{{ scope.row.revokeTime || "-" }}</span>
+            <div class="text-xs space-y-1">
+              <div class="flex items-center flex-nowrap">
+                <span class="text-gray-500 w-20 flex-shrink-0">
+                  {{ $t("notice.table.createLabel") }}：
+                </span>
+                <span class="whitespace-nowrap">{{ scope.row.createTime || "-" }}</span>
+              </div>
+              <div v-if="scope.row.publishStatus === 1" class="flex items-center flex-nowrap">
+                <span class="text-gray-500 w-20 flex-shrink-0">
+                  {{ $t("notice.table.publishLabel") }}：
+                </span>
+                <span class="whitespace-nowrap">{{ scope.row.publishTime || "-" }}</span>
+              </div>
+              <div v-else-if="scope.row.publishStatus === -1" class="flex items-center flex-nowrap">
+                <span class="text-gray-500 w-20 flex-shrink-0">
+                  {{ $t("notice.table.revokeLabel") }}：
+                </span>
+                <span class="whitespace-nowrap">{{ scope.row.revokeTime || "-" }}</span>
+              </div>
             </div>
           </template>
         </el-table-column>
-        <el-table-column align="center" fixed="right" label="操作" width="150">
+        <el-table-column
+          align="center"
+          fixed="right"
+          :label="$t('notice.table.operation')"
+          width="180"
+        >
           <template #default="scope">
             <el-button type="primary" size="small" link @click="openDetailDialog(scope.row.id)">
-              檢視
+              {{ $t("notice.table.view") }}
             </el-button>
             <el-button
               v-if="scope.row.publishStatus != 1"
@@ -115,7 +170,7 @@
               link
               @click="handlePublish(scope.row.id)"
             >
-              釋出
+              {{ $t("notice.table.publish") }}
             </el-button>
             <el-button
               v-if="scope.row.publishStatus == 1"
@@ -124,7 +179,7 @@
               link
               @click="handleRevoke(scope.row.id)"
             >
-              撤回
+              {{ $t("notice.table.revoke") }}
             </el-button>
             <el-button
               v-if="scope.row.publishStatus != 1"
@@ -133,7 +188,7 @@
               link
               @click="handleOpenDialog(scope.row.id)"
             >
-              編輯
+              {{ $t("notice.table.edit") }}
             </el-button>
             <el-button
               v-if="scope.row.publishStatus != 1"
@@ -142,7 +197,7 @@
               link
               @click="handleDelete(scope.row.id)"
             >
-              刪除
+              {{ $t("notice.table.delete") }}
             </el-button>
           </template>
         </el-table-column>
@@ -157,7 +212,7 @@
       />
     </el-card>
 
-    <!-- 通知公告表單彈窗 -->
+    <!-- Notice Form Dialog -->
     <el-dialog
       v-model="dialog.visible"
       :title="dialog.title"
@@ -166,28 +221,36 @@
       @close="handleCloseDialog"
     >
       <el-form ref="dataFormRef" :model="formData" :rules="rules" label-width="100px">
-        <el-form-item label="通知標題" prop="title">
-          <el-input v-model="formData.title" placeholder="通知標題" clearable />
+        <el-form-item :label="$t('notice.form.noticeTitle')" prop="title">
+          <el-input
+            v-model="formData.title"
+            :placeholder="$t('notice.form.titlePlaceholder')"
+            clearable
+          />
         </el-form-item>
 
-        <el-form-item label="通知型別" prop="type">
+        <el-form-item :label="$t('notice.form.type')" prop="type">
           <Dict v-model="formData.type" code="notice_type" />
         </el-form-item>
-        <el-form-item label="通知等級" prop="level">
+        <el-form-item :label="$t('notice.form.level')" prop="level">
           <Dict v-model="formData.level" code="notice_level" />
         </el-form-item>
-        <el-form-item label="目標型別" prop="targetType">
+        <el-form-item :label="$t('notice.form.targetType')" prop="targetType">
           <el-radio-group v-model="formData.targetType">
-            <el-radio :value="1">全體</el-radio>
-            <el-radio :value="2">指定</el-radio>
+            <el-radio :value="1">{{ $t("notice.form.targetTypeAll") }}</el-radio>
+            <el-radio :value="2">{{ $t("notice.form.targetTypeSpecific") }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="formData.targetType == 2" label="指定使用者" prop="targetUserIds">
+        <el-form-item
+          v-if="formData.targetType == 2"
+          :label="$t('notice.form.targetUsers')"
+          prop="targetUserIds"
+        >
           <el-select
             v-model="formData.targetUserIds"
             multiple
             search
-            placeholder="請選擇指定使用者"
+            :placeholder="$t('notice.form.targetUsersPlaceholder')"
           >
             <el-option
               v-for="item in userOptions"
@@ -197,18 +260,20 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="通知內容" prop="content">
+        <el-form-item :label="$t('notice.form.content')" prop="content">
           <WangEditor v-model="formData.content" />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="handleSubmit()">確定</el-button>
-          <el-button @click="handleCloseDialog()">取消</el-button>
+          <el-button type="primary" @click="handleSubmit()">
+            {{ $t("notice.form.confirm") }}
+          </el-button>
+          <el-button @click="handleCloseDialog()">{{ $t("notice.form.cancel") }}</el-button>
         </div>
       </template>
     </el-dialog>
-    <!-- 通知公告詳情 -->
+    <!-- Notice Details Dialog -->
     <el-dialog
       v-model="detailDialog.visible"
       :show-close="false"
@@ -218,7 +283,7 @@
     >
       <template #header>
         <div class="flex-x-between">
-          <span>通知公告詳情</span>
+          <span>{{ $t("notice.detail.title") }}</span>
           <div class="dialog-toolbar">
             <el-button circle @click="closeDetailDialog">
               <template #icon>
@@ -229,21 +294,27 @@
         </div>
       </template>
       <el-descriptions :column="1">
-        <el-descriptions-item label="標題：">
+        <el-descriptions-item :label="$t('notice.detail.noticeTitle')">
           {{ currentNotice.title }}
         </el-descriptions-item>
-        <el-descriptions-item label="釋出狀態：">
-          <el-tag v-if="currentNotice.publishStatus == 0" type="info">未釋出</el-tag>
-          <el-tag v-else-if="currentNotice.publishStatus == 1" type="success">已釋出</el-tag>
-          <el-tag v-else-if="currentNotice.publishStatus == -1" type="warning">已撤回</el-tag>
+        <el-descriptions-item :label="$t('notice.detail.publishStatus')">
+          <el-tag v-if="currentNotice.publishStatus == 0" type="info">
+            {{ $t("notice.publishStatusUnpublished") }}
+          </el-tag>
+          <el-tag v-else-if="currentNotice.publishStatus == 1" type="success">
+            {{ $t("notice.publishStatusPublished") }}
+          </el-tag>
+          <el-tag v-else-if="currentNotice.publishStatus == -1" type="warning">
+            {{ $t("notice.publishStatusWithdrawn") }}
+          </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="釋出人：">
+        <el-descriptions-item :label="$t('notice.detail.publisher')">
           {{ currentNotice.publisherName }}
         </el-descriptions-item>
-        <el-descriptions-item label="釋出時間：">
+        <el-descriptions-item :label="$t('notice.detail.publishTime')">
           {{ currentNotice.publishTime }}
         </el-descriptions-item>
-        <el-descriptions-item label="公告內容：">
+        <el-descriptions-item :label="$t('notice.detail.content')">
           <div class="notice-content" v-html="currentNotice.content" />
         </el-descriptions-item>
       </el-descriptions>
@@ -252,6 +323,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @fileoverview Notice Management Component
+ * @description Provides comprehensive notice management functionality with rich text editing and publishing capabilities
+ * @author System Administrator
+ * @created 2024-01-15
+ * @updated 2024-01-15
+ */
+
 defineOptions({
   name: "Notice",
   inheritAttrs: false,
@@ -264,6 +343,8 @@ import NoticeAPI, {
   NoticeDetailVO,
 } from "@/api/system/notice-api";
 import UserAPI from "@/api/system/user-api";
+
+const { t } = useI18n();
 
 const queryFormRef = ref();
 const dataFormRef = ref();
@@ -278,47 +359,47 @@ const queryParams = reactive<NoticePageQuery>({
 });
 
 const userOptions = ref<OptionType[]>([]);
-// 通知公告表格資料
+// Notice management table data
 const pageData = ref<NoticePageVO[]>([]);
 
-// 彈窗
+// Dialog state
 const dialog = reactive({
   title: "",
   visible: false,
 });
 
-// 通知公告表單資料
+// Notice form data
 const formData = reactive<NoticeForm>({
-  level: "L", // 預設優先順序為低
-  targetType: 1, // 預設目標型別為全體
+  level: "L", // Default priority is low
+  targetType: 1, // Default target type is all
 });
 
-// 通知公告表單校驗規則
-const rules = reactive({
-  title: [{ required: true, message: "請輸入通知標題", trigger: "blur" }],
+// Notice form validation rules
+const rules = computed(() => ({
+  title: [{ required: true, message: t("notice.validation.titleRequired"), trigger: "blur" }],
   content: [
     {
       required: true,
-      message: "請輸入通知內容",
+      message: t("notice.validation.contentRequired"),
       trigger: "blur",
       validator: (rule: any, value: string, callback: any) => {
         if (!value.replace(/<[^>]+>/g, "").trim()) {
-          callback(new Error("請輸入通知內容"));
+          callback(new Error(t("notice.validation.contentRequired")));
         } else {
           callback();
         }
       },
     },
   ],
-  type: [{ required: true, message: "請選擇通知型別", trigger: "change" }],
-});
+  type: [{ required: true, message: t("notice.validation.typeRequired"), trigger: "change" }],
+}));
 
 const detailDialog = reactive({
   visible: false,
 });
 const currentNotice = ref<NoticeDetailVO>({});
 
-// 查詢通知公告
+// Get notice list
 function handleQuery() {
   loading.value = true;
   queryParams.pageNum = 1;
@@ -332,19 +413,19 @@ function handleQuery() {
     });
 }
 
-// 重置查詢
+// Reset query form
 function handleResetQuery() {
   queryFormRef.value!.resetFields();
   queryParams.pageNum = 1;
   handleQuery();
 }
 
-// 行復選框選中項變化
+// Handle table row selection change
 function handleSelectionChange(selection: any) {
   selectIds.value = selection.map((item: any) => item.id);
 }
 
-// 開啟通知公告彈窗
+// Open notice form dialog
 function handleOpenDialog(id?: string) {
   UserAPI.getOptions().then((data) => {
     userOptions.value = data;
@@ -352,33 +433,33 @@ function handleOpenDialog(id?: string) {
 
   dialog.visible = true;
   if (id) {
-    dialog.title = "修改公告";
+    dialog.title = t("notice.form.editTitle");
     NoticeAPI.getFormData(id).then((data) => {
       Object.assign(formData, data);
     });
   } else {
     Object.assign(formData, { level: 0, targetType: 0 });
-    dialog.title = "新增公告";
+    dialog.title = t("notice.form.createTitle");
   }
 }
 
-// 釋出通知公告
+// Publish notice
 function handlePublish(id: string) {
   NoticeAPI.publish(id).then(() => {
-    ElMessage.success("釋出成功");
+    ElMessage.success(t("notice.messages.publishSuccess"));
     handleQuery();
   });
 }
 
-// 撤回通知公告
+// Revoke notice
 function handleRevoke(id: string) {
   NoticeAPI.revoke(id).then(() => {
-    ElMessage.success("撤回成功");
+    ElMessage.success(t("notice.messages.revokeSuccess"));
     handleQuery();
   });
 }
 
-// 通知公告表單提交
+// Submit notice form
 function handleSubmit() {
   dataFormRef.value.validate((valid: any) => {
     if (valid) {
@@ -387,7 +468,7 @@ function handleSubmit() {
       if (id) {
         NoticeAPI.update(id, formData)
           .then(() => {
-            ElMessage.success("修改成功");
+            ElMessage.success(t("notice.messages.updateSuccess"));
             handleCloseDialog();
             handleResetQuery();
           })
@@ -395,7 +476,7 @@ function handleSubmit() {
       } else {
         NoticeAPI.create(formData)
           .then(() => {
-            ElMessage.success("新增成功");
+            ElMessage.success(t("notice.messages.createSuccess"));
             handleCloseDialog();
             handleResetQuery();
           })
@@ -405,7 +486,7 @@ function handleSubmit() {
   });
 }
 
-// 重置表單
+// Reset form data
 function resetForm() {
   dataFormRef.value.resetFields();
   dataFormRef.value.clearValidate();
@@ -413,36 +494,36 @@ function resetForm() {
   formData.targetType = 1;
 }
 
-// 關閉通知公告彈窗
+// Close notice form dialog
 function handleCloseDialog() {
   dialog.visible = false;
   resetForm();
 }
 
-// 刪除通知公告
+// Delete notice
 function handleDelete(id?: number) {
   const deleteIds = [id || selectIds.value].join(",");
   if (!deleteIds) {
-    ElMessage.warning("請勾選刪除項");
+    ElMessage.warning(t("notice.messages.selectDeleteItems"));
     return;
   }
 
-  ElMessageBox.confirm("確認刪除已選中的資料項?", "警告", {
-    confirmButtonText: "確定",
-    cancelButtonText: "取消",
+  ElMessageBox.confirm(t("notice.messages.confirmDelete"), t("notice.messages.warning"), {
+    confirmButtonText: t("notice.form.confirm"),
+    cancelButtonText: t("notice.form.cancel"),
     type: "warning",
   }).then(
     () => {
       loading.value = true;
       NoticeAPI.deleteByIds(deleteIds)
         .then(() => {
-          ElMessage.success("刪除成功");
+          ElMessage.success(t("notice.messages.deleteSuccess"));
           handleResetQuery();
         })
         .finally(() => (loading.value = false));
     },
     () => {
-      ElMessage.info("已取消刪除");
+      ElMessage.info(t("notice.messages.cancelDelete"));
     }
   );
 }

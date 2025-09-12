@@ -1,21 +1,43 @@
 <!-- 系統配置 -->
+<!-- 
+  @author youlaitech
+  @since 2024-08-27
+ 
+  @author Chang Xiu-Wen, AI-Enhanced
+  @since 2025-09-12
+
+  System Configuration Management Component
+  
+  This component provides comprehensive system configuration management functionality including:
+  - Configuration parameter creation, editing, and deletion (CRUD operations)
+  - Real-time configuration search and filtering by config key or name
+  - System configuration cache refresh with debounced API calls
+  - Form validation with internationalized error messages
+  - Responsive data table with pagination support
+  - Modal dialog forms for configuration management
+  - Multilingual support (Traditional Chinese / English) with dynamic language switching
+-->
 <template>
   <div class="app-container">
-    <!-- 搜尋區域 -->
+    <!-- Search Area -->
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item label="關鍵字" prop="keywords">
+        <el-form-item :label="$t('config.keywords')" prop="keywords">
           <el-input
             v-model="queryParams.keywords"
-            placeholder="請輸入配置鍵\配置名稱"
+            :placeholder="$t('config.keywordsPlaceholder')"
             clearable
             @keyup.enter="handleQuery"
           />
         </el-form-item>
 
         <el-form-item class="search-buttons">
-          <el-button type="primary" icon="search" @click="handleQuery">搜尋</el-button>
-          <el-button icon="refresh" @click="handleResetQuery">重置</el-button>
+          <el-button type="primary" icon="search" @click="handleQuery">
+            {{ $t("config.search") }}
+          </el-button>
+          <el-button icon="refresh" @click="handleResetQuery">
+            {{ $t("config.reset") }}
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -23,9 +45,11 @@
     <el-card shadow="hover" class="data-table">
       <div class="data-table__toolbar">
         <div class="data-table__toolbar--actions">
-          <el-button type="success" icon="plus" @click="handleOpenDialog()">新增</el-button>
+          <el-button type="success" icon="plus" @click="handleOpenDialog()">
+            {{ $t("config.addConfig") }}
+          </el-button>
           <el-button color="#626aef" icon="RefreshLeft" @click="handleRefreshCache">
-            重新整理快取
+            {{ $t("config.refreshCache") }}
           </el-button>
         </div>
       </div>
@@ -39,12 +63,36 @@
         border
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="index" label="序號" width="60" />
-        <el-table-column key="configName" label="配置名稱" prop="configName" min-width="100" />
-        <el-table-column key="configKey" label="配置鍵" prop="configKey" min-width="100" />
-        <el-table-column key="configValue" label="配置值" prop="configValue" min-width="100" />
-        <el-table-column key="remark" label="描述" prop="remark" min-width="100" />
-        <el-table-column fixed="right" label="操作" width="220">
+        <el-table-column type="index" :label="$t('config.table.index')" width="70" />
+        <el-table-column
+          key="configName"
+          :label="$t('config.table.configName')"
+          prop="configName"
+          width="180"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          key="configKey"
+          :label="$t('config.table.configKey')"
+          prop="configKey"
+          width="200"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          key="configValue"
+          :label="$t('config.table.configValue')"
+          prop="configValue"
+          min-width="200"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          key="remark"
+          :label="$t('config.table.remark')"
+          prop="remark"
+          min-width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column fixed="right" :label="$t('config.table.operation')" width="180">
           <template #default="scope">
             <el-button
               type="primary"
@@ -53,7 +101,7 @@
               icon="edit"
               @click="handleOpenDialog(scope.row.id)"
             >
-              編輯
+              {{ $t("config.table.edit") }}
             </el-button>
             <el-button
               type="danger"
@@ -62,7 +110,7 @@
               icon="delete"
               @click="handleDelete(scope.row.id)"
             >
-              刪除
+              {{ $t("config.table.delete") }}
             </el-button>
           </template>
         </el-table-column>
@@ -77,7 +125,7 @@
       />
     </el-card>
 
-    <!-- 系統配置表單彈窗 -->
+    <!-- System Configuration Form Dialog -->
     <el-dialog
       v-model="dialog.visible"
       :title="dialog.title"
@@ -91,30 +139,46 @@
         label-suffix=":"
         label-width="100px"
       >
-        <el-form-item label="配置名稱" prop="configName">
-          <el-input v-model="formData.configName" placeholder="請輸入配置名稱" :maxlength="50" />
+        <el-form-item :label="$t('config.form.configName')" prop="configName">
+          <el-input
+            v-model="formData.configName"
+            :placeholder="$t('config.form.configNamePlaceholder')"
+            :maxlength="50"
+          />
         </el-form-item>
-        <el-form-item label="配置鍵" prop="configKey">
-          <el-input v-model="formData.configKey" placeholder="請輸入配置鍵" :maxlength="50" />
+        <el-form-item :label="$t('config.form.configKey')" prop="configKey">
+          <el-input
+            v-model="formData.configKey"
+            :placeholder="$t('config.form.configKeyPlaceholder')"
+            :maxlength="50"
+          />
         </el-form-item>
-        <el-form-item label="配置值" prop="configValue">
-          <el-input v-model="formData.configValue" placeholder="請輸入配置值" :maxlength="100" />
+        <el-form-item :label="$t('config.form.configValue')" prop="configValue">
+          <el-input
+            v-model="formData.configValue"
+            :placeholder="$t('config.form.configValuePlaceholder')"
+            :maxlength="100"
+          />
         </el-form-item>
-        <el-form-item label="描述" prop="remark">
+        <el-form-item :label="$t('config.form.remark')" prop="remark">
           <el-input
             v-model="formData.remark"
             :rows="4"
             :maxlength="100"
             show-word-limit
             type="textarea"
-            placeholder="請輸入描述"
+            :placeholder="$t('config.form.remarkPlaceholder')"
           />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="handleSubmit">確定</el-button>
-          <el-button @click="handleCloseDialog">取消</el-button>
+          <el-button type="primary" @click="handleSubmit">
+            {{ $t("config.form.confirm") }}
+          </el-button>
+          <el-button @click="handleCloseDialog">
+            {{ $t("config.form.cancel") }}
+          </el-button>
         </div>
       </template>
     </el-dialog>
@@ -122,6 +186,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * @fileoverview System Configuration Management Component
+ * @description Provides comprehensive system configuration management with CRUD operations and cache refresh functionality
+ * @author System Administrator
+ * @created 2024-01-15
+ * @updated 2024-01-15
+ */
+
 defineOptions({
   name: "Config",
   inheritAttrs: false,
@@ -130,6 +202,8 @@ defineOptions({
 import ConfigAPI, { ConfigPageVO, ConfigForm, ConfigPageQuery } from "@/api/system/config-api";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useDebounceFn } from "@vueuse/core";
+
+const { t } = useI18n();
 
 const queryFormRef = ref();
 const dataFormRef = ref();
@@ -144,7 +218,7 @@ const queryParams = reactive<ConfigPageQuery>({
   keywords: "",
 });
 
-// 系統配置表格資料
+// System configuration table data
 const pageData = ref<ConfigPageVO[]>([]);
 
 const dialog = reactive({
@@ -160,13 +234,35 @@ const formData = reactive<ConfigForm>({
   remark: "",
 });
 
-const rules = reactive({
-  configName: [{ required: true, message: "請輸入系統配置名稱", trigger: "blur" }],
-  configKey: [{ required: true, message: "請輸入系統配置編碼", trigger: "blur" }],
-  configValue: [{ required: true, message: "請輸入系統配置值", trigger: "blur" }],
-});
+const rules = computed(() => ({
+  configName: [
+    {
+      required: true,
+      message: t("config.validation.configNameRequired"),
+      trigger: "blur",
+    },
+  ],
+  configKey: [
+    {
+      required: true,
+      message: t("config.validation.configKeyRequired"),
+      trigger: "blur",
+    },
+  ],
+  configValue: [
+    {
+      required: true,
+      message: t("config.validation.configValueRequired"),
+      trigger: "blur",
+    },
+  ],
+}));
 
-// 獲取資料
+/**
+ * Fetch system configuration data from API
+ * @description Retrieves paginated configuration data based on current query parameters
+ * @returns {Promise<void>} Promise that resolves when data is fetched
+ */
 function fetchData() {
   loading.value = true;
   ConfigAPI.getPage(queryParams)
@@ -179,46 +275,72 @@ function fetchData() {
     });
 }
 
-// 查詢（重置頁碼後獲取資料）
+/**
+ * Handle search query execution
+ * @description Resets pagination to first page and executes data fetch with current filters
+ * @returns {void}
+ */
 function handleQuery() {
   queryParams.pageNum = 1;
   fetchData();
 }
 
-// 重置查詢
+/**
+ * Reset query form and parameters
+ * @description Clears all search filters, resets form validation, and fetches fresh data
+ * @returns {void}
+ */
 function handleResetQuery() {
   queryFormRef.value.resetFields();
   queryParams.pageNum = 1;
   fetchData();
 }
 
-// 行復選框選中項變化
+/**
+ * Handle table row selection change
+ * @description Updates selected configuration IDs for batch operations
+ * @param {any} selection - Array of selected table rows
+ * @returns {void}
+ */
 function handleSelectionChange(selection: any) {
   selectIds.value = selection.map((item: any) => item.id);
 }
 
-// 開啟系統配置彈窗
+/**
+ * Open configuration dialog for create or edit
+ * @description Opens modal dialog for configuration management, loads existing data for edit mode
+ * @param {string} [id] - Configuration ID for edit mode, omit for create mode
+ * @returns {void}
+ */
 function handleOpenDialog(id?: string) {
   dialog.visible = true;
   if (id) {
-    dialog.title = "修改系統配置";
+    dialog.title = t("config.form.title.edit");
     ConfigAPI.getFormData(id).then((data) => {
       Object.assign(formData, data);
     });
   } else {
-    dialog.title = "新增系統配置";
+    dialog.title = t("config.form.title.add");
     formData.id = undefined;
   }
 }
 
-// 重新整理快取(防抖)
+/**
+ * Refresh system configuration cache (debounced)
+ * @description Refreshes system configuration cache with debounce to prevent excessive API calls
+ * @returns {void}
+ */
 const handleRefreshCache = useDebounceFn(() => {
   ConfigAPI.refreshCache().then(() => {
-    ElMessage.success("重新整理成功");
+    ElMessage.success(t("config.messages.refreshCacheSuccess"));
   });
 }, 1000);
 
-// 系統配置表單提交
+/**
+ * Submit configuration form data
+ * @description Validates and submits configuration form for create or update operations
+ * @returns {void}
+ */
 function handleSubmit() {
   dataFormRef.value.validate((valid: any) => {
     if (valid) {
@@ -227,7 +349,7 @@ function handleSubmit() {
       if (id) {
         ConfigAPI.update(id, formData)
           .then(() => {
-            ElMessage.success("修改成功");
+            ElMessage.success(t("config.messages.updateSuccess"));
             handleCloseDialog();
             handleResetQuery();
           })
@@ -235,7 +357,7 @@ function handleSubmit() {
       } else {
         ConfigAPI.create(formData)
           .then(() => {
-            ElMessage.success("新增成功");
+            ElMessage.success(t("config.messages.createSuccess"));
             handleCloseDialog();
             handleResetQuery();
           })
@@ -245,30 +367,47 @@ function handleSubmit() {
   });
 }
 
-// 重置表單
+/**
+ * Reset configuration form
+ * @description Clears form data, validation errors, and resets form state
+ * @returns {void}
+ */
 function resetForm() {
   dataFormRef.value.resetFields();
   dataFormRef.value.clearValidate();
   formData.id = undefined;
 }
 
-// 關閉系統配置彈窗
+/**
+ * Close configuration dialog
+ * @description Closes modal dialog and resets form state
+ * @returns {void}
+ */
 function handleCloseDialog() {
   dialog.visible = false;
   resetForm();
 }
 
-// 刪除系統配置
+/**
+ * Delete configuration item
+ * @description Shows confirmation dialog and deletes configuration item if confirmed
+ * @param {string} id - Configuration ID to delete
+ * @returns {void}
+ */
 function handleDelete(id: string) {
-  ElMessageBox.confirm("確認刪除該項配置?", "警告", {
-    confirmButtonText: "確定",
-    cancelButtonText: "取消",
-    type: "warning",
-  }).then(() => {
+  ElMessageBox.confirm(
+    t("config.messages.confirmDelete"),
+    t("config.messages.deleteConfirmTitle"),
+    {
+      confirmButtonText: t("config.form.confirm"),
+      cancelButtonText: t("config.form.cancel"),
+      type: "warning",
+    }
+  ).then(() => {
     loading.value = true;
     ConfigAPI.deleteById(id)
       .then(() => {
-        ElMessage.success("刪除成功");
+        ElMessage.success(t("config.messages.deleteSuccess"));
         handleResetQuery();
       })
       .finally(() => (loading.value = false));
