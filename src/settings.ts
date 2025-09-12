@@ -22,8 +22,8 @@ export const defaultSettings: AppSettings = {
   theme: mediaQueryList.matches ? ThemeMode.DARK : ThemeMode.LIGHT,
   // 元件大小 default | medium | small | large
   size: ComponentSize.DEFAULT,
-  // 語言
-  language: LanguageEnum.ZH_TW,
+  // 語言 - Default language for new users
+  language: LanguageEnum.EN,
   // 主題顏色 - 修改此值時需同步修改 src/styles/variables.scss
   themeColor: "#4080FF",
   // 是否顯示水印
