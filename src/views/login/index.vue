@@ -1,41 +1,63 @@
+<!-- 
+  @author youlaitech
+  @since 2024-08-27
+ 
+  @author Chang Xiu-Wen, AI-Enhanced
+  @since 2025/09/12
+
+  Login Page Component
+  
+  This component provides comprehensive user authentication functionality including:
+  - Responsive login interface with glass-morphism design
+  - Dynamic theme switching (dark/light/auto mode)
+  - Multi-language support with language selector
+  - Application branding with version display
+  - Dynamic logo switching based on theme
+  - Smooth transitions between form components
+  - Mobile-responsive layout design
+-->
 <template>
+  <!-- Login page container with responsive background and centered layout -->
   <div class="login-container">
-    <!-- 右側切換主題、語言按鈕  -->
+    <!-- Action bar with theme toggle and language selector positioned on top-right -->
     <div class="action-bar">
+      <!-- Dark/Light mode toggle with tooltip -->
       <el-tooltip :content="t('login.themeToggle')" placement="bottom">
         <CommonWrapper>
           <DarkModeSwitch />
         </CommonWrapper>
       </el-tooltip>
+      <!-- Language selector with tooltip -->
       <el-tooltip :content="t('login.languageToggle')" placement="bottom">
         <CommonWrapper>
           <LangSelect size="text-20px" />
         </CommonWrapper>
       </el-tooltip>
     </div>
-    <!-- 登入頁主體 -->
+    <!-- Main login content area with centered layout -->
     <div flex-1 flex-center>
+      <!-- Login form card with responsive design and glass-morphism effect -->
       <div
         class="p-4xl w-full h-auto sm:w-450px border-rd-10px sm:h-680px shadow-[var(--el-box-shadow-light)] backdrop-blur-3px"
       >
         <div w-full flex flex-col items-center>
-          <!-- logo -->
+          <!-- Application logo with dynamic theme-based switching -->
           <el-image :src="currentLogo" style="width: 84px" />
 
-          <!-- 標題 -->
-          <!-- <h2>
+          <!-- Application title with version badge -->
+          <h2>
             <el-badge :value="`v ${defaultSettings.version}`" type="success">
               {{ defaultSettings.title }}
             </el-badge>
-          </h2> -->
+          </h2>
 
-          <!-- 元件切換 -->
+          <!-- Dynamic component switching between login and reset password forms -->
           <transition name="fade-slide" mode="out-in">
             <component :is="formComponents[component]" v-model="component" class="w-90%" />
           </transition>
         </div>
       </div>
-      <!-- 登入頁底部版權 -->
+      <!-- Footer copyright notice -->
       <el-text size="small" class="py-2.5! fixed bottom-0 text-center">
         Copyright © 2021 - 2025 All Rights Reserved.
       </el-text>
@@ -51,40 +73,43 @@ import CommonWrapper from "@/components/CommonWrapper/index.vue";
 import DarkModeSwitch from "@/components/DarkModeSwitch/index.vue";
 import { ThemeMode } from "@/enums/settings/theme.enum";
 import { useSettingsStore } from "@/store/modules/settings-store";
+import { defaultSettings } from "@/settings";
 
-type LayoutMap = "login" | "register" | "resetPwd";
+// Define layout component types for type safety
+type LayoutMap = "login";
 
+// Initialize composables for i18n and settings store
 const t = useI18n().t;
 const settingsStore = useSettingsStore();
 
-const component = ref<LayoutMap>("login"); // 切換顯示的元件
+// Reactive state for current component and form component mapping
+const component = ref<LayoutMap>("login"); // Current active component (always login now)
 const formComponents = {
   login: defineAsyncComponent(() => import("./components/Login.vue")),
-  register: defineAsyncComponent(() => import("./components/Register.vue")),
-  resetPwd: defineAsyncComponent(() => import("./components/ResetPwd.vue")),
 };
 
-// 根據主題模式動態切換 Logo
+// Computed property for dynamic logo selection based on current theme
 const currentLogo = computed(() => {
   const currentTheme = settingsStore.theme;
 
   switch (currentTheme) {
     case ThemeMode.DARK:
-      return logoWhite; // 暗黑模式使用白色 Logo
+      return logoWhite; // White logo for dark mode for better contrast
     case ThemeMode.LIGHT:
-      return logoDark; // 明亮模式使用深色 Logo
+      return logoDark; // Dark logo for light mode for better contrast
     case ThemeMode.AUTO: {
-      // 自動模式：檢測系統主題偏好
+      // Auto mode: detect system theme preference
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       return prefersDark ? logoWhite : logoDark;
     }
     default:
-      return logo; // 預設 Logo
+      return logo; // Fallback to default logo
   }
 });
 </script>
 
 <style lang="scss" scoped>
+// Main login container with full viewport dimensions
 .login-container {
   position: relative;
   z-index: 1;
@@ -96,7 +121,7 @@ const currentLogo = computed(() => {
   height: 100%;
 }
 
-// 新增偽元素作為背景層
+// Background layer using pseudo-element for better performance
 .login-container::before {
   position: fixed;
   top: 0;
@@ -110,6 +135,7 @@ const currentLogo = computed(() => {
   background-size: cover;
 }
 
+// Action bar positioning with responsive design
 .action-bar {
   position: fixed;
   top: 10px;
@@ -121,19 +147,21 @@ const currentLogo = computed(() => {
   justify-content: center;
   font-size: 1.125rem;
 
+  // Mobile responsive adjustments
   @media (max-width: 480px) {
     top: 10px;
     right: auto;
     left: 10px;
   }
 
+  // Desktop responsive adjustments
   @media (min-width: 640px) {
     top: 40px;
     right: 40px;
   }
 }
 
-/* fade-slide */
+// Smooth fade-slide transition animations for component switching
 .fade-slide-leave-active,
 .fade-slide-enter-active {
   transition: all 0.3s;

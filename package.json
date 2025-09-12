@@ -1,7 +1,7 @@
 {
-  "name": "vue3-element-admin",
-  "description": "Vue3 + Vite + TypeScript + Element-Plus 的后台管理模板，vue-element-admin 的 Vue3 版本",
-  "version": "3.3.1",
+  "name": "cwl-iot-frontend",
+  "description": "A modern water level monitoring dashboard designed for community infrastructure management. Built with Vue 3 Composition API and enhanced with AI-driven development workflow for international competition.",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {

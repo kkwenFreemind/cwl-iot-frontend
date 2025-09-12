@@ -1,3 +1,21 @@
+<!-- 
+  @author youlaitech
+  @since 2024-08-27
+ 
+  @author Chang Xiu-Wen, AI-Enhanced
+  @since 2025/09/12
+
+  User Profile Management Component
+  
+  This component provides comprehensive user profile management functionality including:
+  - Personal information display with avatar, nickname, role, and department details
+  - Interactive avatar upload with file selection and preview capabilities
+  - Account information editing through modal dialogs with form validation
+  - Password change functionality with security validation and confirmation
+  - User statistics display showing todos, messages, and notifications counts
+  - Responsive layout design with separate cards for different information sections
+  - Multi-language support for all UI elements and validation messages
+-->
 <template>
   <div class="profile-container">
     <el-row :gutter="20">

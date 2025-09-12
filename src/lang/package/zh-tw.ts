@@ -18,7 +18,6 @@ export default {
     captchaCode: "驗證碼",
     capsLock: "大寫鎖定已開啟",
     rememberMe: "記住我",
-    forgetPassword: "忘記密碼？",
     message: {
       username: {
         required: "請輸入使用者名稱",
@@ -34,15 +33,10 @@ export default {
       },
     },
     otherLoginMethods: "其他",
-    resetPassword: "重置密碼",
-    thinkOfPasswd: "想起密碼？",
-    register: "註冊賬號",
     agree: "我已同意並閱讀",
     userAgreement: "使用者協議",
     haveAccount: "已有賬號？",
-    noAccount: "您沒有賬號？",
     quickFill: "快速填寫",
-    reg: "注 冊",
   },
   // 導航欄國際化
   navbar: {
@@ -264,6 +258,7 @@ export default {
     menuNamePlaceholder: "選單名稱",
     menuType: "選單型別",
     parentMenu: "父選單",
+    routeName: "路由名稱",
     component: "元件路徑",
     path: "路由路徑",
     perms: "權限標識",

@@ -14,7 +14,6 @@
     "captchaCode": "Verify Code",
     "capsLock": "Caps Lock is On",
     "rememberMe": "Remember Me",
-    "forgetPassword": "Forget Password?",
     "message": {
       "username": {
         "required": "Please enter Username"
@@ -30,15 +29,10 @@
       }
     },
     "otherLoginMethods": "Other",
-    "resetPassword": "Reset password",
-    "thinkOfPasswd": "Remember your password?",
-    "register": "Register account",
     "agree": "I have read and agree to the",
     "userAgreement": "User Agreement",
     "haveAccount": "Already have an account?",
-    "noAccount": "Don't have an account?",
-    "quickFill": "Quick fill",
-    "reg": "Register"
+    "quickFill": "Quick fill"
   },
   "navbar": {
     "dashboard": "Dashboard",

@@ -22,17 +22,24 @@ export const usePermissionStore = defineStore("permission", () => {
    */
   async function generateRoutes(): Promise<RouteRecordRaw[]> {
     try {
+      console.log("🛠️ [Permission Store] Fetching routes from API...");
       const data = await MenuAPI.getRoutes(); // 獲取當前登入人擁有的選單路由
+      console.log(`✅ [Permission Store] Received ${data.length} routes from API`);
+
+      console.log("🔄 [Permission Store] Parsing dynamic routes...");
       const dynamicRoutes = parseDynamicRoutes(data);
+      console.log(`✅ [Permission Store] Parsed ${dynamicRoutes.length} dynamic routes`);
 
       routes.value = [...constantRoutes, ...dynamicRoutes];
+      console.log(`📋 [Permission Store] Total routes after merge: ${routes.value.length}`);
 
       setAllCacheRoutes(routes.value);
       isDynamicRoutesGenerated.value = true;
+      console.log("✅ [Permission Store] Dynamic routes generation completed");
 
       return dynamicRoutes;
     } catch (error) {
-      console.error("❌ Failed to generate routes:", error);
+      console.error("❌ [Permission Store] Failed to generate routes:", error);
       isDynamicRoutesGenerated.value = false;
       throw error;
     }
@@ -105,27 +112,41 @@ export const usePermissionStore = defineStore("permission", () => {
  */
 const parseDynamicRoutes = (rawRoutes: RouteVO[]): RouteRecordRaw[] => {
   const parsedRoutes: RouteRecordRaw[] = [];
+  console.log(`🔧 [Route Parser] Parsing ${rawRoutes.length} raw routes...`);
 
-  rawRoutes.forEach((route) => {
+  rawRoutes.forEach((route, index) => {
+    console.log(`🔧 [Route Parser] Processing route ${index + 1}: ${route.path}`);
     // Note: demo routes removed from project; no special filtering required
 
     const normalizedRoute = { ...route } as RouteRecordRaw;
 
     // 處理元件路徑
+    const componentPath = normalizedRoute.component?.toString();
+    console.log(`🔧 [Route Parser] Route '${route.path}' component: ${componentPath}`);
+
     normalizedRoute.component =
-      normalizedRoute.component?.toString() === "Layout"
+      componentPath === "Layout"
         ? Layout
-        : modules[`../../views/${normalizedRoute.component}.vue`] ||
-          modules["../../views/error-page/404.vue"];
+        : modules[`../../views/${componentPath}.vue`] || modules["../../views/error-page/404.vue"];
+
+    if (!normalizedRoute.component) {
+      console.warn(`⚠️ [Route Parser] Component not found for '${route.path}': ${componentPath}`);
+    } else {
+      console.log(`✅ [Route Parser] Component resolved for '${route.path}'`);
+    }
 
     // 遞迴解析子路由，同時過濾掉demo相關的子路由
     if (normalizedRoute.children) {
+      console.log(
+        `🔧 [Route Parser] Processing ${normalizedRoute.children.length} child routes for '${route.path}'`
+      );
       normalizedRoute.children = parseDynamicRoutes(route.children);
     }
 
     parsedRoutes.push(normalizedRoute);
   });
 
+  console.log(`✅ [Route Parser] Successfully parsed ${parsedRoutes.length} routes`);
   return parsedRoutes;
 };
 

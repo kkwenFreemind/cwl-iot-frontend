@@ -1,7 +1,27 @@
+<!-- 
+  @author youlaitech
+  @since 2024-08-27
+ 
+  @author Chang Xiu-Wen, AI-Enhanced
+  @since 2025/09/12
+
+  Login Form Component
+  
+  This component provides secure user authentication functionality including:
+  - Username and password input validation with internationalized error messages
+  - Interactive captcha verification system with click-to-refresh capability
+  - Caps lock detection during password input with visual feedback
+  - Remember me option for persistent authentication
+  - Loading states and error handling for smooth user experience
+  - Responsive form layout with Element Plus styling
+  - Automatic redirect handling after successful authentication
+-->
 <template>
   <div>
+    <!-- Login form container -->
     <!-- <h3 text-center m-0 mb-20px>{{ t("login.login") }}</h3> -->
     <h1></h1>
+    <!-- Main login form with validation rules and large size styling -->
     <el-form
       ref="loginFormRef"
       :model="loginFormData"
@@ -9,7 +29,7 @@
       size="large"
       :validate-on-rule-change="false"
     >
-      <!-- 使用者名稱 -->
+      <!-- Username input field with user icon prefix -->
       <el-form-item prop="username">
         <el-input v-model.trim="loginFormData.username" :placeholder="t('login.username')">
           <template #prefix>
@@ -18,7 +38,7 @@
         </el-input>
       </el-form-item>
 
-      <!-- 密碼 -->
+      <!-- Password input field with caps lock detection and lock icon prefix -->
       <el-tooltip :visible="isCapsLock" :content="t('login.capsLock')" placement="right">
         <el-form-item prop="password">
           <el-input
@@ -36,9 +56,10 @@
         </el-form-item>
       </el-tooltip>
 
-      <!-- 驗證碼 -->
+      <!-- Captcha verification field with image display and refresh functionality -->
       <el-form-item prop="captchaCode">
         <div flex>
+          <!-- Captcha input field -->
           <el-input
             v-model.trim="loginFormData.captchaCode"
             :placeholder="t('login.captchaCode')"
@@ -48,6 +69,7 @@
               <div class="i-svg:captcha" />
             </template>
           </el-input>
+          <!-- Captcha image with click-to-refresh functionality -->
           <div cursor-pointer h="[40px]" w="[120px]" flex-center ml-10px @click="getCaptcha">
             <el-icon v-if="codeLoading" class="is-loading"><Loading /></el-icon>
 
@@ -64,82 +86,53 @@
         </div>
       </el-form-item>
 
+      <!-- Login options: Remember me checkbox -->
       <div class="flex-x-between w-full">
         <el-checkbox v-model="loginFormData.rememberMe">{{ t("login.rememberMe") }}</el-checkbox>
-        <el-link type="primary" underline="never" @click="toOtherForm('resetPwd')">
-          {{ t("login.forgetPassword") }}
-        </el-link>
       </div>
 
-      <!-- 登入按鈕 -->
+      <!-- Login submit button with loading state -->
       <el-form-item>
         <el-button :loading="loading" type="primary" class="w-full" @click="handleLoginSubmit">
           {{ t("login.login") }}
         </el-button>
       </el-form-item>
     </el-form>
-
-    <div flex-center gap-10px>
-      <el-text size="default">{{ t("login.noAccount") }}</el-text>
-      <el-link type="primary" underline="never" @click="toOtherForm('register')">
-        {{ t("login.reg") }}
-      </el-link>
-    </div>
-
-    <!-- 第三方登入 -->
-    <!-- <div class="third-party-login">
-      <div class="divider-container">
-        <div class="divider-line"></div>
-        <span class="divider-text">{{ t("login.otherLoginMethods") }}</span>
-        <div class="divider-line"></div>
-      </div>
-      <div class="flex-center gap-x-5 w-full text-[var(--el-text-color-secondary)]">
-        <CommonWrapper>
-          <div text-20px class="i-svg:wechat" />
-        </CommonWrapper>
-        <CommonWrapper>
-          <div text-20px cursor-pointer class="i-svg:qq" />
-        </CommonWrapper>
-        <CommonWrapper>
-          <div text-20px cursor-pointer class="i-svg:github" />
-        </CommonWrapper>
-        <CommonWrapper>
-          <div text-20px cursor-pointer class="i-svg:gitee" />
-        </CommonWrapper>
-      </div>
-    </div> -->
   </div>
 </template>
 <script setup lang="ts">
+// Import required types and APIs
 import type { FormInstance } from "element-plus";
 import AuthAPI, { type LoginFormData } from "@/api/auth-api";
 import router from "@/router";
 import { useUserStore } from "@/store";
 import { AuthStorage } from "@/utils/auth";
 
-const { t } = useI18n();
-const userStore = useUserStore();
-const route = useRoute();
+// Initialize composables and stores
+const { t } = useI18n(); // Internationalization function
+const userStore = useUserStore(); // User state management
+const route = useRoute(); // Current route information
 
+// Load captcha on component mount
 onMounted(() => getCaptcha());
 
-const loginFormRef = ref<FormInstance>();
-const loading = ref(false);
-// 是否大寫鎖定
-const isCapsLock = ref(false);
-// 驗證碼圖片Base64字串
-const captchaBase64 = ref();
-// 記住我
-const rememberMe = AuthStorage.getRememberMe();
+// Reactive references for form and UI state
+const loginFormRef = ref<FormInstance>(); // Form instance reference for validation
+const loading = ref(false); // Loading state for login button
+const isCapsLock = ref(false); // Caps lock detection state
+const captchaBase64 = ref(); // Base64 encoded captcha image
+const rememberMe = AuthStorage.getRememberMe(); // Remember me preference from storage
 
+// Login form data with default values for development
 const loginFormData = ref<LoginFormData>({
-  username: "admin",
-  password: "123456",
-  captchaKey: "",
-  captchaCode: "",
-  rememberMe,
+  username: "admin", // Default username for testing
+  password: "123456", // Default password for testing
+  captchaKey: "", // Captcha key from server
+  captchaCode: "", // User input captcha code
+  rememberMe, // Remember me checkbox state
 });
 
+// Form validation rules with internationalized error messages
 const loginRules = computed(() => {
   return {
     username: [
@@ -171,8 +164,12 @@ const loginRules = computed(() => {
   };
 });
 
-// 獲取驗證碼
+// Captcha loading state and fetch function
 const codeLoading = ref(false);
+/**
+ * Fetch new captcha image from server
+ * Updates both captcha key and base64 image data
+ */
 function getCaptcha() {
   codeLoading.value = true;
   AuthAPI.getCaptcha()
@@ -184,46 +181,53 @@ function getCaptcha() {
 }
 
 /**
- * 登入提交
+ * Handle login form submission
+ * Performs validation, authentication, and navigation
  */
 async function handleLoginSubmit() {
   try {
-    // 1. 表單驗證
+    // 1. Validate form fields
     const valid = await loginFormRef.value?.validate();
     if (!valid) return;
 
     loading.value = true;
 
-    // 2. 執行登入
-    await userStore.login(loginFormData.value);
+    console.log("🔑 [Login] Starting login process...");
 
+    // 2. Execute login authentication
+    await userStore.login(loginFormData.value);
+    console.log("✅ [Login] Authentication successful");
+
+    // 3. Handle redirect after successful login
     const redirectPath = (route.query.redirect as string) || "/";
+    console.log(`🔄 [Login] Attempting to redirect to: ${redirectPath}`);
 
     await router.push(decodeURIComponent(redirectPath));
+    console.log("✅ [Login] Navigation completed successfully");
   } catch (error) {
-    // 4. 統一錯誤處理
-    getCaptcha(); // 重新整理驗證碼
-    console.error("登入失敗:", error);
+    // 4. Handle login errors
+    getCaptcha(); // Refresh captcha on error
+    console.error("❌ [Login] Login failed:", error);
   } finally {
     loading.value = false;
   }
 }
 
-// 檢查輸入大小寫
+/**
+ * Check for caps lock state during password input
+ * Provides visual feedback to user when caps lock is active
+ * @param event - Keyboard event from password input
+ */
 function checkCapsLock(event: KeyboardEvent) {
-  // 防止瀏覽器密碼自動填充時報錯
+  // Prevent errors when browser auto-fills password
   if (event instanceof KeyboardEvent) {
     isCapsLock.value = event.getModifierState("CapsLock");
   }
 }
-
-const emit = defineEmits(["update:modelValue"]);
-function toOtherForm(type: "register" | "resetPwd") {
-  emit("update:modelValue", type);
-}
 </script>
 
 <style lang="scss" scoped>
+// Styles for third-party login section (currently unused but preserved for future use)
 .third-party-login {
   .divider-container {
     display: flex;

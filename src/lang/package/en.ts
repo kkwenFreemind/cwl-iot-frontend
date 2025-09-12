@@ -263,6 +263,7 @@ export default {
     menuNamePlaceholder: "Menu Name",
     menuType: "Menu Type",
     parentMenu: "Parent Menu",
+    routeName: "Route Name",
     component: "Component Path",
     path: "Route Path",
     perms: "Permission",
