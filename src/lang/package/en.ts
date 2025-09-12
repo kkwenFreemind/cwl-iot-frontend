@@ -3,6 +3,8 @@ export default {
   route: {
     dashboard: "Dashboard",
     document: "Document",
+    profile: "User Profile",
+    myNotice: "My Notifications",
   },
   // 登录页面国际化
   login: {
@@ -336,7 +338,7 @@ export default {
     username: "Username",
     mobile: "Mobile",
     email: "Email",
-    department: "Department",
+    department: "Community",
     createTime: "Create Time",
     gender: "Gender",
     role: "Role",

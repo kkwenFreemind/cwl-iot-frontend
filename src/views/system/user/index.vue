@@ -69,22 +69,6 @@
                 {{ $t("user.delete") }}
               </el-button>
             </div>
-            <div class="data-table__toolbar--tools">
-              <!-- 调试按钮 -->
-              <el-button
-                :type="debugMode ? 'danger' : 'info'"
-                size="small"
-                @click="debugMode = !debugMode"
-              >
-                {{ debugMode ? $t("user.debug.disable") : $t("user.debug.enable") }}
-              </el-button>
-
-              <el-button icon="upload" @click="handleOpenImportDialog">
-                {{ $t("user.import") }}
-              </el-button>
-
-              <el-button icon="download" @click="handleExport">{{ $t("user.export") }}</el-button>
-            </div>
           </div>
 
           <el-table
@@ -104,19 +88,12 @@
               align="center"
               prop="nickname"
             />
-            <el-table-column :label="$t('user.gender')" width="100" align="center">
-              <template #default="scope">
-                <DictLabel v-model="scope.row.gender" code="gender" />
-              </template>
-            </el-table-column>
             <el-table-column
               :label="$t('user.department')"
               width="120"
               align="center"
               prop="deptName"
             />
-            <el-table-column :label="$t('user.mobile')" align="center" prop="mobile" width="120" />
-            <el-table-column :label="$t('user.email')" align="center" prop="email" width="160" />
             <el-table-column :label="$t('user.status')" align="center" prop="status" width="80">
               <template #default="scope">
                 <el-tag :type="scope.row.status == 1 ? 'success' : 'info'">
@@ -132,15 +109,6 @@
             />
             <el-table-column :label="$t('user.operation')" fixed="right" width="220">
               <template #default="scope">
-                <!-- 调试信息：显示当前用户权限 -->
-                <div v-if="debugMode" style=" margin-bottom: 5px;font-size: 12px; color: #666">
-                  {{ $t("user.debug.role") }}:
-                  {{ userStore.userInfo.roles?.join(", ") || $t("user.debug.none") }}
-                  <br />
-                  {{ $t("user.debug.permission") }}: {{ userStore.userInfo.perms?.length || 0
-                  }}{{ $t("user.debug.permissions") }}
-                </div>
-
                 <el-button
                   type="primary"
                   icon="RefreshLeft"
@@ -218,10 +186,6 @@
           />
         </el-form-item>
 
-        <el-form-item :label="$t('user.userForm.gender')" prop="gender">
-          <Dict v-model="formData.gender" code="gender" />
-        </el-form-item>
-
         <el-form-item :label="$t('user.userForm.role')" prop="roleIds">
           <el-select
             v-model="formData.roleIds"
@@ -235,22 +199,6 @@
               :value="item.value"
             />
           </el-select>
-        </el-form-item>
-
-        <el-form-item :label="$t('user.userForm.mobile')" prop="mobile">
-          <el-input
-            v-model="formData.mobile"
-            :placeholder="$t('user.userForm.mobilePlaceholder')"
-            maxlength="11"
-          />
-        </el-form-item>
-
-        <el-form-item :label="$t('user.userForm.email')" prop="email">
-          <el-input
-            v-model="formData.email"
-            :placeholder="$t('user.userForm.emailPlaceholder')"
-            maxlength="50"
-          />
         </el-form-item>
 
         <el-form-item :label="$t('user.userForm.status')" prop="status">
@@ -274,15 +222,11 @@
         </div>
       </template>
     </el-drawer>
-
-    <!-- 使用者匯入 -->
-    <UserImport v-model="importDialogVisible" @import-success="handleQuery()" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useAppStore } from "@/store/modules/app-store";
-import { useUserStore } from "@/store/modules/user-store";
 import { DeviceEnum } from "@/enums/settings/device.enum";
 
 import UserAPI, { UserForm, UserPageQuery, UserPageVO } from "@/api/system/user-api";
@@ -290,7 +234,6 @@ import DeptAPI from "@/api/system/dept-api";
 import RoleAPI from "@/api/system/role-api";
 
 import DeptTree from "./components/DeptTree.vue";
-import UserImport from "./components/UserImport.vue";
 
 defineOptions({
   name: "User",
@@ -298,11 +241,7 @@ defineOptions({
 });
 
 const appStore = useAppStore();
-const userStore = useUserStore();
 const { t } = useI18n();
-
-// 调试模式 - 用于查看权限状态
-const debugMode = ref(false);
 
 const queryFormRef = ref();
 const userFormRef = ref();
@@ -347,20 +286,6 @@ const rules = reactive({
   roleIds: [
     { required: true, message: computed(() => t("user.validation.roleRequired")), trigger: "blur" },
   ],
-  email: [
-    {
-      pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/,
-      message: computed(() => t("user.validation.emailInvalid")),
-      trigger: "blur",
-    },
-  ],
-  mobile: [
-    {
-      pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-      message: computed(() => t("user.validation.mobileInvalid")),
-      trigger: "blur",
-    },
-  ],
 });
 
 // 選中的使用者ID
@@ -369,8 +294,6 @@ const selectIds = ref<number[]>([]);
 const deptOptions = ref<OptionType[]>();
 // 角色下拉資料來源
 const roleOptions = ref<OptionType[]>();
-// 匯入彈窗顯示狀態
-const importDialogVisible = ref(false);
 
 // 獲取資料
 async function fetchData() {
@@ -516,56 +439,7 @@ function handleDelete(id?: number) {
   );
 }
 
-// 開啟匯入彈窗
-function handleOpenImportDialog() {
-  importDialogVisible.value = true;
-}
-
-// 匯出使用者
-function handleExport() {
-  UserAPI.export(queryParams).then((response: any) => {
-    const fileData = response.data;
-    const fileName = decodeURI(response.headers["content-disposition"].split(";")[1].split("=")[1]);
-    const fileType =
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8";
-
-    const blob = new Blob([fileData], { type: fileType });
-    const downloadUrl = window.URL.createObjectURL(blob);
-
-    const downloadLink = document.createElement("a");
-    downloadLink.href = downloadUrl;
-    downloadLink.download = fileName;
-
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-
-    document.body.removeChild(downloadLink);
-    window.URL.revokeObjectURL(downloadUrl);
-  });
-}
-
 onMounted(() => {
   handleQuery();
-
-  // 调试信息：输出当前用户权限
-  console.log("🔍 用户管理页面 - 权限调试信息:");
-  console.log("用户信息:", userStore.userInfo);
-  console.log("角色列表:", userStore.userInfo.roles);
-  console.log("权限列表:", userStore.userInfo.perms);
-  console.log("是否包含 sys:user:edit 权限:", userStore.userInfo.perms?.includes("sys:user:edit"));
-  console.log(
-    "是否包含 sys:user:delete 权限:",
-    userStore.userInfo.perms?.includes("sys:user:delete")
-  );
-  console.log(
-    "是否包含 sys:user:reset-password 权限:",
-    userStore.userInfo.perms?.includes("sys:user:reset-password")
-  );
-
-  // 詳細檢查用戶信息結構
-  console.log("🔍 詳細用戶信息檢查:");
-  console.log("用戶信息原始數據:", JSON.stringify(userStore.userInfo, null, 2));
-  console.log("角色數組:", Array.from(userStore.userInfo.roles || []));
-  console.log("權限數組:", Array.from(userStore.userInfo.perms || []));
 });
 </script>

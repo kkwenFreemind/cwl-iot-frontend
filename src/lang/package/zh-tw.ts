@@ -3,6 +3,8 @@ export default {
   route: {
     dashboard: "首頁",
     document: "專案文件",
+    profile: "個人中心",
+    myNotice: "我的通知",
   },
   // 登入頁面國際化
   login: {
@@ -335,7 +337,7 @@ export default {
     username: "使用者名稱",
     mobile: "手機號碼",
     email: "郵箱",
-    department: "部門",
+    department: "社區(村里)",
     createTime: "建立時間",
     gender: "性別",
     role: "角色",

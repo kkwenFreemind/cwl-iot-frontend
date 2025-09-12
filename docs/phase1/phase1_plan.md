@@ -28,6 +28,10 @@ This phase aims to streamline the codebase by removing unnecessary features and 
 ### 🔍 Part 3: Systematic Screen Review & Bug Fixes 🔄 IN PROGRESS
 
 - ✅ Profile page complete review and fixes
+- ✅ Department field terminology updated for community context
+- ✅ Router i18n implementation and comment translation
+- ✅ Logout dialog internationalization fix
+- ✅ User management page simplified for community focus
 - 🔄 Systematic review of all existing screens for:
   - UI/UX issues
   - Form validation problems
@@ -112,6 +116,58 @@ This phase aims to streamline the codebase by removing unnecessary features and 
     - Follows Vue 3 best practices for form state management
   - **Impact**: Improved security and user experience
   - Commit: `e415b52` — fix: clear password form when opening change password dialog
+
+- **Logout Dialog i18n Fix**: Hardcoded confirmation text issue
+  - **Problem**: Logout confirmation dialog contained hardcoded Chinese text
+  - **Solution**: Implement proper i18n for logout confirmation
+  - **Implementation**:
+    - Added logout confirmation translations to both language packages
+    - navbar.logoutConfirm: "Are you sure you want to logout and exit the system?" / "確定登出並退出系統嗎？"
+    - navbar.logoutConfirmTitle: "Confirm Logout" / "確認登出"
+    - Updated logout function to use t() function calls
+    - Uses common.confirm and common.cancel for button text
+    - Converted function comments to English for consistency
+  - **Impact**: Proper internationalization support for logout flow
+  - Commit: `49f4f9b` — fix: implement i18n for logout confirmation dialog
+
+- **Department Field Terminology Update**: Better context for IoT project
+  - **Problem**: Generic "Department" wording not suitable for community water monitoring
+  - **Solution**: Updated field terminology to reflect community context
+  - **Implementation**:
+    - Changed profile.department translation from "部門" to "社區(村里)" in zh-tw
+    - Updated English translation from "Department" to "Community"
+    - Maintains data structure while improving user experience context
+  - **Impact**: Better alignment with community water level monitoring project purpose
+  - Commit: TBD — feat: update department field terminology to community context
+
+- **Router i18n Implementation**: Hardcoded route titles fixed
+  - **Problem**: Route titles "個人中心" and "我的通知" were hardcoded in router configuration
+  - **Solution**: Implement proper i18n for router meta titles
+  - **Implementation**:
+    - Added route.profile and route.myNotice translation keys to both language packages
+    - Updated router configuration to use title keys: "profile", "myNotice"
+    - System automatically uses translateRouteTitle() function for breadcrumbs and navigation
+    - Converted all router comments to English for consistency
+  - **Impact**: Proper internationalization for navigation elements and breadcrumbs
+  - Commit: TBD — fix: implement i18n for router titles and convert comments to English
+
+- **User Management Simplification**: Removed unnecessary features for community focus
+  - **Problem**: User management page contained excessive features not needed for community monitoring
+  - **Solution**: Streamline interface to core user management functions
+  - **Implementation**:
+    - Removed gender, email, mobile fields from user display table and forms
+    - Eliminated email/mobile validation rules from form validation
+    - Removed debug mode functionality and all debug console outputs
+    - Deleted user import/export features and related UI components
+    - Removed UserImport component dependency and import dialog
+    - Simplified toolbar by removing debug, import, and export buttons
+    - Cleaned up unused userStore dependency
+  - **Impact**: Cleaner, focused user management suitable for community water monitoring
+  - **Backend APIs to Remove**:
+    - `GET /api/v1/users/template` (download import template)
+    - `POST /api/v1/users/import` (user import)  
+    - `GET /api/v1/users/export` (user export)
+  - Commit: TBD — feat: simplify user management for community focus
 
 ## Verification Results
 
