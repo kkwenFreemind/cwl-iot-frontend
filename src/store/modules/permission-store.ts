@@ -107,11 +107,7 @@ const parseDynamicRoutes = (rawRoutes: RouteVO[]): RouteRecordRaw[] => {
   const parsedRoutes: RouteRecordRaw[] = [];
 
   rawRoutes.forEach((route) => {
-    // 過濾掉demo相關的路由
-    if (route.component?.toString().includes("demo/")) {
-      console.warn(`Skipping demo route: ${route.component}`);
-      return;
-    }
+    // Note: demo routes removed from project; no special filtering required
 
     const normalizedRoute = { ...route } as RouteRecordRaw;
 

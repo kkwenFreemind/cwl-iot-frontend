@@ -138,7 +138,6 @@ export default defineMock([
             },
           ],
         },
-        // Demo menus removed
       ],
       msg: "一切ok",
     },
