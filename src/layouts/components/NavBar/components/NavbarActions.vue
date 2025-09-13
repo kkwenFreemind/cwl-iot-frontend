@@ -32,7 +32,14 @@
     <div class="navbar-actions__item">
       <el-dropdown trigger="click">
         <div class="user-profile">
-          <img class="user-profile__avatar" :src="userStore.userInfo.avatar" />
+          <div class="user-profile__avatar">
+            <img
+              v-if="userStore.userInfo.avatar"
+              :src="userStore.userInfo.avatar"
+              alt="User Avatar"
+            />
+            <div v-else class="i-svg:user default-avatar"></div>
+          </div>
           <span class="user-profile__name">{{ userStore.userInfo.username }}</span>
         </div>
         <template #dropdown>
@@ -204,10 +211,28 @@ function handleSettingsClick() {
     padding: 0 8px;
 
     &__avatar {
+      position: relative;
+      display: flex;
       flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
       width: 28px;
       height: 28px;
+      overflow: hidden;
+      background-color: var(--el-color-info-light-9);
       border-radius: 50%;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      .default-avatar {
+        font-size: 16px;
+        color: var(--el-color-info);
+      }
     }
 
     &__name {
@@ -237,6 +262,14 @@ function handleSettingsClick() {
 
   .user-profile__name {
     color: rgba(255, 255, 255, 0.85);
+  }
+
+  .user-profile__avatar {
+    background-color: rgba(255, 255, 255, 0.1);
+
+    .default-avatar {
+      color: rgba(255, 255, 255, 0.85);
+    }
   }
 }
 
