@@ -784,4 +784,142 @@ export default {
     success: "Success",
     failed: "Failed",
   },
+
+  // Device Management Internationalization
+  device: {
+    title: "Device Management",
+    keywords: "Keywords",
+    keywordsPlaceholder: "Device Name/Model/Serial",
+    status: "Status",
+    statusAll: "All",
+    statusActive: "Active",
+    statusInactive: "Inactive",
+    statusDisabled: "Disabled",
+    deviceName: "Device Name",
+    deviceModel: "Device Model",
+    serialNumber: "Serial Number",
+    department: "Department",
+    location: "Location",
+    manufacturer: "Manufacturer",
+    installDate: "Install Date",
+    lastSeen: "Last Seen",
+    operation: "Operations",
+    search: "Search",
+    reset: "Reset",
+    add: "Add Device",
+    edit: "Edit",
+    delete: "Delete",
+    online: "Online",
+    offline: "Offline",
+    heartbeat: "Heartbeat",
+    maintenance: "Maintenance",
+    warranty: "Warranty",
+
+    // Device Form
+    deviceForm: {
+      title: {
+        add: "Add Device",
+        edit: "Edit Device",
+      },
+      deviceName: "Device Name",
+      deviceModel: "Device Model",
+      serialNumber: "Serial Number",
+      description: "Description",
+      status: "Status",
+      department: "Department",
+      location: "Location",
+      latitude: "Latitude",
+      longitude: "Longitude",
+      installDate: "Install Date",
+      lastMaintenanceDate: "Last Maintenance",
+      nextMaintenanceDate: "Next Maintenance",
+      firmwareVersion: "Firmware Version",
+      hardwareVersion: "Hardware Version",
+      manufacturer: "Manufacturer",
+      purchasePrice: "Purchase Price",
+      warrantyExpiry: "Warranty Expiry",
+      specifications: "Specifications",
+      confirm: "Confirm",
+      cancel: "Cancel",
+
+      // Placeholders
+      deviceNamePlaceholder: "Enter device name",
+      deviceModelPlaceholder: "Enter device model",
+      serialNumberPlaceholder: "Enter serial number",
+      descriptionPlaceholder: "Enter device description",
+      departmentPlaceholder: "Select department",
+      locationPlaceholder: "Enter installation location",
+      manufacturerPlaceholder: "Enter manufacturer",
+    },
+
+    // Validation Messages
+    validation: {
+      deviceNameRequired: "Device name is required",
+      deviceModelRequired: "Device model is required",
+      serialNumberRequired: "Serial number is required",
+      deptRequired: "Department is required",
+      locationRequired: "Location is required",
+      serialNumberExists: "Serial number already exists",
+    },
+
+    // Status Updates
+    statusUpdate: {
+      title: "Device Status Update",
+      confirmActive: "Are you sure you want to activate this device?",
+      confirmInactive: "Are you sure you want to deactivate this device?",
+      confirmDisabled: "Are you sure you want to disable this device?",
+      success: "Device status updated successfully",
+      failed: "Failed to update device status",
+    },
+
+    // Delete Confirmation
+    deleteDialog: {
+      title: "Delete Confirmation",
+      confirmMessage: "This will permanently delete the device. Continue?",
+      successMessage: "Device deleted successfully",
+      cancelMessage: "Delete cancelled",
+      noSelectionWarning: "Please select devices to delete",
+    },
+
+    // Success Messages
+    createSuccessMessage: "Device created successfully",
+    updateSuccessMessage: "Device updated successfully",
+
+    // Statistics Panel
+    stats: {
+      totalDevices: "Total Devices",
+      activeDevices: "Active Devices",
+      inactiveDevices: "Inactive Devices",
+      disabledDevices: "Disabled Devices",
+      onlineDevices: "Online Devices",
+      offlineDevices: "Offline Devices",
+      maintenanceDue: "Maintenance Due",
+      warrantyExpiring: "Warranty Expiring",
+    },
+
+    // Spatial Queries
+    spatial: {
+      withinRadius: "Within Radius",
+      nearest: "Nearest Devices",
+      radiusKm: "Radius (km)",
+      centerLocation: "Center Location",
+    },
+
+    // Device Actions
+    actions: {
+      viewDetails: "View Details",
+      updateStatus: "Update Status",
+      updateHeartbeat: "Update Heartbeat",
+      scheduleMaintenance: "Schedule Maintenance",
+      viewLocation: "View Location",
+      exportData: "Export Data",
+    },
+
+    // Filters
+    filters: {
+      department: "All Departments",
+      model: "Device Model",
+      location: "Location",
+    },
+  },
 };

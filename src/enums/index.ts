@@ -5,3 +5,5 @@ export * from "./settings/locale.enum";
 export * from "./settings/device.enum";
 
 export * from "./system/menu.enum";
+
+export * from "./iot/device-status.enum";
