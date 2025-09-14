@@ -49,7 +49,6 @@
         <el-table-column :label="$t('log.table.module')" prop="module" width="100" />
         <el-table-column :label="$t('log.logContent')" prop="content" min-width="200" />
         <el-table-column :label="$t('log.table.ipAddress')" prop="ip" width="150" />
-        <el-table-column :label="$t('log.table.region')" prop="region" width="150" />
         <el-table-column :label="$t('log.table.browser')" prop="browser" width="150" />
         <el-table-column :label="$t('log.table.os')" prop="os" width="200" show-overflow-tooltip />
         <el-table-column :label="$t('log.table.executionTime')" prop="executionTime" width="150" />

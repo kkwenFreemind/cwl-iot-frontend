@@ -231,6 +231,9 @@ export default {
     parentDept: "上級部門",
     parentDeptPlaceholder: "選擇上級部門",
     topLevel: "頂級部門",
+    centerLatitude: "中心緯度",
+    centerLongitude: "中心經度",
+    coordinates: "地理座標",
     form: {
       title: {
         add: "新增部門",
@@ -245,12 +248,19 @@ export default {
       status: "部門狀態",
       statusNormal: "正常",
       statusDisabled: "禁用",
+      centerLatitude: "中心緯度",
+      centerLatitudePlaceholder: "請輸入緯度 (例如: 25.0330)",
+      centerLongitude: "中心經度",
+      centerLongitudePlaceholder: "請輸入經度 (例如: 121.5654)",
+      coordinatesHint: "地理座標用於地圖定位和區域管理",
     },
     validation: {
       parentDeptRequired: "上級部門不能為空",
       deptNameRequired: "部門名稱不能為空",
       deptCodeRequired: "部門編號不能為空",
       sortRequired: "顯示排序不能為空",
+      centerLatitudeInvalid: "緯度值必須在 -90 到 90 之間",
+      centerLongitudeInvalid: "經度值必須在 -180 到 180 之間",
     },
     messages: {
       createSuccess: "新增成功",

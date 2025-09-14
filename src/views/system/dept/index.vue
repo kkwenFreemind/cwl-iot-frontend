@@ -80,17 +80,36 @@
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column prop="name" :label="$t('dept.deptName')" min-width="200" />
-        <el-table-column prop="code" :label="$t('dept.deptCode')" width="200" />
-        <el-table-column prop="status" :label="$t('common.status')" width="100">
+        <el-table-column prop="code" :label="$t('dept.deptCode')" width="180" />
+        <el-table-column prop="status" :label="$t('common.status')" width="90" align="center">
           <template #default="scope">
-            <el-tag v-if="scope.row.status == 1" type="success">
+            <el-tag v-if="scope.row.status == 1" type="success" size="small">
               {{ $t("dept.statusNormal") }}
             </el-tag>
-            <el-tag v-else type="info">{{ $t("dept.statusDisabled") }}</el-tag>
+            <el-tag v-else type="info" size="small">{{ $t("dept.statusDisabled") }}</el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column prop="sort" :label="$t('dept.sort')" width="100" />
+        <el-table-column :label="$t('dept.coordinates')" width="180" align="center">
+          <template #default="scope">
+            <div
+              v-if="scope.row.centerLatitude && scope.row.centerLongitude"
+              class="coordinates-cell"
+            >
+              <div class="coordinate-item">
+                <span class="coordinate-label">{{ $t("dept.centerLatitude") }}:</span>
+                <span class="coordinate-value">{{ scope.row.centerLatitude }}</span>
+              </div>
+              <div class="coordinate-item">
+                <span class="coordinate-label">{{ $t("dept.centerLongitude") }}:</span>
+                <span class="coordinate-value">{{ scope.row.centerLongitude }}</span>
+              </div>
+            </div>
+            <el-tag v-else type="info" size="small">{{ $t("common.notSet") }}</el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="sort" :label="$t('dept.sort')" width="80" align="center" />
 
         <el-table-column :label="$t('common.operation')" fixed="right" align="left" width="200">
           <template #default="scope">
@@ -129,7 +148,7 @@
     <el-dialog
       v-model="dialog.visible"
       :title="dialog.title"
-      width="650px"
+      width="700px"
       @closed="handleCloseDialog"
     >
       <el-form ref="deptFormRef" :model="formData" :rules="rules" label-width="140px">
@@ -163,6 +182,43 @@
             <el-radio :value="0">{{ $t("dept.form.statusDisabled") }}</el-radio>
           </el-radio-group>
         </el-form-item>
+
+        <!-- Geographic Coordinates Section -->
+        <el-divider content-position="left">
+          <span style="font-size: 14px; color: var(--el-text-color-regular)">
+            {{ $t("dept.form.coordinatesHint") }}
+          </span>
+        </el-divider>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item :label="$t('dept.form.centerLatitude')" prop="centerLatitude">
+              <el-input-number
+                v-model="formData.centerLatitude"
+                :placeholder="$t('dept.form.centerLatitudePlaceholder')"
+                :precision="6"
+                :step="0.000001"
+                :min="-90"
+                :max="90"
+                style="width: 100%"
+                controls-position="right"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('dept.form.centerLongitude')" prop="centerLongitude">
+              <el-input-number
+                v-model="formData.centerLongitude"
+                :placeholder="$t('dept.form.centerLongitudePlaceholder')"
+                :precision="6"
+                :step="0.000001"
+                :min="-180"
+                :max="180"
+                style="width: 100%"
+                controls-position="right"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
 
       <template #footer>
@@ -212,6 +268,30 @@ const rules = computed(() => ({
   name: [{ required: true, message: t("dept.validation.deptNameRequired"), trigger: "blur" }],
   code: [{ required: true, message: t("dept.validation.deptCodeRequired"), trigger: "blur" }],
   sort: [{ required: true, message: t("dept.validation.sortRequired"), trigger: "blur" }],
+  centerLatitude: [
+    {
+      validator: (rule: any, value: number, callback: any) => {
+        if (value !== undefined && value !== null && (value < -90 || value > 90)) {
+          callback(new Error(t("dept.validation.centerLatitudeInvalid")));
+        } else {
+          callback();
+        }
+      },
+      trigger: "blur",
+    },
+  ],
+  centerLongitude: [
+    {
+      validator: (rule: any, value: number, callback: any) => {
+        if (value !== undefined && value !== null && (value < -180 || value > 180)) {
+          callback(new Error(t("dept.validation.centerLongitudeInvalid")));
+        } else {
+          callback();
+        }
+      },
+      trigger: "blur",
+    },
+  ],
 }));
 
 /**
@@ -346,6 +426,8 @@ function resetForm() {
   formData.parentId = "0";
   formData.status = 1;
   formData.sort = 1;
+  formData.centerLatitude = undefined;
+  formData.centerLongitude = undefined;
 }
 
 /**
@@ -403,9 +485,63 @@ onMounted(() => {
 :deep(.el-table) {
   .el-table__cell {
     .cell {
+      padding: 8px 4px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+  }
+
+  /* Status column specific styling */
+  .el-table__header th:nth-child(4),
+  .el-table__body td:nth-child(4) {
+    .cell {
+      padding: 6px 2px;
+      text-align: center;
+    }
+  }
+
+  /* Sort column styling */
+  .el-table__header th:nth-child(6),
+  .el-table__body td:nth-child(6) {
+    .cell {
+      font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+      font-size: 13px;
+      text-align: center;
+    }
+  }
+}
+
+/* Coordinates display styling */
+.coordinates-cell {
+  padding: 2px 0;
+
+  .coordinate-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1px;
+    font-size: 11px;
+    line-height: 1.2;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .coordinate-label {
+      min-width: 24px;
+      margin-right: 2px;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--el-text-color-secondary);
+    }
+
+    .coordinate-value {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+      font-size: 10px;
+      color: var(--el-text-color-primary);
     }
   }
 }

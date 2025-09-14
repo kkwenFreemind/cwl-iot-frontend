@@ -57,6 +57,10 @@ export interface DeptVO {
   status?: number;
   /** 修改時間 */
   updateTime?: Date;
+  /** 中心緯度 */
+  centerLatitude?: number;
+  /** 中心經度 */
+  centerLongitude?: number;
 }
 
 export interface DeptForm {
@@ -72,4 +76,8 @@ export interface DeptForm {
   sort?: number;
   /** 狀態(1:啟用；0：禁用) */
   status?: number;
+  /** 中心緯度 */
+  centerLatitude?: number;
+  /** 中心經度 */
+  centerLongitude?: number;
 }
