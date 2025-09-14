@@ -25,7 +25,7 @@ const UserAPI = {
    * @param queryParams Query parameters for pagination and filtering
    */
   getPage(queryParams: UserPageQuery) {
-    return request<any, PageResult<UserPageVO[]>>({
+    return request<any, PageResult<UserPageVO>>({
       url: `${USER_BASE_URL}/page`,
       method: "get",
       params: queryParams,

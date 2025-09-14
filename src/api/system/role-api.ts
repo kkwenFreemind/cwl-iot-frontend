@@ -5,7 +5,7 @@ const ROLE_BASE_URL = "/api/v1/roles";
 const RoleAPI = {
   /** 獲取角色分頁資料 */
   getPage(queryParams?: RolePageQuery) {
-    return request<any, PageResult<RolePageVO[]>>({
+    return request<any, PageResult<RolePageVO>>({
       url: `${ROLE_BASE_URL}/page`,
       method: "get",
       params: queryParams,

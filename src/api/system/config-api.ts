@@ -5,7 +5,7 @@ const CONFIG_BASE_URL = "/api/v1/config";
 const ConfigAPI = {
   /** 獲取配置分頁資料 */
   getPage(queryParams?: ConfigPageQuery) {
-    return request<any, PageResult<ConfigPageVO[]>>({
+    return request<any, PageResult<ConfigPageVO>>({
       url: `${CONFIG_BASE_URL}/page`,
       method: "get",
       params: queryParams,

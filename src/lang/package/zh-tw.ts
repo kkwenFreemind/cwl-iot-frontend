@@ -714,6 +714,146 @@ export default {
       passwordChangeSuccess: "密碼修改成功",
     },
   },
+  // 設備管理國際化
+  device: {
+    title: "設備管理",
+    keywords: "關鍵字",
+    keywordsPlaceholder: "設備名稱/型號/序號",
+    status: "狀態",
+    statusAll: "全部",
+    statusActive: "運行中",
+    statusInactive: "離線",
+    statusDisabled: "已停用",
+    deviceName: "設備名稱",
+    deviceModel: "設備型號",
+    serialNumber: "序號",
+    department: "所屬部門",
+    location: "安裝位置",
+    manufacturer: "製造商",
+    installDate: "安裝日期",
+    lastSeen: "最後在線",
+    operation: "操作",
+    search: "搜尋",
+    reset: "重置",
+    add: "新增設備",
+    edit: "編輯",
+    delete: "刪除",
+    online: "在線",
+    offline: "離線",
+    heartbeat: "心跳",
+    maintenance: "維護",
+    warranty: "保固",
+
+    // 設備表單
+    deviceForm: {
+      title: {
+        add: "新增設備",
+        edit: "編輯設備",
+      },
+      deviceName: "設備名稱",
+      deviceModel: "設備型號",
+      serialNumber: "序號",
+      description: "設備描述",
+      status: "設備狀態",
+      department: "所屬部門",
+      location: "安裝位置",
+      latitude: "緯度",
+      longitude: "經度",
+      installDate: "安裝日期",
+      lastMaintenanceDate: "上次維護日期",
+      nextMaintenanceDate: "下次維護日期",
+      firmwareVersion: "韌體版本",
+      hardwareVersion: "硬體版本",
+      manufacturer: "製造商",
+      purchasePrice: "採購價格",
+      warrantyExpiry: "保固到期日",
+      specifications: "技術規格",
+      confirm: "確定",
+      cancel: "取消",
+
+      // 佔位符
+      deviceNamePlaceholder: "請輸入設備名稱",
+      deviceModelPlaceholder: "請輸入設備型號",
+      serialNumberPlaceholder: "請輸入設備序號",
+      descriptionPlaceholder: "請輸入設備描述",
+      departmentPlaceholder: "請選擇所屬部門",
+      locationPlaceholder: "請輸入安裝位置",
+      manufacturerPlaceholder: "請輸入製造商",
+    },
+
+    // 驗證訊息
+    validation: {
+      deviceNameRequired: "請輸入設備名稱",
+      deviceModelRequired: "請輸入設備型號",
+      serialNumberRequired: "請輸入設備序號",
+      deptRequired: "請選擇所屬部門",
+      locationRequired: "請輸入安裝位置",
+      serialNumberExists: "序號已存在",
+    },
+
+    // 狀態更新
+    statusUpdate: {
+      title: "設備狀態更新",
+      confirmActive: "確定要啟用此設備嗎？",
+      confirmInactive: "確定要停用此設備嗎？",
+      confirmDisabled: "確定要禁用此設備嗎？",
+      success: "設備狀態更新成功",
+      failed: "設備狀態更新失敗",
+    },
+
+    // 刪除確認
+    deleteDialog: {
+      title: "刪除確認",
+      confirmMessage: "此操作將永久刪除該設備，是否繼續？",
+      successMessage: "設備刪除成功",
+      cancelMessage: "已取消刪除",
+      noSelectionWarning: "請選擇要刪除的設備",
+    },
+
+    // 成功訊息
+    createSuccessMessage: "設備建立成功",
+    updateSuccessMessage: "設備更新成功",
+
+    // 統計面板
+    stats: {
+      totalDevices: "設備總數",
+      activeDevices: "運行設備",
+      inactiveDevices: "離線設備",
+      disabledDevices: "停用設備",
+      onlineDevices: "在線設備",
+      offlineDevices: "離線設備",
+      maintenanceDue: "需維護設備",
+      warrantyExpiring: "保固到期",
+    },
+
+    // 空間查詢
+    spatial: {
+      withinRadius: "半徑內查詢",
+      nearest: "最近設備",
+      radiusKm: "半徑(公里)",
+      centerLocation: "中心位置",
+    },
+
+    // 設備操作
+    actions: {
+      viewDetails: "查看詳情",
+      updateStatus: "更新狀態",
+      updateHeartbeat: "更新心跳",
+      scheduleMaintenance: "安排維護",
+      viewLocation: "查看位置",
+      exportData: "匯出資料",
+    },
+
+    // 篩選器
+    filters: {
+      department: "部門篩選",
+      status: "狀態篩選",
+      model: "型號篩選",
+      manufacturer: "製造商篩選",
+      location: "位置篩選",
+      dateRange: "日期範圍",
+    },
+  },
   // 通用翻譯
   common: {
     confirm: "確定",

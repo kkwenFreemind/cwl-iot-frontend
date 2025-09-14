@@ -5,7 +5,7 @@ const GENERATOR_BASE_URL = "/api/v1/codegen";
 const GeneratorAPI = {
   /** 獲取資料表分頁列表 */
   getTablePage(params: TablePageQuery) {
-    return request<any, PageResult<TablePageVO[]>>({
+    return request<any, PageResult<TablePageVO>>({
       url: `${GENERATOR_BASE_URL}/table/page`,
       method: "get",
       params,

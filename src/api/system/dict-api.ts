@@ -5,7 +5,7 @@ const DICT_BASE_URL = "/api/v1/dicts";
 const DictAPI = {
   /** 字典分頁列表 */
   getPage(queryParams: DictPageQuery) {
-    return request<any, PageResult<DictPageVO[]>>({
+    return request<any, PageResult<DictPageVO>>({
       url: `${DICT_BASE_URL}/page`,
       method: "get",
       params: queryParams,
@@ -34,7 +34,7 @@ const DictAPI = {
 
   /** 獲取字典項分頁列表 */
   getDictItemPage(dictCode: string, queryParams: DictItemPageQuery) {
-    return request<any, PageResult<DictItemPageVO[]>>({
+    return request<any, PageResult<DictItemPageVO>>({
       url: `${DICT_BASE_URL}/${dictCode}/items/page`,
       method: "get",
       params: queryParams,

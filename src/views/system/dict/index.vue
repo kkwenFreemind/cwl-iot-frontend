@@ -393,7 +393,7 @@ function handleOpenDictData(row: DictPageVO) {
     allRoutes.map((r) => ({
       name: r.name,
       path: r.path,
-      component: r.component?.name || "component_unknown",
+      component: r.components?.default?.name || "component_unknown",
     }))
   );
 
@@ -406,7 +406,7 @@ function handleOpenDictData(row: DictPageVO) {
   console.log("🎯 [Dict] Route resolution:", {
     byName: dictItemRoute ? `Found: ${dictItemRoute.path}` : "NOT FOUND",
     byPath: dictItemByPath
-      ? `Found: ${dictItemByPath.name || "unnamed"} at ${dictItemByPath.path}`
+      ? `Found: ${String(dictItemByPath.name) || "unnamed"} at ${dictItemByPath.path}`
       : "NOT FOUND",
   });
 

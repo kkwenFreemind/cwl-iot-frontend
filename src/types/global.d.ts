@@ -21,7 +21,7 @@ declare global {
    */
   interface PageResult<T> {
     /** 資料列表 */
-    list: T;
+    list: T[];
     /** 總數 */
     total: number;
   }
