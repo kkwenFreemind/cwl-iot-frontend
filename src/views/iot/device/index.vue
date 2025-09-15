@@ -1,33 +1,53 @@
-<!-- 
-  @author Chang Xiu-Wen, AI-Enhanced
-  @since 2025/09/14
+<!--
 
-  IoT Device Management Component
-  IoT設備管理組件
-  
-  This component provides comprehensive IoT device management functionality including:
-  - Device listing with filtering and search
-  - Device CRUD operations (Create, Read, Update, Delete)
-  - Status management and heartbeat updates
-  - Department-based filtering
-  - Location and spatial information management
-  - Responsive design with drawer-based forms
+  @author Chang Xiu-Wen, AI-Enhanced
+  @since 2025-09-15
+
+  Device Management Component
+  ==========================
+
+  A comprehensive Vue 3 Composition API component for managing IoT devices.
+  Provides full CRUD operations with advanced filtering, real-time status monitoring,
+  and responsive design optimized for both desktop and mobile interfaces.
+
+  Features:
+  - Device listing with pagination and sear  // Device form data for create/edit operations
+  formData: {
+    deviceId: undefined,
+    deviceName: "",
+    deviceModel: "",
+    status: undefined,
+    deptId: 0 as number,
+    location: "",
+    latitude: undefined,
+    longitude: undefined,
+  } as DeviceForm,ties
+  - Advanced filtering by department, status, and keywords
+  - Real-time device status and online/offline indicators
+  - Create, read, update, and delete operations
+  - Heartbeat monitoring and device connectivity management
+  - Responsive layout with mobile-optimized drawer forms
+  - Internationalization support with vue-i18n
+  - TypeScript integration for type safety
 -->
 <template>
+  <!-- Main application container with responsive layout -->
   <div class="app-container">
+    <!-- Two-column responsive grid layout -->
     <el-row :gutter="20">
-      <!-- Department Tree S    console.log("First device id (deviceId):", data[0].deviceId);
-    console.log("First device keys:", Object.keys(data[0]));ebar / 部門樹側邊欄 -->
+      <!-- Left sidebar: Department tree filter (4/12 width on large screens, full width on mobile) -->
       <el-col :lg="4" :xs="24" class="mb-[12px]">
+        <!-- Department tree component for hierarchical filtering -->
         <DeptTree v-model="queryParams.deptId" @node-click="handleQuery" />
       </el-col>
 
-      <!-- Main Content Area / 主要內容區域 -->
+      <!-- Main content area (8/12 width on large screens, full width on mobile) -->
       <el-col :lg="20" :xs="24">
-        <!-- Search Form Container / 搜尋表單容器 -->
+        <!-- Search and filter section -->
         <div class="search-container">
+          <!-- Inline search form with multiple filter criteria -->
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="auto">
-            <!-- Keywords Search Input / 關鍵字搜尋輸入框 -->
+            <!-- Keyword search input with clear functionality -->
             <el-form-item :label="$t('device.keywords')" prop="keywords">
               <el-input
                 v-model="queryParams.keywords"
@@ -37,7 +57,7 @@
               />
             </el-form-item>
 
-            <!-- Device Status Filter / 設備狀態篩選 -->
+            <!-- Device status filter dropdown -->
             <el-form-item :label="$t('device.status')" prop="status">
               <el-select
                 v-model="queryParams.status"
@@ -47,11 +67,23 @@
               >
                 <el-option :label="$t('device.active')" value="ACTIVE" />
                 <el-option :label="$t('device.inactive')" value="INACTIVE" />
-                <el-option :label="$t('device.disabled')" value="DISABLED" />
               </el-select>
             </el-form-item>
 
-            <!-- Search Action Buttons / 搜尋操作按鈕 -->
+            <!-- Device type filter dropdown -->
+            <el-form-item :label="$t('device.deviceType')" prop="deviceType">
+              <el-select
+                v-model="queryParams.deviceType"
+                :placeholder="$t('device.deviceTypeAll')"
+                clearable
+                style="width: 140px"
+              >
+                <el-option :label="$t('device.waterLevelSensor')" value="WATER_LEVEL_SENSOR" />
+                <el-option :label="$t('device.otherDevice')" value="OTHER" />
+              </el-select>
+            </el-form-item>
+
+            <!-- Action buttons for search and reset -->
             <el-form-item class="search-buttons">
               <el-button type="primary" icon="search" @click="handleQuery">
                 {{ $t("device.search") }}
@@ -63,16 +95,16 @@
           </el-form>
         </div>
 
-        <!-- Data Table Card / 資料表格卡片 -->
+        <!-- Data table container with shadow effect -->
         <el-card shadow="hover" class="data-table">
-          <!-- Table Toolbar / 表格工具列 -->
+          <!-- Table toolbar with action buttons -->
           <div class="data-table__toolbar">
             <div class="data-table__toolbar--actions">
-              <!-- Add Device Button / 新增設備按鈕 -->
+              <!-- Add new device button -->
               <el-button type="success" icon="plus" @click="handleOpenDialog()">
                 {{ $t("device.add") }}
               </el-button>
-              <!-- Batch Delete Button / 批次刪除按鈕 -->
+              <!-- Bulk delete button (disabled when no items selected) -->
               <el-button
                 type="danger"
                 icon="delete"
@@ -84,7 +116,7 @@
             </div>
           </div>
 
-          <!-- Device Data Table / 設備資料表格 -->
+          <!-- Main data table with loading state and selection capabilities -->
           <el-table
             v-loading="loading"
             :data="pageData"
@@ -94,32 +126,37 @@
             class="data-table__content"
             @selection-change="handleSelectionChange"
           >
-            <!-- Selection Column / 選擇欄位 -->
+            <!-- Selection checkbox column -->
             <el-table-column type="selection" width="50" align="center" />
-            <!-- Device Name Column / 設備名稱欄位 -->
+
+            <!-- Device name column -->
             <el-table-column :label="$t('device.deviceName')" prop="deviceName" min-width="120" />
-            <!-- Device Model Column / 設備型號欄位 -->
+
+            <!-- Device model column -->
             <el-table-column
               :label="$t('device.deviceModel')"
               prop="deviceModel"
               width="120"
               align="center"
             />
-            <!-- Serial Number Column / 序號欄位 -->
+
+            <!-- Device ID column (unique identifier) -->
             <el-table-column
               :label="$t('device.deviceId')"
               prop="deviceId"
               width="140"
               align="center"
             />
-            <!-- Department Column / 部門欄位 -->
+
+            <!-- Department name column -->
             <el-table-column
               :label="$t('device.department')"
               width="120"
               align="center"
               prop="deptName"
             />
-            <!-- Status Column with Tag Display / 狀態欄位帶標籤顯示 -->
+
+            <!-- Device status column with color-coded tags -->
             <el-table-column :label="$t('device.status')" align="center" prop="status" width="80">
               <template #default="scope">
                 <el-tag :type="getStatusTagType(scope.row.status)" size="small">
@@ -127,7 +164,8 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <!-- Online Status Column / 在線狀態欄位 -->
+
+            <!-- Online/offline status column -->
             <el-table-column :label="$t('device.online')" align="center" width="80">
               <template #default="scope">
                 <el-tag :type="scope.row.isOnline ? 'success' : 'info'" size="small">
@@ -135,7 +173,8 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <!-- Location Column / 位置欄位 -->
+
+            <!-- Device location column with overflow tooltip -->
             <el-table-column
               :label="$t('device.location')"
               prop="location"
@@ -143,17 +182,19 @@
               align="center"
               show-overflow-tooltip
             />
-            <!-- Create Time Column / 建立時間欄位 -->
+
+            <!-- Creation timestamp column -->
             <el-table-column
               :label="$t('device.createTime')"
               align="center"
               prop="createdAt"
               width="150"
             />
-            <!-- Operation Column with Action Buttons / 操作欄位帶操作按鈕 -->
+
+            <!-- Operations column with action buttons -->
             <el-table-column :label="$t('device.operation')" fixed="right" width="220">
               <template #default="scope">
-                <!-- Update Heartbeat Button / 更新心跳按鈕 -->
+                <!-- Heartbeat update button -->
                 <el-button
                   type="warning"
                   icon="Refresh"
@@ -163,7 +204,7 @@
                 >
                   {{ $t("device.heartbeat") }}
                 </el-button>
-                <!-- Edit Device Button / 編輯設備按鈕 -->
+                <!-- Edit device button -->
                 <el-button
                   type="primary"
                   icon="edit"
@@ -173,7 +214,7 @@
                 >
                   {{ $t("device.edit") }}
                 </el-button>
-                <!-- Delete Device Button / 刪除設備按鈕 -->
+                <!-- Delete device button -->
                 <el-button
                   type="danger"
                   icon="delete"
@@ -187,7 +228,7 @@
             </el-table-column>
           </el-table>
 
-          <!-- Simple List Display (when no pagination data) / 簡單列表顯示（無分頁數據時） -->
+          <!-- Empty state when no data is available -->
           <div v-if="pageData.length === 0 && !loading" class="empty-data">
             <el-empty :description="$t('device.noData')" />
           </div>
@@ -195,7 +236,7 @@
       </el-col>
     </el-row>
 
-    <!-- Device Form Drawer / 設備表單抽屜 -->
+    <!-- Device form drawer (modal-like overlay) -->
     <el-drawer
       v-model="dialog.visible"
       :title="dialog.title"
@@ -203,9 +244,9 @@
       :size="drawerSize"
       @close="handleCloseDialog"
     >
-      <!-- Device Form / 設備表單 -->
+      <!-- Device form with validation rules -->
       <el-form ref="deviceFormRef" :model="formData" :rules="rules" label-width="100px">
-        <!-- Device Name Field / 設備名稱欄位 -->
+        <!-- Device name input field -->
         <el-form-item :label="$t('device.deviceForm.deviceName')" prop="deviceName">
           <el-input
             v-model="formData.deviceName"
@@ -213,20 +254,31 @@
           />
         </el-form-item>
 
-        <!-- Device Model Field / 設備型號欄位 -->
-        <el-form-item :label="$t('device.deviceForm.deviceModel')" prop="deviceModel">
+        <!-- Device model input field -->
+        <!-- <el-form-item :label="$t('device.deviceForm.deviceModel')" prop="deviceModel">
           <el-input
             v-model="formData.deviceModel"
             :placeholder="$t('device.deviceForm.deviceModelPlaceholder')"
           />
+        </el-form-item> -->
+
+        <!-- Device type selection -->
+        <el-form-item :label="$t('device.deviceForm.deviceModel')" prop="deviceType">
+          <el-select
+            v-model="formData.deviceType"
+            :placeholder="$t('device.deviceForm.deviceModelPlaceholder')"
+          >
+            <el-option :label="$t('device.waterLevelSensor')" value="WATER_LEVEL_SENSOR" />
+            <el-option :label="$t('device.otherDevice')" value="OTHER" />
+          </el-select>
         </el-form-item>
 
-        <!-- Device ID Field (Read-only when editing) / 設備ID欄位（編輯時唯讀） -->
+        <!-- Device ID field (read-only in edit mode) -->
         <el-form-item v-if="formData.deviceId" :label="$t('device.deviceId')" prop="deviceId">
           <el-input v-model="formData.deviceId" readonly :placeholder="$t('device.deviceId')" />
         </el-form-item>
 
-        <!-- Department Field / 部門欄位 -->
+        <!-- Department selection tree -->
         <el-form-item :label="$t('device.deviceForm.department')" prop="deptId">
           <el-tree-select
             v-model="formData.deptId"
@@ -238,7 +290,7 @@
           />
         </el-form-item>
 
-        <!-- Status Field / 狀態欄位 -->
+        <!-- Device status selection -->
         <el-form-item :label="$t('device.deviceForm.status')" prop="status">
           <el-select
             v-model="formData.status"
@@ -246,11 +298,10 @@
           >
             <el-option :label="$t('device.active')" value="ACTIVE" />
             <el-option :label="$t('device.inactive')" value="INACTIVE" />
-            <el-option :label="$t('device.disabled')" value="DISABLED" />
           </el-select>
         </el-form-item>
 
-        <!-- Location Field / 位置欄位 -->
+        <!-- Device location input -->
         <el-form-item :label="$t('device.deviceForm.location')" prop="location">
           <el-input
             v-model="formData.location"
@@ -258,8 +309,9 @@
           />
         </el-form-item>
 
-        <!-- Coordinates Fields / 座標欄位 -->
+        <!-- Geographic coordinates section -->
         <el-row :gutter="16">
+          <!-- Latitude input -->
           <el-col :span="12">
             <el-form-item :label="$t('device.deviceForm.latitude')" prop="latitude">
               <el-input-number
@@ -271,6 +323,7 @@
               />
             </el-form-item>
           </el-col>
+          <!-- Longitude input -->
           <el-col :span="12">
             <el-form-item :label="$t('device.deviceForm.longitude')" prop="longitude">
               <el-input-number
@@ -285,7 +338,7 @@
         </el-row>
       </el-form>
 
-      <!-- Form Actions / 表單操作 -->
+      <!-- Drawer footer with action buttons -->
       <template #footer>
         <div class="drawer-footer">
           <el-button @click="handleCloseDialog">{{ $t("common.cancel") }}</el-button>
@@ -298,81 +351,151 @@
   </div>
 </template>
 
+<!--
+  Vue 3 Composition API Script Section
+  ====================================
+
+  This script section implements the component logic using Vue 3's Composition API,
+  providing reactive state management, computed properties, and event handlers
+  for comprehensive IoT device management functionality.
+-->
 <script setup lang="ts">
-// Vue Composition API imports
+/**
+ * Vue 3 Composition API imports
+ * Core reactive primitives and lifecycle hooks for component state management
+ */
 import { computed, onMounted, reactive, ref, toRefs } from "vue";
-// Element Plus components and utilities
+
+/**
+ * Element Plus UI components and utilities
+ * Form validation, message display, and confirmation dialogs
+ */
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from "element-plus";
-// Internationalization
+
+/**
+ * Internationalization composable
+ * Provides translation functions for multi-language support
+ */
 import { useI18n } from "vue-i18n";
-// Store and utilities
+
+/**
+ * Application store access
+ * Global state management for responsive design and app-wide settings
+ */
 import { useAppStore } from "@/store/modules/app-store";
 
-// API and Type imports
+/**
+ * API layer imports
+ * Device management API functions and TypeScript type definitions
+ */
 import DeviceAPI, { type DeviceForm, type DeviceQuery, type DeviceVO } from "@/api/iot/device-api";
 import DeptAPI from "@/api/system/dept-api";
 
-// Component imports
+/**
+ * Component imports
+ * Department tree component for hierarchical department selection
+ */
 import DeptTree from "@/views/system/user/components/DeptTree.vue";
 
-// Component setup
+/**
+ * Component Configuration
+ * Defines component metadata and options for Vue's component system
+ */
 defineOptions({
   name: "DeviceManagement",
   inheritAttrs: false,
 });
 
-// Internationalization setup
+/**
+ * Internationalization Setup
+ * Initialize translation composable for multi-language support
+ */
 const { t } = useI18n();
 
-// Store access
+/**
+ * Application Store Access
+ * Access to global application state for responsive design and settings
+ */
 const appStore = useAppStore();
 
-// Reactive data state
+/**
+ * Reactive State Management
+ * Centralized reactive state using Vue's reactive() function
+ * Contains all component-level data and UI state
+ */
 const state = reactive({
+  // Loading state for async operations
   loading: false,
-  // Device list data
+
+  // Device list data from API
   pageData: [] as DeviceVO[],
-  // Query parameters
+
+  // Query parameters for device filtering and search
   queryParams: {
     keywords: "",
-    status: "",
+    status: undefined,
+    deviceType: undefined,
     deptId: undefined as number | undefined,
     createTime: undefined as [string, string] | undefined,
   } as DeviceQuery,
-  // Selection management
+
+  // Selected device IDs for bulk operations
   selectIds: [] as string[],
-  // Dialog state
+
+  // Dialog/modal state management
   dialog: {
     visible: false,
     title: "",
     loading: false,
   },
-  // Form data
+
+  // Device form data for create/edit operations
   formData: {
     deviceId: undefined,
     deviceName: "",
     deviceModel: "",
+    deviceType: "WATER_LEVEL_SENSOR",
     status: "ACTIVE",
     deptId: 0 as number,
     location: "",
     latitude: undefined,
     longitude: undefined,
   } as DeviceForm,
-  // Department options for form
+
+  // Department options for tree selection
   deptOptions: [] as OptionType[],
 });
 
-// Destructure reactive state
+/**
+ * Reactive State Destructuring
+ * Extract reactive properties using toRefs() for template binding
+ * Maintains reactivity while providing convenient access
+ */
 const { loading, pageData, queryParams, selectIds, dialog, formData, deptOptions } = toRefs(state);
 
-// Template refs
+/**
+ * Template References
+ * Reactive references to DOM elements for form manipulation and validation
+ */
 const queryFormRef = ref<FormInstance>();
 const deviceFormRef = ref<FormInstance>();
 
-// Computed properties
+/**
+ * Computed Properties
+ * Reactive computed values that automatically update when dependencies change
+ */
+
+/**
+ * Dynamic drawer size based on device type
+ * Responsive design: larger drawer on desktop, full-width on mobile
+ */
 const drawerSize = computed(() => (appStore.device === "desktop" ? "600px" : "90%"));
 
-// Form validation rules
+/**
+ * Form Validation Rules
+ * Comprehensive validation rules for device form fields
+ * Uses computed property for reactive translation support
+ */
 const rules = computed<FormRules>(() => ({
   deviceName: [
     {
@@ -386,6 +509,13 @@ const rules = computed<FormRules>(() => ({
       required: true,
       message: t("device.validation.deviceModelRequired"),
       trigger: "blur",
+    },
+  ],
+  deviceType: [
+    {
+      required: true,
+      message: t("device.validation.deviceTypeRequired"),
+      trigger: "change",
     },
   ],
   deptId: [
@@ -411,11 +541,16 @@ const rules = computed<FormRules>(() => ({
   ],
 }));
 
-// Utility functions
+/**
+ * Utility Functions
+ * Helper functions for data transformation and UI logic
+ */
 
 /**
- * Get status tag type for display
- * 獲取狀態標籤類型用於顯示
+ * Get status tag type for Element Plus tags
+ * Maps device status to appropriate color-coded tag types
+ * @param status - Device status string
+ * @returns Element Plus tag type
  */
 function getStatusTagType(status: string): "success" | "warning" | "danger" | "info" | "primary" {
   switch (status) {
@@ -423,45 +558,44 @@ function getStatusTagType(status: string): "success" | "warning" | "danger" | "i
       return "success";
     case "INACTIVE":
       return "warning";
-    case "DISABLED":
-      return "danger";
     default:
       return "info";
   }
 }
 
 /**
- * Get localized status text
- * 獲取本地化狀態文本
+ * Get localized status text with fallback logic
+ * Provides translated status text with graceful degradation
+ * @param status - Device status string
+ * @returns Localized status text
  */
 function getStatusText(status: string): string {
-  // Map canonical status codes to the i18n keys used in language files.
-  // Some language files use `device.statusActive` etc., while others
-  // may provide short keys like `device.active`. Prefer the explicit
-  // `statusXxx` keys first and fall back to the short key and finally
-  // to the raw status code.
+  // Primary: Use explicit status translation keys
   switch (status) {
     case "ACTIVE":
       return t("device.statusActive");
     case "INACTIVE":
       return t("device.statusInactive");
-    case "DISABLED":
-      return t("device.statusDisabled");
     default: {
+      // Fallback: Try short key format
       const shortKey = status ? status.toLowerCase() : "";
       const short = shortKey ? t(`device.${shortKey}`) : "";
-      // If translation returns the key itself (no translation), fall back to status
+      // Final fallback: Return original status if no translation found
       if (short === `device.${shortKey}` || short === "") return status;
       return short;
     }
   }
 }
 
-// Data fetching methods
+/**
+ * Data Fetching Functions
+ * API interaction functions for retrieving and managing device data
+ */
 
 /**
  * Fetch device data from API
- * 從 API 獲取設備數據
+ * Retrieves paginated device list based on current query parameters
+ * Handles loading states and error scenarios
  */
 async function fetchData() {
   try {
@@ -477,8 +611,9 @@ async function fetchData() {
 }
 
 /**
- * Load department tree options
- * 載入部門樹選項
+ * Load department options for tree selection
+ * Fetches hierarchical department data for form dropdown
+ * Used in device assignment and filtering
  */
 async function loadDeptOptions() {
   try {
@@ -489,11 +624,15 @@ async function loadDeptOptions() {
   }
 }
 
-// Event handlers
+/**
+ * Event Handlers
+ * User interaction handlers for buttons, forms, and UI events
+ */
 
 /**
- * Handle edit button click
- * 處理編輯按鈕點擊
+ * Handle edit button click in table
+ * Initiates edit mode by opening dialog with selected device data
+ * @param row - Device data object from table row
  */
 function handleEditClick(row: DeviceVO) {
   console.log("Edit button clicked, deviceId:", row.deviceId);
@@ -501,22 +640,23 @@ function handleEditClick(row: DeviceVO) {
 }
 
 /**
- * Handle search query
- * 處理搜尋查詢
+ * Handle search query execution
+ * Triggers data fetch with current filter parameters
  */
 function handleQuery() {
   fetchData();
 }
 
 /**
- * Reset search query
- * 重置搜尋查詢
+ * Handle search form reset
+ * Clears all filter parameters and refreshes data
  */
 function handleResetQuery() {
   queryFormRef.value?.resetFields();
   queryParams.value = {
     keywords: "",
-    status: "",
+    status: undefined,
+    deviceType: undefined,
     deptId: undefined,
     createTime: undefined,
   };
@@ -524,30 +664,34 @@ function handleResetQuery() {
 }
 
 /**
- * Handle table selection change
- * 處理表格選擇變更
+ * Handle table row selection changes
+ * Updates selected device IDs for bulk operations
+ * @param selection - Array of selected device objects
  */
 function handleSelectionChange(selection: DeviceVO[]) {
   selectIds.value = selection.map((item) => item.deviceId);
 }
 
 /**
- * Open device form dialog
- * 打開設備表單對話框
+ * Handle dialog opening for device creation/editing
+ * Manages dialog state and form data population
+ * @param deviceId - Optional device ID for edit mode
  */
 async function handleOpenDialog(deviceId?: string) {
   dialog.value.visible = true;
 
   if (deviceId) {
+    // Edit mode: Populate form with existing device data
     dialog.value.title = t("device.edit");
     try {
-      // Find device from current page data instead of API call
+      // Find device in current page data (optimization to avoid extra API call)
       const device = pageData.value.find((d) => d.deviceId === deviceId);
       if (device) {
         Object.assign(formData.value, {
           deviceId: device.deviceId,
           deviceName: device.deviceName,
           deviceModel: device.deviceModel,
+          deviceType: device.deviceType,
           status: device.status,
           deptId: device.deptId,
           location: device.location,
@@ -565,14 +709,15 @@ async function handleOpenDialog(deviceId?: string) {
       handleCloseDialog();
     }
   } else {
+    // Create mode: Initialize empty form
     dialog.value.title = t("device.add");
     resetForm();
   }
 }
 
 /**
- * Close device form dialog
- * 關閉設備表單對話框
+ * Handle dialog closing
+ * Resets dialog state and form data
  */
 function handleCloseDialog() {
   dialog.value.visible = false;
@@ -580,14 +725,15 @@ function handleCloseDialog() {
 }
 
 /**
- * Reset form data
- * 重置表單數據
+ * Reset device form to initial state
+ * Clears all form fields and validation states
  */
 function resetForm() {
   Object.assign(formData.value, {
     deviceId: undefined,
     deviceName: "",
     deviceModel: "",
+    deviceType: "WATER_LEVEL_SENSOR",
     status: "ACTIVE",
     deptId: 0,
     location: "",
@@ -598,13 +744,15 @@ function resetForm() {
 }
 
 /**
- * Handle form submission
- * 處理表單提交
+ * Handle form submission for device creation/updates
+ * Validates form data and executes appropriate API operation
+ * Provides user feedback through success/error messages
  */
 async function handleSubmit() {
   if (!deviceFormRef.value) return;
 
   try {
+    // Validate form before submission
     const valid = await deviceFormRef.value.validate();
     if (!valid) return;
 
@@ -620,6 +768,7 @@ async function handleSubmit() {
       ElMessage.success(t("device.addSuccess"));
     }
 
+    // Close dialog and refresh data
     handleCloseDialog();
     fetchData();
   } catch (error) {
@@ -631,8 +780,10 @@ async function handleSubmit() {
 }
 
 /**
- * Handle device deletion
- * 處理設備刪除
+ * Handle device deletion (single or bulk)
+ * Supports both individual device deletion and bulk operations
+ * Includes confirmation dialog for safety
+ * @param deviceId - Optional single device ID, if not provided uses selected items
  */
 async function handleDelete(deviceId?: string) {
   const ids = deviceId ? [deviceId] : selectIds.value;
@@ -642,12 +793,14 @@ async function handleDelete(deviceId?: string) {
   }
 
   try {
+    // Show confirmation dialog
     await ElMessageBox.confirm(t("device.deleteConfirmation"), t("device.deleteTitle"), {
       confirmButtonText: t("common.confirm"),
       cancelButtonText: t("common.cancel"),
       type: "warning",
     });
 
+    // Execute deletion
     await DeviceAPI.deleteDevices(ids.join(","));
     ElMessage.success(t("device.deleteSuccess"));
     fetchData();
@@ -661,7 +814,8 @@ async function handleDelete(deviceId?: string) {
 
 /**
  * Handle device heartbeat update
- * 處理設備心跳更新
+ * Triggers heartbeat refresh for connectivity monitoring
+ * @param device - Device object to update heartbeat for
  */
 async function handleUpdateHeartbeat(device: DeviceVO) {
   try {
@@ -674,52 +828,105 @@ async function handleUpdateHeartbeat(device: DeviceVO) {
   }
 }
 
-// Lifecycle hooks
+/**
+ * Lifecycle Hooks
+ * Component initialization and cleanup logic
+ */
+
+/**
+ * Component mounted lifecycle hook
+ * Initializes component by fetching initial data and loading dependencies
+ */
 onMounted(() => {
   fetchData();
   loadDeptOptions();
 });
 </script>
 
+<!--
+  SCSS Styles Section
+  ===================
+
+  Component-specific styles using SCSS with BEM-like naming convention.
+  Implements responsive design patterns and integrates with Element Plus theme system.
+  Uses CSS custom properties for consistent theming and maintainability.
+-->
 <style lang="scss" scoped>
+/**
+ * Main container styling
+ * Provides consistent padding and layout foundation for the component
+ */
 .app-container {
   padding: 20px;
 }
 
+/**
+ * Search and filter section styling
+ * Creates a visually distinct container for search functionality
+ * Uses theme-aware background color for consistency
+ */
 .search-container {
   padding: 20px;
   margin-bottom: 20px;
   background: var(--el-bg-color);
   border-radius: 8px;
 
+  /**
+   * Search buttons alignment
+   * Positions action buttons to the right side of the search form
+   */
   .search-buttons {
     margin-left: auto;
   }
 }
 
+/**
+ * Data table container styling
+ * Organizes table layout with toolbar and content sections
+ */
 .data-table {
+  /**
+   * Table toolbar styling
+   * Provides consistent spacing and alignment for table action buttons
+   */
   &__toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
 
+    /**
+     * Action buttons container
+     * Groups related action buttons with consistent spacing
+     */
     &--actions {
       display: flex;
       gap: 8px;
     }
   }
 
+  /**
+   * Table content styling
+   * Ensures table takes full available width
+   */
   &__content {
     width: 100%;
   }
 }
 
+/**
+ * Empty state styling
+ * Centers empty state content when no data is available
+ */
 .empty-data {
   padding: 40px 0;
   text-align: center;
 }
 
+/**
+ * Drawer footer styling
+ * Provides consistent button layout in modal drawer footer
+ */
 .drawer-footer {
   display: flex;
   gap: 12px;
@@ -727,16 +934,32 @@ onMounted(() => {
   padding: 16px 0;
 }
 
-// Responsive design
+/**
+ * Responsive Design Breakpoints
+ * Mobile-first approach with progressive enhancement for larger screens
+ */
 @media (max-width: 768px) {
+  /**
+   * Mobile container adjustments
+   * Reduces padding for better mobile experience
+   */
   .app-container {
     padding: 12px;
   }
 
+  /**
+   * Mobile search container
+   * Adjusts padding for smaller screens
+   */
   .search-container {
     padding: 16px;
   }
 
+  /**
+   * Mobile form layout override
+   * Forces inline forms to stack vertically on mobile devices
+   * Uses Element Plus deep selector for component styling
+   */
   :deep(.el-form--inline .el-form-item) {
     display: block;
     margin-right: 0;
