@@ -23,9 +23,8 @@
     longitude: undefined,
   } as DeviceForm,ties
   - Advanced filtering by department, status, and keywords
-  - Real-time device status and online/offline indicators
+  - Real-time device status
   - Create, read, update, and delete operations
-  - Heartbeat monitoring and device connectivity management
   - Responsive layout with mobile-optimized drawer forms
   - Internationalization support with vue-i18n
   - TypeScript integration for type safety
@@ -165,15 +164,6 @@
               </template>
             </el-table-column>
 
-            <!-- Online/offline status column -->
-            <el-table-column :label="$t('device.online')" align="center" width="80">
-              <template #default="scope">
-                <el-tag :type="scope.row.isOnline ? 'success' : 'info'" size="small">
-                  {{ scope.row.isOnline ? $t("device.online") : $t("device.offline") }}
-                </el-tag>
-              </template>
-            </el-table-column>
-
             <!-- Device location column with overflow tooltip -->
             <el-table-column
               :label="$t('device.location')"
@@ -194,16 +184,6 @@
             <!-- Operations column with action buttons -->
             <el-table-column :label="$t('device.operation')" fixed="right" width="220">
               <template #default="scope">
-                <!-- Heartbeat update button -->
-                <el-button
-                  type="warning"
-                  icon="Refresh"
-                  size="small"
-                  link
-                  @click="handleUpdateHeartbeat(scope.row)"
-                >
-                  {{ $t("device.heartbeat") }}
-                </el-button>
                 <!-- Edit device button -->
                 <el-button
                   type="primary"
@@ -245,7 +225,7 @@
       @close="handleCloseDialog"
     >
       <!-- Device form with validation rules -->
-      <el-form ref="deviceFormRef" :model="formData" :rules="rules" label-width="100px">
+      <el-form ref="deviceFormRef" :model="formData" :rules="rules" label-width="140px">
         <!-- Device name input field -->
         <el-form-item :label="$t('device.deviceForm.deviceName')" prop="deviceName">
           <el-input
@@ -263,10 +243,10 @@
         </el-form-item> -->
 
         <!-- Device type selection -->
-        <el-form-item :label="$t('device.deviceForm.deviceModel')" prop="deviceType">
+        <el-form-item :label="$t('device.deviceForm.deviceType')" prop="deviceType">
           <el-select
             v-model="formData.deviceType"
-            :placeholder="$t('device.deviceForm.deviceModelPlaceholder')"
+            :placeholder="$t('device.deviceForm.deviceTypePlaceholder')"
           >
             <el-option :label="$t('device.waterLevelSensor')" value="WATER_LEVEL_SENSOR" />
             <el-option :label="$t('device.otherDevice')" value="OTHER" />
@@ -809,22 +789,6 @@ async function handleDelete(deviceId?: string) {
       console.error("Error deleting devices:", error);
       ElMessage.error(t("device.deleteError"));
     }
-  }
-}
-
-/**
- * Handle device heartbeat update
- * Triggers heartbeat refresh for connectivity monitoring
- * @param device - Device object to update heartbeat for
- */
-async function handleUpdateHeartbeat(device: DeviceVO) {
-  try {
-    await DeviceAPI.updateDeviceHeartbeat(device.deviceId);
-    ElMessage.success(t("device.heartbeatUpdateSuccess"));
-    fetchData();
-  } catch (error) {
-    console.error("Error updating heartbeat:", error);
-    ElMessage.error(t("device.heartbeatUpdateError"));
   }
 }
 

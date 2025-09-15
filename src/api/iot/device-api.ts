@@ -140,20 +140,6 @@ const DeviceAPI = {
   },
 
   /**
-   * Refresh device heartbeat timestamp
-   * Updates last-seen timestamp for connectivity monitoring
-   *
-   * @param deviceId - Unique identifier of the device to ping
-   * @returns Promise resolving to heartbeat update response
-   */
-  updateDeviceHeartbeat(deviceId: string) {
-    return request({
-      url: `${DEVICE_BASE_URL}/${deviceId}/heartbeat`,
-      method: "patch",
-    });
-  },
-
-  /**
    * Discover devices within a specified geographic radius
    * Enables location-based device discovery and proximity queries
    *
