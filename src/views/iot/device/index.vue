@@ -56,32 +56,6 @@
               />
             </el-form-item>
 
-            <!-- Device status filter dropdown -->
-            <el-form-item :label="$t('device.status')" prop="status">
-              <el-select
-                v-model="queryParams.status"
-                :placeholder="$t('device.statusAll')"
-                clearable
-                style="width: 120px"
-              >
-                <el-option :label="$t('device.active')" value="ACTIVE" />
-                <el-option :label="$t('device.inactive')" value="INACTIVE" />
-              </el-select>
-            </el-form-item>
-
-            <!-- Device type filter dropdown -->
-            <el-form-item :label="$t('device.deviceType')" prop="deviceType">
-              <el-select
-                v-model="queryParams.deviceType"
-                :placeholder="$t('device.deviceTypeAll')"
-                clearable
-                style="width: 140px"
-              >
-                <el-option :label="$t('device.waterLevelSensor')" value="WATER_LEVEL_SENSOR" />
-                <el-option :label="$t('device.otherDevice')" value="OTHER" />
-              </el-select>
-            </el-form-item>
-
             <!-- Action buttons for search and reset -->
             <el-form-item class="search-buttons">
               <el-button type="primary" icon="search" @click="handleQuery">
@@ -137,7 +111,11 @@
               prop="deviceModel"
               width="120"
               align="center"
-            />
+            >
+              <template #default="scope">
+                {{ getDeviceTypeText(scope.row.deviceModel) }}
+              </template>
+            </el-table-column>
 
             <!-- Device ID column (unique identifier) -->
             <el-table-column
@@ -235,10 +213,10 @@
         </el-form-item>
 
         <!-- Device type selection -->
-        <el-form-item :label="$t('device.deviceForm.deviceType')" prop="deviceType">
+        <el-form-item :label="$t('device.deviceForm.devieModel')" prop="deviceType">
           <el-select
-            v-model="formData.deviceType"
-            :placeholder="$t('device.deviceForm.deviceTypePlaceholder')"
+            v-model="formData.deviceModel"
+            :placeholder="$t('device.deviceForm.deviceModelPlaceholder')"
           >
             <el-option :label="$t('device.waterLevelSensor')" value="WATER_LEVEL_SENSOR" />
             <el-option :label="$t('device.otherDevice')" value="OTHER" />
@@ -532,6 +510,30 @@ function getStatusTagType(status: string): "success" | "warning" | "danger" | "i
       return "warning";
     default:
       return "info";
+  }
+}
+
+/**
+ * Get localized device type text with fallback logic
+ * Provides translated device type text with graceful degradation
+ * @param deviceType - Device type string
+ * @returns Localized device type text
+ */
+function getDeviceTypeText(deviceType: string): string {
+  // Primary: Use explicit device type translation keys
+  switch (deviceType) {
+    case "WATER_LEVEL_SENSOR":
+      return t("device.waterLevelSensor");
+    case "OTHER":
+      return t("device.otherDevice");
+    default: {
+      // Fallback: Try short key format
+      const shortKey = deviceType ? deviceType.toLowerCase() : "";
+      const short = shortKey ? t(`device.${shortKey}`) : "";
+      // Final fallback: Return original device type if no translation found
+      if (short === `device.${shortKey}` || short === "") return deviceType;
+      return short;
+    }
   }
 }
 
