@@ -800,6 +800,7 @@ export default {
     serialNumber: "Serial Number",
     department: "Department",
     location: "Location",
+    createTime: "Create Time",
     manufacturer: "Manufacturer",
     installDate: "Install Date",
     lastSeen: "Last Seen",
