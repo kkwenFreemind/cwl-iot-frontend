@@ -234,14 +234,6 @@
           />
         </el-form-item>
 
-        <!-- Device model input field -->
-        <!-- <el-form-item :label="$t('device.deviceForm.deviceModel')" prop="deviceModel">
-          <el-input
-            v-model="formData.deviceModel"
-            :placeholder="$t('device.deviceForm.deviceModelPlaceholder')"
-          />
-        </el-form-item> -->
-
         <!-- Device type selection -->
         <el-form-item :label="$t('device.deviceForm.deviceType')" prop="deviceType">
           <el-select
