@@ -16,7 +16,8 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <!-- Department Tree Sidebar / 部門樹側邊欄 -->
+      <!-- Department Tree S    console.log("First device id (deviceId):", data[0].deviceId);
+    console.log("First device keys:", Object.keys(data[0]));ebar / 部門樹側邊欄 -->
       <el-col :lg="4" :xs="24" class="mb-[12px]">
         <DeptTree v-model="queryParams.deptId" @node-click="handleQuery" />
       </el-col>
@@ -48,19 +49,6 @@
                 <el-option :label="$t('device.inactive')" value="INACTIVE" />
                 <el-option :label="$t('device.disabled')" value="DISABLED" />
               </el-select>
-            </el-form-item>
-
-            <!-- Create Time Range Picker / 建立時間範圍選擇器 -->
-            <el-form-item :label="$t('device.createTime')">
-              <el-date-picker
-                v-model="queryParams.createTime"
-                :editable="false"
-                type="daterange"
-                range-separator="~"
-                :start-placeholder="$t('device.startTime')"
-                :end-placeholder="$t('device.endTime')"
-                value-format="YYYY-MM-DD"
-              />
             </el-form-item>
 
             <!-- Search Action Buttons / 搜尋操作按鈕 -->
@@ -119,8 +107,8 @@
             />
             <!-- Serial Number Column / 序號欄位 -->
             <el-table-column
-              :label="$t('device.serialNumber')"
-              prop="serialNumber"
+              :label="$t('device.deviceId')"
+              prop="deviceId"
               width="140"
               align="center"
             />
@@ -159,7 +147,7 @@
             <el-table-column
               :label="$t('device.createTime')"
               align="center"
-              prop="createTime"
+              prop="createdAt"
               width="150"
             />
             <!-- Operation Column with Action Buttons / 操作欄位帶操作按鈕 -->
@@ -181,7 +169,7 @@
                   icon="edit"
                   link
                   size="small"
-                  @click="handleOpenDialog(scope.row.id)"
+                  @click="handleEditClick(scope.row)"
                 >
                   {{ $t("device.edit") }}
                 </el-button>
@@ -191,7 +179,7 @@
                   icon="delete"
                   link
                   size="small"
-                  @click="handleDelete(scope.row.id)"
+                  @click="handleDelete(scope.row.deviceId)"
                 >
                   {{ $t("device.delete") }}
                 </el-button>
@@ -233,12 +221,9 @@
           />
         </el-form-item>
 
-        <!-- Serial Number Field / 序號欄位 -->
-        <el-form-item :label="$t('device.deviceForm.serialNumber')" prop="serialNumber">
-          <el-input
-            v-model="formData.serialNumber"
-            :placeholder="$t('device.deviceForm.serialNumberPlaceholder')"
-          />
+        <!-- Device ID Field (Read-only when editing) / 設備ID欄位（編輯時唯讀） -->
+        <el-form-item v-if="formData.deviceId" :label="$t('device.deviceId')" prop="deviceId">
+          <el-input v-model="formData.deviceId" readonly :placeholder="$t('device.deviceId')" />
         </el-form-item>
 
         <!-- Department Field / 部門欄位 -->
@@ -298,73 +283,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
-        <!-- Manufacturer Field / 製造商欄位 -->
-        <el-form-item :label="$t('device.deviceForm.manufacturer')" prop="manufacturer">
-          <el-input
-            v-model="formData.manufacturer"
-            :placeholder="$t('device.deviceForm.manufacturerPlaceholder')"
-          />
-        </el-form-item>
-
-        <!-- Firmware Version Field / 韌體版本欄位 -->
-        <el-form-item :label="$t('device.deviceForm.firmwareVersion')" prop="firmwareVersion">
-          <el-input
-            v-model="formData.firmwareVersion"
-            :placeholder="$t('device.deviceForm.firmwareVersionPlaceholder')"
-          />
-        </el-form-item>
-
-        <!-- Hardware Version Field / 硬體版本欄位 -->
-        <el-form-item :label="$t('device.deviceForm.hardwareVersion')" prop="hardwareVersion">
-          <el-input
-            v-model="formData.hardwareVersion"
-            :placeholder="$t('device.deviceForm.hardwareVersionPlaceholder')"
-          />
-        </el-form-item>
-
-        <!-- Install Date Field / 安裝日期欄位 -->
-        <el-form-item :label="$t('device.deviceForm.installDate')" prop="installDate">
-          <el-date-picker
-            v-model="formData.installDate"
-            type="date"
-            :placeholder="$t('device.deviceForm.installDatePlaceholder')"
-            value-format="YYYY-MM-DD"
-            style="width: 100%"
-          />
-        </el-form-item>
-
-        <!-- Purchase Price Field / 採購價格欄位 -->
-        <el-form-item :label="$t('device.deviceForm.purchasePrice')" prop="purchasePrice">
-          <el-input-number
-            v-model="formData.purchasePrice"
-            :placeholder="$t('device.deviceForm.purchasePricePlaceholder')"
-            :min="0"
-            :precision="2"
-            style="width: 100%"
-          />
-        </el-form-item>
-
-        <!-- Warranty Expiry Field / 保固到期日欄位 -->
-        <el-form-item :label="$t('device.deviceForm.warrantyExpiry')" prop="warrantyExpiry">
-          <el-date-picker
-            v-model="formData.warrantyExpiry"
-            type="date"
-            :placeholder="$t('device.deviceForm.warrantyExpiryPlaceholder')"
-            value-format="YYYY-MM-DD"
-            style="width: 100%"
-          />
-        </el-form-item>
-
-        <!-- Description Field / 描述欄位 -->
-        <el-form-item :label="$t('device.deviceForm.description')" prop="description">
-          <el-input
-            v-model="formData.description"
-            type="textarea"
-            :rows="3"
-            :placeholder="$t('device.deviceForm.descriptionPlaceholder')"
-          />
-        </el-form-item>
       </el-form>
 
       <!-- Form Actions / 表單操作 -->
@@ -431,24 +349,14 @@ const state = reactive({
   },
   // Form data
   formData: {
-    id: undefined,
+    deviceId: undefined,
     deviceName: "",
     deviceModel: "",
-    serialNumber: "",
-    description: "",
     status: "ACTIVE",
     deptId: 0 as number,
     location: "",
     latitude: undefined,
     longitude: undefined,
-    installDate: "",
-    lastMaintenanceDate: "",
-    nextMaintenanceDate: "",
-    firmwareVersion: "",
-    hardwareVersion: "",
-    manufacturer: "",
-    purchasePrice: undefined,
-    warrantyExpiry: "",
   } as DeviceForm,
   // Department options for form
   deptOptions: [] as OptionType[],
@@ -477,13 +385,6 @@ const rules = computed<FormRules>(() => ({
     {
       required: true,
       message: t("device.validation.deviceModelRequired"),
-      trigger: "blur",
-    },
-  ],
-  serialNumber: [
-    {
-      required: true,
-      message: t("device.validation.serialNumberRequired"),
       trigger: "blur",
     },
   ],
@@ -534,8 +435,26 @@ function getStatusTagType(status: string): "success" | "warning" | "danger" | "i
  * 獲取本地化狀態文本
  */
 function getStatusText(status: string): string {
-  const statusKey = status.toLowerCase();
-  return t(`device.${statusKey}`);
+  // Map canonical status codes to the i18n keys used in language files.
+  // Some language files use `device.statusActive` etc., while others
+  // may provide short keys like `device.active`. Prefer the explicit
+  // `statusXxx` keys first and fall back to the short key and finally
+  // to the raw status code.
+  switch (status) {
+    case "ACTIVE":
+      return t("device.statusActive");
+    case "INACTIVE":
+      return t("device.statusInactive");
+    case "DISABLED":
+      return t("device.statusDisabled");
+    default: {
+      const shortKey = status ? status.toLowerCase() : "";
+      const short = shortKey ? t(`device.${shortKey}`) : "";
+      // If translation returns the key itself (no translation), fall back to status
+      if (short === `device.${shortKey}` || short === "") return status;
+      return short;
+    }
+  }
 }
 
 // Data fetching methods
@@ -573,6 +492,15 @@ async function loadDeptOptions() {
 // Event handlers
 
 /**
+ * Handle edit button click
+ * 處理編輯按鈕點擊
+ */
+function handleEditClick(row: DeviceVO) {
+  console.log("Edit button clicked, deviceId:", row.deviceId);
+  handleOpenDialog(row.deviceId);
+}
+
+/**
  * Handle search query
  * 處理搜尋查詢
  */
@@ -600,7 +528,7 @@ function handleResetQuery() {
  * 處理表格選擇變更
  */
 function handleSelectionChange(selection: DeviceVO[]) {
-  selectIds.value = selection.map((item) => item.id);
+  selectIds.value = selection.map((item) => item.deviceId);
 }
 
 /**
@@ -612,29 +540,29 @@ async function handleOpenDialog(deviceId?: string) {
 
   if (deviceId) {
     dialog.value.title = t("device.edit");
-    // Load device data for editing
-    const device = pageData.value.find((d) => d.id === deviceId);
-    if (device) {
-      Object.assign(formData.value, {
-        id: device.id,
-        deviceName: device.deviceName,
-        deviceModel: device.deviceModel,
-        serialNumber: device.serialNumber,
-        description: device.description,
-        status: device.status,
-        deptId: device.deptId,
-        location: device.location,
-        latitude: device.latitude,
-        longitude: device.longitude,
-        installDate: device.installDate,
-        lastMaintenanceDate: device.lastMaintenanceDate,
-        nextMaintenanceDate: device.nextMaintenanceDate,
-        firmwareVersion: device.firmwareVersion,
-        hardwareVersion: device.hardwareVersion,
-        manufacturer: device.manufacturer,
-        purchasePrice: device.purchasePrice,
-        warrantyExpiry: device.warrantyExpiry,
-      });
+    try {
+      // Find device from current page data instead of API call
+      const device = pageData.value.find((d) => d.deviceId === deviceId);
+      if (device) {
+        Object.assign(formData.value, {
+          deviceId: device.deviceId,
+          deviceName: device.deviceName,
+          deviceModel: device.deviceModel,
+          status: device.status,
+          deptId: device.deptId,
+          location: device.location,
+          latitude: device.latitude,
+          longitude: device.longitude,
+        });
+      } else {
+        console.warn("Device not found in current page data");
+        ElMessage.error(t("device.deviceNotFound"));
+        handleCloseDialog();
+      }
+    } catch (error) {
+      console.error("Error loading device details:", error);
+      ElMessage.error(t("device.loadError"));
+      handleCloseDialog();
     }
   } else {
     dialog.value.title = t("device.add");
@@ -657,24 +585,14 @@ function handleCloseDialog() {
  */
 function resetForm() {
   Object.assign(formData.value, {
-    id: undefined,
+    deviceId: undefined,
     deviceName: "",
     deviceModel: "",
-    serialNumber: "",
-    description: "",
     status: "ACTIVE",
     deptId: 0,
     location: "",
     latitude: undefined,
     longitude: undefined,
-    installDate: "",
-    lastMaintenanceDate: "",
-    nextMaintenanceDate: "",
-    firmwareVersion: "",
-    hardwareVersion: "",
-    manufacturer: "",
-    purchasePrice: undefined,
-    warrantyExpiry: "",
   });
   deviceFormRef.value?.resetFields();
 }
@@ -692,9 +610,9 @@ async function handleSubmit() {
 
     dialog.value.loading = true;
 
-    if (formData.value.id) {
+    if (formData.value.deviceId) {
       // Update existing device
-      await DeviceAPI.updateDevice(formData.value.id, formData.value);
+      await DeviceAPI.updateDevice(formData.value.deviceId, formData.value);
       ElMessage.success(t("device.updateSuccess"));
     } else {
       // Create new device
@@ -747,7 +665,7 @@ async function handleDelete(deviceId?: string) {
  */
 async function handleUpdateHeartbeat(device: DeviceVO) {
   try {
-    await DeviceAPI.updateDeviceHeartbeat(device.id);
+    await DeviceAPI.updateDeviceHeartbeat(device.deviceId);
     ElMessage.success(t("device.heartbeatUpdateSuccess"));
     fetchData();
   } catch (error) {

@@ -728,6 +728,7 @@ export default {
     inactive: "離線",
     disabled: "已停用",
     deviceName: "設備名稱",
+    deviceId: "設備ID",
     deviceModel: "設備型號",
     serialNumber: "序號",
     department: "所屬部門",

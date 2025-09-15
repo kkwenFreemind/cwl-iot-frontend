@@ -51,19 +51,6 @@
               </el-select>
             </el-form-item>
 
-            <!-- Create Time Range Picker / 建立時間範圍選擇器 -->
-            <el-form-item :label="$t('user.createTime')">
-              <el-date-picker
-                v-model="queryParams.createTime"
-                :editable="false"
-                type="daterange"
-                range-separator="~"
-                :start-placeholder="$t('user.startTime')"
-                :end-placeholder="$t('user.endTime')"
-                value-format="YYYY-MM-DD"
-              />
-            </el-form-item>
-
             <!-- Search Action Buttons / 搜尋操作按鈕 -->
             <el-form-item class="search-buttons">
               <el-button type="primary" icon="search" @click="handleQuery">

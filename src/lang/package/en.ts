@@ -795,7 +795,11 @@ export default {
     statusActive: "Active",
     statusInactive: "Inactive",
     statusDisabled: "Disabled",
+    active: "Active",
+    inactive: "Inactive",
+    disabled: "Disabled",
     deviceName: "Device Name",
+    deviceId: "Device ID",
     deviceModel: "Device Model",
     serialNumber: "Serial Number",
     department: "Department",
@@ -885,6 +889,21 @@ export default {
     // Success Messages
     createSuccessMessage: "Device created successfully",
     updateSuccessMessage: "Device updated successfully",
+
+    // Error Messages
+    loadError: "Failed to load device details",
+    deviceNotFound: "Device not found",
+    fetchError: "Failed to fetch devices",
+    saveError: "Failed to save device",
+    deleteError: "Failed to delete device",
+    heartbeatUpdateError: "Failed to update heartbeat",
+    selectDevicesToDelete: "Please select devices to delete",
+    deleteConfirmation: "This will permanently delete the selected device(s). Continue?",
+    deleteTitle: "Delete Confirmation",
+    deleteSuccess: "Device(s) deleted successfully",
+    updateSuccess: "Device updated successfully",
+    addSuccess: "Device added successfully",
+    heartbeatUpdateSuccess: "Heartbeat updated successfully",
 
     // Statistics Panel
     stats: {

@@ -154,6 +154,20 @@ const DeviceAPI = {
       params: { centerLat, centerLng, limit },
     });
   },
+
+  /**
+   * 獲取設備詳情
+   * Get device details
+   *
+   * @param deviceId 設備ID
+   * @returns 設備詳情
+   */
+  getDevice(deviceId: string) {
+    return request<any, DeviceVO>({
+      url: `${DEVICE_BASE_URL}/${deviceId}`,
+      method: "get",
+    });
+  },
 };
 
 export default DeviceAPI;
@@ -167,51 +181,28 @@ export interface DeviceQuery {
 }
 
 export interface DeviceForm {
-  id?: string;
+  deviceId?: string;
   deviceName: string;
   deviceModel: string;
-  serialNumber: string;
-  description?: string;
-  status: string;
-  deptId: number;
+  deptId: string | number;
   location?: string;
   latitude?: number;
   longitude?: number;
-  installDate?: string;
-  lastMaintenanceDate?: string;
-  nextMaintenanceDate?: string;
-  firmwareVersion?: string;
-  hardwareVersion?: string;
-  manufacturer?: string;
-  purchasePrice?: number;
-  warrantyExpiry?: string;
+  status?: string; // Keep status for form functionality
 }
 
 export interface DeviceVO {
-  id: string;
+  deviceId: string;
   deviceName: string;
   deviceModel: string;
-  serialNumber: string;
-  description?: string;
-  status: string;
-  statusText: string;
-  deptId: number;
-  deptName: string;
+  deptId: string | number;
+  deptName?: string;
   location?: string;
   latitude?: number;
   longitude?: number;
-  installDate?: string;
-  lastMaintenanceDate?: string;
-  nextMaintenanceDate?: string;
-  lastSeenAt?: string;
-  firmwareVersion?: string;
-  hardwareVersion?: string;
-  manufacturer?: string;
-  purchasePrice?: number;
-  warrantyExpiry?: string;
-  isOnline: boolean;
-  createTime: string;
-  updateTime: string;
-  createBy?: string;
-  updateBy?: string;
+  status: string;
+  statusText?: string;
+  lastSeen?: string;
+  createdAt?: string;
+  isOnline?: boolean;
 }
