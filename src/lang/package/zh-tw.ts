@@ -889,7 +889,147 @@ export default {
       dateRange: "日期範圍",
     },
   },
-  // 通用翻譯
+  // IoT指標定義管理
+  metric: {
+    // 基本操作
+    add: "新增指標",
+    edit: "編輯指標",
+    delete: "刪除指標",
+    search: "搜尋",
+    reset: "重置",
+    confirm: "確定",
+    cancel: "取消",
+
+    // 標題
+    addMetric: "新增指標定義",
+    editMetric: "編輯指標定義",
+    metricManagement: "指標定義管理",
+
+    // 搜尋和篩選
+    keywords: "關鍵字",
+    keywordsPlaceholder: "輸入指標名稱或別名",
+    metricName: "指標名稱",
+    physicalQuantity: "物理量",
+    physicalQuantityAll: "全部物理量",
+    dataType: "數據類型",
+    dataTypeAll: "全部數據類型",
+    deptName: "部門名稱",
+    status: "狀態",
+    range: "數值範圍",
+    unit: "單位",
+
+    // 物理量類型
+    length: "長度",
+    mass: "質量",
+    temperature: "溫度",
+    pressure: "壓力",
+    volume: "體積",
+    flow: "流量",
+    velocity: "速度",
+    power: "功率",
+    energy: "能量",
+    time: "時間",
+    frequency: "頻率",
+    electricCurrent: "電流",
+    voltage: "電壓",
+    resistance: "電阻",
+    conductance: "電導",
+    capacitance: "電容",
+    inductance: "電感",
+    magneticFlux: "磁通量",
+    luminousIntensity: "光強度",
+    illuminance: "照度",
+    radioactivity: "放射性",
+    angle: "角度",
+    area: "面積",
+    dimensionless: "無量綱",
+
+    // 單位
+    meter: "米",
+    kilometer: "公里",
+    centimeter: "厘米",
+    millimeter: "毫米",
+    kilogram: "公斤",
+    gram: "克",
+    ton: "噸",
+    celsius: "攝氏度",
+    fahrenheit: "華氏度",
+    kelvin: "開爾文",
+    second: "秒",
+    minute: "分鐘",
+    hour: "小時",
+    day: "天",
+    percent: "百分比",
+    volt: "伏特",
+    dbm: "分貝毫瓦",
+    litersPerMinute: "升/分鐘",
+    waterLevel: "水位",
+    signalStrength: "訊號強度",
+
+    // 數據類型
+    integer: "整數",
+    float: "浮點數",
+    double: "雙精度",
+    boolean: "布林值",
+    string: "字串",
+    timestamp: "時間戳",
+
+    // 狀態
+    active: "啟用",
+    inactive: "停用",
+    noRange: "無範圍限制",
+
+    // 操作按鈕
+    actions: "操作",
+
+    // 表單欄位
+    metricForm: {
+      metricName: "指標名稱",
+      metricNamePlaceholder: "輸入指標名稱",
+      alias: "別名",
+      aliasPlaceholder: "輸入指標別名（可選）",
+      physicalQuantity: "物理量",
+      physicalQuantityPlaceholder: "選擇物理量類型",
+      unit: "單位",
+      unitPlaceholder: "選擇測量單位",
+      dataType: "數據類型",
+      dataTypePlaceholder: "選擇數據類型",
+      minValue: "最小值",
+      minValuePlaceholder: "輸入最小值",
+      maxValue: "最大值",
+      maxValuePlaceholder: "輸入最大值",
+      precision: "精度",
+      precisionPlaceholder: "輸入小數位數",
+      description: "描述",
+      descriptionPlaceholder: "輸入指標描述（可選）",
+    },
+
+    // 驗證訊息
+    validation: {
+      metricNameRequired: "指標名稱不能為空",
+      physicalQuantityRequired: "請選擇物理量",
+      unitRequired: "請選擇單位",
+      dataTypeRequired: "請選擇數據類型",
+    },
+
+    // 成功訊息
+    createSuccess: "指標定義創建成功",
+    updateSuccess: "指標定義更新成功",
+    deleteSuccess: "指標定義刪除成功",
+
+    // 錯誤訊息
+    fetchError: "獲取指標定義失敗",
+    submitError: "提交失敗",
+    deleteError: "刪除失敗",
+
+    // 確認對話框
+    confirmDelete: "確定要刪除選中的指標定義嗎？此操作無法撤銷。",
+    confirmDeleteTitle: "刪除確認",
+
+    // 提示訊息
+    selectDeptFirst: "請先選擇部門",
+    noData: "暫無數據",
+  },
   common: {
     confirm: "確定",
     cancel: "取消",

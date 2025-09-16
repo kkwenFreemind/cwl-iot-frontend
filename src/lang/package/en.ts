@@ -949,4 +949,146 @@ export default {
       location: "Location",
     },
   },
+  // IoT Metric Definition Management
+  metric: {
+    // Basic operations
+    add: "Add Metric",
+    edit: "Edit Metric",
+    delete: "Delete Metric",
+    search: "Search",
+    reset: "Reset",
+    confirm: "Confirm",
+    cancel: "Cancel",
+
+    // Titles
+    addMetric: "Add Metric Definition",
+    editMetric: "Edit Metric Definition",
+    metricManagement: "Metric Definition Management",
+
+    // Search and filters
+    keywords: "Keywords",
+    keywordsPlaceholder: "Enter metric name or alias",
+    metricName: "Metric Name",
+    physicalQuantity: "Physical Quantity",
+    physicalQuantityAll: "All Physical Quantities",
+    dataType: "Data Type",
+    dataTypeAll: "All Data Types",
+    deptName: "Department Name",
+    status: "Status",
+    range: "Value Range",
+    unit: "Unit",
+
+    // Physical quantity types
+    length: "Length",
+    mass: "Mass",
+    temperature: "Temperature",
+    pressure: "Pressure",
+    volume: "Volume",
+    flow: "Flow",
+    velocity: "Velocity",
+    power: "Power",
+    energy: "Energy",
+    time: "Time",
+    frequency: "Frequency",
+    electricCurrent: "Electric Current",
+    voltage: "Voltage",
+    resistance: "Resistance",
+    conductance: "Conductance",
+    capacitance: "Capacitance",
+    inductance: "Inductance",
+    magneticFlux: "Magnetic Flux",
+    luminousIntensity: "Luminous Intensity",
+    illuminance: "Illuminance",
+    radioactivity: "Radioactivity",
+    angle: "Angle",
+    area: "Area",
+    dimensionless: "Dimensionless",
+
+    // Units
+    meter: "Meter",
+    kilometer: "Kilometer",
+    centimeter: "Centimeter",
+    millimeter: "Millimeter",
+    kilogram: "Kilogram",
+    gram: "Gram",
+    ton: "Ton",
+    celsius: "Celsius",
+    fahrenheit: "Fahrenheit",
+    kelvin: "Kelvin",
+    second: "Second",
+    minute: "Minute",
+    hour: "Hour",
+    day: "Day",
+    percent: "Percent",
+    volt: "Volt",
+    dbm: "dBm",
+    litersPerMinute: "Liters/Minute",
+    waterLevel: "Water Level",
+    signalStrength: "Signal Strength",
+
+    // Data types
+    integer: "Integer",
+    float: "Float",
+    double: "Double",
+    boolean: "Boolean",
+    string: "String",
+    timestamp: "Timestamp",
+
+    // Status
+    active: "Active",
+    inactive: "Inactive",
+    noRange: "No Range Limit",
+
+    // Actions
+    actions: "Actions",
+
+    // Form fields
+    metricForm: {
+      metricName: "Metric Name",
+      metricNamePlaceholder: "Enter metric name",
+      alias: "Alias",
+      aliasPlaceholder: "Enter metric alias (optional)",
+      physicalQuantity: "Physical Quantity",
+      physicalQuantityPlaceholder: "Select physical quantity type",
+      unit: "Unit",
+      unitPlaceholder: "Select measurement unit",
+      dataType: "Data Type",
+      dataTypePlaceholder: "Select data type",
+      minValue: "Minimum Value",
+      minValuePlaceholder: "Enter minimum value",
+      maxValue: "Maximum Value",
+      maxValuePlaceholder: "Enter maximum value",
+      precision: "Precision",
+      precisionPlaceholder: "Enter decimal places",
+      description: "Description",
+      descriptionPlaceholder: "Enter metric description (optional)",
+    },
+
+    // Validation messages
+    validation: {
+      metricNameRequired: "Metric name is required",
+      physicalQuantityRequired: "Please select physical quantity",
+      unitRequired: "Please select unit",
+      dataTypeRequired: "Please select data type",
+    },
+
+    // Success messages
+    createSuccess: "Metric definition created successfully",
+    updateSuccess: "Metric definition updated successfully",
+    deleteSuccess: "Metric definition deleted successfully",
+
+    // Error messages
+    fetchError: "Failed to fetch metric definitions",
+    submitError: "Submission failed",
+    deleteError: "Deletion failed",
+
+    // Confirmation dialogs
+    confirmDelete:
+      "Are you sure you want to delete the selected metric definition? This action cannot be undone.",
+    confirmDeleteTitle: "Delete Confirmation",
+
+    // Prompts
+    selectDeptFirst: "Please select a department first",
+    noData: "No data",
+  },
 };
