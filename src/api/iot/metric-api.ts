@@ -54,13 +54,15 @@ const MetricAPI = {
    * Create new metric definition
    *
    * @param data 指標定義表單數據
+   * @param deptId 部門ID
    * @returns 創建結果
    */
-  createMetricDefinition(data: MetricCreateForm) {
+  createMetricDefinition(data: MetricCreateForm, deptId: string) {
     return request({
       url: `${METRIC_BASE_URL}`,
       method: "post",
       data,
+      params: { deptId },
     });
   },
 
@@ -70,13 +72,15 @@ const MetricAPI = {
    *
    * @param id 指標定義ID
    * @param data 指標定義表單數據
+   * @param deptId 部門ID
    * @returns 更新結果
    */
-  updateMetricDefinition(id: string, data: MetricUpdateForm) {
+  updateMetricDefinition(id: string, data: MetricUpdateForm, deptId: string) {
     return request({
       url: `${METRIC_BASE_URL}/${id}`,
       method: "put",
       data,
+      params: { deptId },
     });
   },
 
@@ -170,7 +174,6 @@ export interface MetricCreateForm {
   minValue?: number;
   maxValue?: number;
   precision?: number;
-  deptId: string;
 }
 
 export interface MetricUpdateForm {
@@ -183,6 +186,7 @@ export interface MetricUpdateForm {
   minValue?: number;
   maxValue?: number;
   precision?: number;
+  isActive?: boolean;
 }
 
 export interface IotMetricDefinition {

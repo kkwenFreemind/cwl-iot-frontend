@@ -414,20 +414,15 @@ async function handleSubmit() {
       isActive: formData.isActive,
     };
 
-    // 只在新增時包含 deptId，編輯時不包含
-    if (!formData.id) {
-      submitData.deptId = deptId;
-    }
-
     console.log("提交指標數據，deptId:", deptId, "提交數據:", submitData);
 
     if (formData.id) {
       // 更新
-      await MetricAPI.updateMetricDefinition(formData.id, submitData);
+      await MetricAPI.updateMetricDefinition(formData.id, submitData, deptId.toString());
       ElMessage.success("更新成功");
     } else {
       // 新增
-      await MetricAPI.createMetricDefinition(submitData);
+      await MetricAPI.createMetricDefinition(submitData, deptId.toString());
       ElMessage.success("新增成功");
     }
 
@@ -470,11 +465,11 @@ async function resetForm() {
  */
 function getPhysicalQuantityText(physicalQuantity: string): string {
   const map: Record<string, string> = {
-    WATER_LEVEL: "水位",
-    TEMPERATURE: "溫度",
-    HUMIDITY: "濕度",
-    PRESSURE: "壓力",
-    OTHER: "其他",
+    WATER_LEVEL: "Water Level",
+    TEMPERATURE: "Temperature",
+    VOLTAGE: "Voltage",
+    SIGNAL_STRENGTH: "Singnal Strength",
+    OTHER: "Other",
   };
   return map[physicalQuantity] || physicalQuantity;
 }
