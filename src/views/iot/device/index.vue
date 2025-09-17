@@ -1,8 +1,48 @@
+<!--
+  Device Management Component - IoT Device CRUD Interface
+
+  This component provides a comprehensive interface for managing IoT devices within the
+  Community Water Level monitoring system. It implements full CRUD operations with
+  advanced features including:
+
+  Features:
+  - Device listing with pagination and search capabilities
+  - Real-time device status monitoring with visual indicators
+  - Localized device model display (WATER_LEVEL_SENSOR, OTHER)
+  - Complete device creation and editing forms
+  - Geographic coordinate management for device positioning
+  - Responsive design with mobile-friendly drawer interface
+  - Internationalization support for multi-language environments
+
+  Technical Implementation:
+  - Vue 3 Composition API with TypeScript
+  - Element Plus UI components for consistent design
+  - Reactive state management with Vue's ref() and reactive()
+  - Form validation with Element Plus validation rules
+  - API integration with DeviceAPI for backend communication
+  - Internationalization using vue-i18n
+
+  @author System Administrator
+  @version 1.0.0
+  @since 2024-01-15
+-->
 <template>
+  <!--
+    Main application container with responsive layout
+    Provides consistent spacing and structure for the entire component
+  -->
   <div class="app-container">
-    <!-- Search Area -->
+    <!--
+      Search and Filter Section
+      Contains keyword search input and action buttons for device filtering
+      Uses inline form layout for compact design
+    -->
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+        <!--
+          Keyword search field for device name, model, or serial number
+          Supports real-time search with enter key trigger
+        -->
         <el-form-item prop="keywords" :label="$t('device.keywords')">
           <el-input
             v-model="queryParams.keywords"
@@ -12,6 +52,7 @@
           />
         </el-form-item>
 
+        <!-- Action buttons for search and reset operations -->
         <el-form-item class="search-buttons">
           <el-button type="primary" icon="search" @click="handleQuery">
             {{ $t("device.search") }}
@@ -23,7 +64,16 @@
       </el-form>
     </div>
 
+    <!--
+      Device Data Table Container
+      Displays device information in a structured table format
+      Includes loading states, pagination, and action buttons
+    -->
     <el-card shadow="hover" class="data-table">
+      <!--
+        Main data table with device information
+        Features: loading state, row highlighting, border styling
+      -->
       <el-table
         v-loading="loading"
         :data="pageData"
@@ -31,7 +81,13 @@
         border
         class="data-table__content"
       >
+        <!-- Device name column with minimum width constraint -->
         <el-table-column :label="$t('device.deviceName')" prop="deviceName" min-width="120" />
+
+        <!--
+          Device model column with localized display
+          Converts technical values (WATER_LEVEL_SENSOR, OTHER) to user-friendly text
+        -->
         <el-table-column
           :label="$t('device.deviceModel')"
           prop="deviceModel"
@@ -42,12 +98,19 @@
             <span>{{ getDeviceModelText(scope.row.deviceModel) }}</span>
           </template>
         </el-table-column>
+
+        <!-- Device ID column for unique identification -->
         <el-table-column
           :label="$t('device.deviceId')"
           prop="deviceId"
           width="140"
           align="center"
         />
+
+        <!--
+          Device status column with visual status indicators
+          Uses Element Plus tags with color coding for different states
+        -->
         <el-table-column :label="$t('device.status')" align="center" prop="status" width="80">
           <template #default="scope">
             <el-tag :type="getStatusTagType(scope.row.status)" size="small">
@@ -55,6 +118,8 @@
             </el-tag>
           </template>
         </el-table-column>
+
+        <!-- Device location with text overflow handling -->
         <el-table-column
           :label="$t('device.location')"
           prop="location"
@@ -62,6 +127,8 @@
           align="center"
           show-overflow-tooltip
         />
+
+        <!-- Device creation timestamp -->
         <el-table-column
           :label="$t('device.createTime')"
           align="center"
@@ -69,10 +136,13 @@
           width="150"
         />
 
-        <!-- Operations column with action buttons -->
+        <!--
+          Operations column with action buttons
+          Fixed positioning for consistent access to edit/delete functions
+        -->
         <el-table-column :label="$t('device.operation')" fixed="right" width="220">
           <template #default="scope">
-            <!-- Edit device button -->
+            <!-- Edit device button - opens device form in edit mode -->
             <el-button
               type="primary"
               icon="edit"
@@ -82,7 +152,8 @@
             >
               {{ $t("device.edit") }}
             </el-button>
-            <!-- Delete device button -->
+
+            <!-- Delete device button with confirmation dialog -->
             <el-button
               type="danger"
               icon="delete"
@@ -96,6 +167,11 @@
         </el-table-column>
       </el-table>
 
+      <!--
+        Pagination component for data navigation
+        Only displayed when there are records to paginate
+        Synchronized with query parameters for seamless navigation
+      -->
       <pagination
         v-if="total > 0"
         v-model:total="total"
@@ -105,7 +181,13 @@
       />
     </el-card>
 
-    <!-- Device form drawer (modal-like overlay) -->
+    <!--
+      Device Form Drawer - Modal Interface for CRUD Operations
+
+      A responsive drawer component that slides in from the right side
+      Contains comprehensive form fields for device creation and editing
+      Features dynamic sizing based on device type and validation rules
+    -->
     <el-drawer
       v-model="dialog.visible"
       :title="dialog.title"
@@ -113,9 +195,13 @@
       :size="drawerSize"
       @close="handleCloseDialog"
     >
-      <!-- Device form with validation rules -->
+      <!--
+        Device information form with comprehensive validation
+        Uses Element Plus form components with reactive validation rules
+        Supports both create and edit modes with conditional field display
+      -->
       <el-form ref="deviceFormRef" :model="formData" :rules="rules" label-width="140px">
-        <!-- Device name input field -->
+        <!-- Device name input - required field with validation -->
         <el-form-item :label="$t('device.deviceForm.deviceName')" prop="deviceName">
           <el-input
             v-model="formData.deviceName"
@@ -123,7 +209,11 @@
           />
         </el-form-item>
 
-        <!-- Device type selection -->
+        <!--
+          Device type selection dropdown
+          Maps to deviceModel field with predefined options
+          Localized labels for user-friendly selection
+        -->
         <el-form-item :label="$t('device.deviceForm.deviceModel')" prop="deviceType">
           <el-select
             v-model="formData.deviceType"
@@ -134,12 +224,16 @@
           </el-select>
         </el-form-item>
 
-        <!-- Device ID field (read-only in edit mode) -->
+        <!--
+          Device ID field - read-only in edit mode
+          Only displayed when editing existing devices
+          Provides unique identifier reference
+        -->
         <el-form-item v-if="formData.deviceId" :label="$t('device.deviceId')" prop="deviceId">
           <el-input v-model="formData.deviceId" readonly :placeholder="$t('device.deviceId')" />
         </el-form-item>
 
-        <!-- Device status selection -->
+        <!-- Device operational status selection -->
         <el-form-item :label="$t('device.deviceForm.status')" prop="status">
           <el-select
             v-model="formData.status"
@@ -150,7 +244,7 @@
           </el-select>
         </el-form-item>
 
-        <!-- Device location input -->
+        <!-- Device installation location input -->
         <el-form-item :label="$t('device.deviceForm.location')" prop="location">
           <el-input
             v-model="formData.location"
@@ -158,9 +252,13 @@
           />
         </el-form-item>
 
-        <!-- Geographic coordinates section -->
+        <!--
+          Geographic coordinates section
+          Two-column layout for latitude and longitude inputs
+          High precision input with 6 decimal places for accurate positioning
+        -->
         <el-row :gutter="16">
-          <!-- Latitude input -->
+          <!-- Latitude coordinate input with validation -->
           <el-col :span="12">
             <el-form-item :label="$t('device.deviceForm.latitude')" prop="latitude">
               <el-input-number
@@ -172,7 +270,8 @@
               />
             </el-form-item>
           </el-col>
-          <!-- Longitude input -->
+
+          <!-- Longitude coordinate input with validation -->
           <el-col :span="12">
             <el-form-item :label="$t('device.deviceForm.longitude')" prop="longitude">
               <el-input-number
@@ -187,7 +286,11 @@
         </el-row>
       </el-form>
 
-      <!-- Drawer footer with action buttons -->
+      <!--
+        Drawer footer with action buttons
+        Consistent button layout with cancel and confirm actions
+        Loading state support for async operations
+      -->
       <template #footer>
         <div class="drawer-footer">
           <el-button @click="handleCloseDialog">{{ $t("common.cancel") }}</el-button>
@@ -202,17 +305,29 @@
 
 <script setup lang="ts">
 /**
- * @fileoverview Device Management Component
- * @description Simple and stable device management with basic CRUD operations
- * @author System Administrator
- * @created 2024-01-15
- * @updated 2024-01-15
+ * @fileoverview Device Management Component - Vue 3 Composition API Implementation
+ * @description Comprehensive IoT device management interface with full CRUD operations
+ *
+ * This component implements a complete device management system featuring:
+ * - Paginated device listing with advanced search capabilities
+ * - Real-time device status monitoring and visualization
+ * - Localized device model display with internationalization support
+ * - Comprehensive device creation and editing forms
+ * - Geographic coordinate management for spatial device positioning
+ * - Responsive drawer interface with mobile optimization
+ * - Form validation with reactive error handling
+ * - API integration with robust error management
+ *
+ * Architecture:
+ * - Vue 3 Composition API with TypeScript for type safety
+ * - Reactive state management using Vue's ref() and reactive()
+ * - Element Plus UI components for consistent design system
+ * - Internationalization support via vue-i18n
+ * - Modular function organization with clear separation of concerns
+ *
+  @author Chang Xiu-Wen, AI-Enhanced
+  @since 2025-09-15
  */
-
-defineOptions({
-  name: "DeviceManagement",
-  inheritAttrs: false,
-});
 
 import DeviceAPI from "@/api/iot/device-api";
 import type { DeviceVO, DeviceQuery, DeviceForm } from "@/api/iot/device-api";
@@ -222,33 +337,86 @@ import { useAppStore } from "@/store/modules/app-store";
 import type { FormInstance, FormRules } from "element-plus";
 
 /**
- * Extended query parameters interface with pagination for device filtering and search
+ * Component Configuration
+ * Defines component metadata and inheritance behavior
+ * Disables attribute inheritance for cleaner component isolation
+ */
+defineOptions({
+  name: "DeviceManagement",
+  inheritAttrs: false,
+});
+
+/**
+ * Extended Query Parameters Interface
+ *
+ * Extends the base DeviceQuery interface with pagination parameters
+ * Enables seamless integration with backend pagination APIs
+ * Supports flexible query parameter management for device filtering
+ *
+ * @interface DeviceQueryWithPagination
+ * @extends {DeviceQuery}
  */
 interface DeviceQueryWithPagination extends DeviceQuery {
+  /** Current page number for pagination */
   pageNum?: number;
+  /** Number of items per page */
   pageSize?: number;
 }
 
+/**
+ * Core Vue Composables and Store Initialization
+ *
+ * Initializes essential Vue ecosystem dependencies:
+ * - i18n: Internationalization composable for multi-language support
+ * - appStore: Global application state management for responsive behavior
+ */
 const { t } = useI18n();
 const appStore = useAppStore();
 
+/**
+ * Form and Component References
+ *
+ * Template refs for direct DOM manipulation and form control:
+ * - queryFormRef: Reference to search form for validation and reset operations
+ * - deviceFormRef: Reference to device form for validation and data management
+ */
 const queryFormRef = ref<FormInstance>();
 const deviceFormRef = ref<FormInstance>();
 
+/**
+ * Reactive State Management
+ *
+ * Core reactive state variables for component functionality:
+ * - loading: Controls table loading spinner during API operations
+ * - total: Total number of devices for pagination calculations
+ * - selectIds: Array of selected device IDs for bulk operations
+ */
 const loading = ref(false);
 const total = ref(0);
-
-// Selected device IDs for bulk operations
 const selectIds = ref<string[]>([]);
 
-// Dialog/modal state management
+/**
+ * Dialog State Management
+ *
+ * Reactive object managing modal/drawer state:
+ * - visible: Controls drawer visibility
+ * - title: Dynamic title based on operation mode (create/edit)
+ * - loading: Loading state for async form submission
+ */
 const dialog = reactive({
   visible: false,
   title: "",
   loading: false,
 });
 
-// Device form data for create/edit operations
+/**
+ * Device Form Data Model
+ *
+ * Reactive form data object containing all device properties:
+ * Supports both creation and editing modes
+ * Includes validation-compatible field structure
+ * Geographic coordinates with high precision support
+ */
 const formData = reactive<DeviceForm>({
   deviceId: undefined,
   deviceName: "",
@@ -261,30 +429,57 @@ const formData = reactive<DeviceForm>({
   longitude: undefined,
 });
 
+/**
+ * Query Parameters State
+ *
+ * Reactive query parameters for device filtering and pagination:
+ * - pageNum: Current page in pagination
+ * - pageSize: Items per page (default: 10)
+ * - keywords: Search term for device name/model/serial filtering
+ */
 const queryParams = reactive<DeviceQueryWithPagination>({
   pageNum: 1,
   pageSize: 10,
   keywords: "",
 });
 
-// Device table data
+/**
+ * Device Data Store
+ *
+ * Reactive array storing paginated device data from API:
+ * - Contains DeviceVO objects with complete device information
+ * - Automatically updates table display when modified
+ * - Supports real-time data synchronization
+ */
 const pageData = ref<DeviceVO[]>([]);
 
 /**
- * Computed Properties
- * Reactive computed values that automatically update when dependencies change
+ * Computed Properties Section
+ * Reactive computed values that automatically update based on dependencies
  */
 
 /**
- * Dynamic drawer size based on device type
- * Responsive design: larger drawer on desktop, full-width on mobile
+ * Dynamic Drawer Size Computation
+ *
+ * Responsive drawer sizing based on device type:
+ * - Desktop: Fixed width for optimal desktop experience
+ * - Mobile: Percentage-based width for responsive mobile adaptation
+ * - Ensures optimal user experience across all device types
+ *
+ * @returns {string} Computed drawer size value
  */
 const drawerSize = computed(() => (appStore.device === "desktop" ? "600px" : "90%"));
 
 /**
- * Form Validation Rules
- * Comprehensive validation rules for device form fields
- * Uses computed property for reactive translation support
+ * Form Validation Rules Configuration
+ *
+ * Comprehensive validation rules for device form fields:
+ * - Reactive computation ensures translation updates
+ * - Required field validation with localized error messages
+ * - Trigger-based validation for optimal user experience
+ * - Supports internationalization through vue-i18n integration
+ *
+ * @returns {FormRules} Computed validation rules object
  */
 const rules = computed<FormRules>(() => ({
   deviceName: [
@@ -318,15 +513,34 @@ const rules = computed<FormRules>(() => ({
 }));
 
 /**
- * Fetch device data from API
- * @description Retrieves paginated device data based on current query parameters
- * @returns {Promise<void>} Promise that resolves when data is fetched
+ * Data Fetching and Management Functions
+ * Core functions for API communication and data synchronization
+ */
+
+/**
+ * Fetch Device Data from API
+ *
+ * Retrieves paginated device data based on current query parameters
+ * Implements robust error handling and loading state management
+ * Supports multiple response formats for API compatibility
+ *
+ * Process Flow:
+ * 1. Set loading state to true
+ * 2. Execute API call with current query parameters
+ * 3. Parse response data (handles array and object formats)
+ * 4. Update reactive data stores
+ * 5. Reset loading state
+ *
+ * @async
+ * @function fetchData
+ * @returns {Promise<void>} Promise that resolves when data fetch completes
+ * @throws {Error} Propagates API errors for caller handling
  */
 function fetchData() {
   loading.value = true;
   DeviceAPI.listDevices(queryParams)
     .then((data: any) => {
-      // Handle different response formats
+      // Handle different response formats for API compatibility
       if (Array.isArray(data)) {
         pageData.value = data;
         total.value = data.length;
@@ -344,8 +558,13 @@ function fetchData() {
 }
 
 /**
- * Handle search query execution
- * @description Resets pagination to first page and executes data fetch with current filters
+ * Handle Search Query Execution
+ *
+ * Processes search form submission with optimized pagination reset
+ * Ensures fresh data retrieval when search criteria change
+ * Maintains consistent user experience with loading states
+ *
+ * @function handleQuery
  * @returns {void}
  */
 function handleQuery() {
@@ -354,8 +573,19 @@ function handleQuery() {
 }
 
 /**
- * Reset query form and parameters
- * @description Clears all search filters, resets form validation, and fetches fresh data
+ * Reset Query Form and Parameters
+ *
+ * Clears all search filters and form validation states
+ * Resets pagination to first page for comprehensive data refresh
+ * Provides clean slate for new search operations
+ *
+ * Process:
+ * 1. Reset form fields to initial state
+ * 2. Clear query parameters
+ * 3. Reset pagination
+ * 4. Trigger fresh data fetch
+ *
+ * @function handleResetQuery
  * @returns {void}
  */
 function handleResetQuery() {
@@ -366,9 +596,25 @@ function handleResetQuery() {
 }
 
 /**
- * Get status tag type for Element Plus tags
- * @param status - Device status string
- * @returns Element Plus tag type
+ * Utility Functions for Data Transformation
+ * Helper functions for data formatting and localization
+ */
+
+/**
+ * Get Status Tag Type for Element Plus Tags
+ *
+ * Maps device status values to appropriate Element Plus tag types
+ * Provides visual status indicators with semantic color coding
+ * Supports accessibility and user experience enhancement
+ *
+ * Color Mapping:
+ * - ACTIVE: success (green) - indicates operational status
+ * - INACTIVE: warning (yellow) - indicates maintenance/offline status
+ * - Default: info (blue) - fallback for unknown states
+ *
+ * @function getStatusTagType
+ * @param {string} status - Device status string value
+ * @returns {("success" | "warning" | "danger" | "info" | "primary")} Element Plus tag type
  */
 function getStatusTagType(status: string): "success" | "warning" | "danger" | "info" | "primary" {
   switch (status) {
@@ -382,9 +628,15 @@ function getStatusTagType(status: string): "success" | "warning" | "danger" | "i
 }
 
 /**
- * Get localized status text
- * @param status - Device status string
- * @returns Localized status text
+ * Get Localized Status Text
+ *
+ * Converts technical status values to user-friendly localized text
+ * Supports internationalization for multi-language environments
+ * Provides consistent status representation across the application
+ *
+ * @function getStatusText
+ * @param {string} status - Device status string value
+ * @returns {string} Localized status text for display
  */
 function getStatusText(status: string): string {
   switch (status) {
@@ -398,9 +650,20 @@ function getStatusText(status: string): string {
 }
 
 /**
- * Get localized device model text
- * @param deviceModel - Device model string
- * @returns Localized device model text
+ * Get Localized Device Model Text
+ *
+ * Transforms technical device model values into user-friendly display text
+ * Implements internationalization support for device type representation
+ * Ensures consistent device model display across different languages
+ *
+ * Supported Models:
+ * - WATER_LEVEL_SENSOR: Maps to localized "Water Level Sensor"
+ * - OTHER: Maps to localized "Other Device"
+ * - Default: Returns original value for unknown models
+ *
+ * @function getDeviceModelText
+ * @param {string} deviceModel - Technical device model identifier
+ * @returns {string} Localized device model display text
  */
 function getDeviceModelText(deviceModel: string): string {
   switch (deviceModel) {
@@ -414,8 +677,20 @@ function getDeviceModelText(deviceModel: string): string {
 }
 
 /**
- * Handle edit button click in table
- * @param row - Device data object from table row
+ * CRUD Operation Handlers
+ * Functions managing create, read, update, and delete operations
+ */
+
+/**
+ * Handle Edit Button Click in Table
+ *
+ * Initiates device editing workflow from table row action
+ * Triggers dialog opening with pre-populated device data
+ * Provides seamless transition to edit mode
+ *
+ * @function handleEditClick
+ * @param {DeviceVO} row - Device data object from table row
+ * @returns {void}
  */
 function handleEditClick(row: DeviceVO) {
   console.log("Edit button clicked, deviceId:", row.deviceId);
@@ -423,8 +698,24 @@ function handleEditClick(row: DeviceVO) {
 }
 
 /**
- * Handle device deletion
- * @param deviceId - Device ID to delete
+ * Handle Device Deletion
+ *
+ * Manages device deletion workflow with user confirmation
+ * Supports both single and bulk deletion operations
+ * Implements comprehensive error handling and user feedback
+ *
+ * Process Flow:
+ * 1. Validate selection (single device or bulk selection)
+ * 2. Display confirmation dialog with localized messages
+ * 3. Execute deletion API call
+ * 4. Provide success/error feedback
+ * 5. Refresh data display
+ *
+ * @async
+ * @function handleDelete
+ * @param {string} [deviceId] - Optional specific device ID for single deletion
+ * @returns {Promise<void>} Promise that resolves when deletion completes
+ * @throws {Error} Handles user cancellation gracefully
  */
 async function handleDelete(deviceId?: string) {
   const ids = deviceId ? [deviceId] : selectIds.value;
@@ -434,14 +725,14 @@ async function handleDelete(deviceId?: string) {
   }
 
   try {
-    // Show confirmation dialog
+    // Display confirmation dialog with localized messages
     await ElMessageBox.confirm(t("device.deleteConfirmation"), t("device.deleteTitle"), {
       confirmButtonText: t("common.confirm"),
       cancelButtonText: t("common.cancel"),
       type: "warning",
     });
 
-    // Execute deletion
+    // Execute deletion operation
     await DeviceAPI.deleteDevices(ids.join(","));
     ElMessage.success(t("device.deleteSuccess"));
     fetchData();
@@ -454,9 +745,20 @@ async function handleDelete(deviceId?: string) {
 }
 
 /**
- * Handle dialog opening for device creation/editing
- * Manages dialog state and form data population
- * @param deviceId - Optional device ID for edit mode
+ * Handle Dialog Opening for Device Operations
+ *
+ * Manages modal dialog state and form data initialization
+ * Supports both create and edit modes with appropriate data handling
+ * Implements error handling for data loading operations
+ *
+ * Mode Handling:
+ * - Edit Mode: Loads existing device data and populates form
+ * - Create Mode: Initializes empty form with default values
+ *
+ * @async
+ * @function handleOpenDialog
+ * @param {string} [deviceId] - Optional device ID for edit mode
+ * @returns {Promise<void>} Promise that resolves when dialog is ready
  */
 async function handleOpenDialog(deviceId?: string) {
   dialog.visible = true;
@@ -497,8 +799,14 @@ async function handleOpenDialog(deviceId?: string) {
 }
 
 /**
- * Handle dialog closing
- * Resets dialog state and form data
+ * Handle Dialog Closing
+ *
+ * Manages dialog closure with proper state cleanup
+ * Resets form data and dialog state for next operation
+ * Ensures clean state transition between operations
+ *
+ * @function handleCloseDialog
+ * @returns {void}
  */
 function handleCloseDialog() {
   dialog.visible = false;
@@ -506,8 +814,24 @@ function handleCloseDialog() {
 }
 
 /**
- * Reset device form to initial state
+ * Reset Device Form to Initial State
+ *
  * Clears all form fields and validation states
+ * Prepares form for new data entry or editing
+ * Ensures consistent form state across operations
+ *
+ * Reset Fields:
+ * - deviceId: Cleared for new entries
+ * - deviceName: Empty string
+ * - deviceModel: Empty string
+ * - deviceType: Default to WATER_LEVEL_SENSOR
+ * - deptId: Reset to 0
+ * - status: Default to ACTIVE
+ * - location: Empty string
+ * - latitude/longitude: Undefined
+ *
+ * @function resetForm
+ * @returns {void}
  */
 function resetForm() {
   Object.assign(formData, {
@@ -525,9 +849,23 @@ function resetForm() {
 }
 
 /**
- * Handle form submission for device creation/updates
- * Validates form data and executes appropriate API operation
- * Provides user feedback through success/error messages
+ * Handle Form Submission for Device Operations
+ *
+ * Processes device creation and update operations with validation
+ * Implements comprehensive error handling and user feedback
+ * Manages loading states and form state transitions
+ *
+ * Process Flow:
+ * 1. Validate form data using Element Plus validation
+ * 2. Set loading state for user feedback
+ * 3. Determine operation type (create vs update)
+ * 4. Execute appropriate API call
+ * 5. Handle success/error responses
+ * 6. Update UI state and refresh data
+ *
+ * @async
+ * @function handleSubmit
+ * @returns {Promise<void>} Promise that resolves when submission completes
  */
 async function handleSubmit() {
   if (!deviceFormRef.value) return;
@@ -560,36 +898,96 @@ async function handleSubmit() {
   }
 }
 
+/**
+ * Lifecycle Hooks
+ * Vue component lifecycle management
+ */
+
+/**
+ * Component Mount Hook
+ *
+ * Initializes component with data fetching
+ * Ensures data is loaded when component becomes active
+ * Triggers initial data population for user interface
+ */
 onMounted(() => {
   handleQuery();
 });
 </script>
 
 <style lang="scss" scoped>
+/**
+ * Device Management Component Styles
+ *
+ * Comprehensive SCSS styling for the device management interface
+ * Implements responsive design patterns and consistent visual hierarchy
+ * Uses CSS custom properties for theme integration and maintainability
+ */
+
+/**
+ * Main Application Container
+ *
+ * Root container providing consistent spacing and layout foundation
+ * Ensures proper content padding across different screen sizes
+ * Creates visual separation from page boundaries
+ */
 .app-container {
   padding: 20px;
 }
 
+/**
+ * Search Container Styling
+ *
+ * Container for search and filter controls
+ * Provides visual grouping and background contrast
+ * Implements rounded corners for modern UI aesthetics
+ * Ensures proper spacing for form elements
+ */
 .search-container {
   padding: 20px;
   margin-bottom: 20px;
   background: var(--el-bg-color);
   border-radius: 8px;
 
+  /**
+   * Search Buttons Layout
+   *
+   * Right-aligns action buttons in the search form
+   * Provides consistent spacing and visual hierarchy
+   * Ensures buttons don't interfere with form layout
+   */
   .search-buttons {
     margin-left: auto;
   }
 }
 
+/**
+ * Data Table Container
+ *
+ * Wrapper for the device data table with card-based design
+ * Applies shadow effects for depth and visual separation
+ * Ensures table content has proper spacing and alignment
+ */
 .data-table {
+  /**
+   * Table Content Styling
+   *
+   * Ensures table occupies full container width
+   * Provides consistent table layout and responsiveness
+   * Maintains proper column alignment and spacing
+   */
   &__content {
     width: 100%;
   }
 }
 
 /**
- * Drawer footer styling
- * Provides consistent button layout in modal drawer footer
+ * Drawer Footer Styling
+ *
+ * Consistent button layout for modal drawer footer
+ * Implements flexbox for proper button alignment
+ * Provides adequate spacing between action buttons
+ * Ensures consistent footer appearance across different contexts
  */
 .drawer-footer {
   display: flex;
