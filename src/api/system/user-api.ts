@@ -197,6 +197,10 @@ export interface UserInfo {
   /** Avatar URL */
   avatar?: string;
 
+  /** 部門ID */
+  /** Department ID */
+  deptId?: string;
+
   /** 角色 */
   /** Roles */
   roles: string[];
@@ -325,6 +329,10 @@ export interface UserProfileVO {
   /** 頭像URL */
   /** Avatar URL */
   avatar?: string;
+
+  /** 部門ID */
+  /** Department ID */
+  deptId?: string;
 
   /** 性別 */
   /** Gender */
