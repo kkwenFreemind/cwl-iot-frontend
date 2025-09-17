@@ -892,14 +892,19 @@ export default {
   // IoT指標定義管理
   metric: {
     // 基本操作
-    add: "新增指標",
-    edit: "編輯指標",
-    delete: "刪除指標",
+    add: "新增",
+    edit: "編輯",
+    delete: "刪除",
     search: "搜尋",
     reset: "重置",
     confirm: "確定",
     cancel: "取消",
-
+    alias: "別名",
+    keyword: "關鍵字",
+    keywordPlaceholder: "Metric Name",
+    isActive: "是否啟用",
+    createdAt: "創建日期",
+    operation: "操作",
     // 標題
     addMetric: "新增指標定義",
     editMetric: "編輯指標定義",

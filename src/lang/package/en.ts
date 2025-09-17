@@ -953,13 +953,18 @@ export default {
   metric: {
     // Basic operations
     add: "Add Metric",
-    edit: "Edit Metric",
-    delete: "Delete Metric",
+    edit: "Edit",
+    delete: "Delete",
     search: "Search",
     reset: "Reset",
     confirm: "Confirm",
     cancel: "Cancel",
-
+    alias: "Alias",
+    keyword: "Keyword",
+    keywordPlaceholder: "Metric Name",
+    isActive: "Active?",
+    createdAt: "CreateTime",
+    operation: "Operater",
     // Titles
     addMetric: "Add Metric Definition",
     editMetric: "Edit Metric Definition",

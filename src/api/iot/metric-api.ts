@@ -100,17 +100,17 @@ const MetricAPI = {
    * 根據關鍵字搜索指標定義
    * Search metric definitions by keyword
    *
-   * @param keyword 搜索關鍵字
+   * @param keywords 搜索關鍵字
    * @param deptId 部門ID
    * @param page 頁碼
    * @param size 每頁大小
    * @returns 搜索結果
    */
-  searchMetricDefinitions(keyword: string, deptId: string, page = 0, size = 10) {
+  searchMetricDefinitions(keywords: string, deptId: string, page = 0, size = 10) {
     return request<any, PageResult<IotMetricDefinition>>({
       url: `${METRIC_BASE_URL}/search`,
       method: "get",
-      params: { keyword, deptId, page, size },
+      params: { keywords, deptId, page, size },
     });
   },
 
@@ -154,8 +154,9 @@ export interface MetricQuery {
   deptId?: string;
   page?: number;
   size?: number;
-  keyword?: string;
+  keywords?: string; // Changed from 'keyword' to 'keywords' to match backend
   physicalQuantity?: string;
+  unit?: string; // Added unit field to match backend
   dataType?: string;
 }
 

@@ -3,22 +3,15 @@
     <!-- 搜尋區域 -->
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item prop="deviceName" :label="$t('device.deviceName')">
+        <el-form-item prop="keywords" :label="$t('device.deviceName')">
           <el-input
-            v-model="queryParams.deviceName"
+            v-model="queryParams.keywords"
             :placeholder="$t('device.deviceNamePlaceholder')"
             clearable
             @keyup.enter="handleQuery"
           />
         </el-form-item>
-        <el-form-item prop="location" :label="$t('device.location')">
-          <el-input
-            v-model="queryParams.location"
-            :placeholder="$t('device.locationPlaceholder')"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
+
         <el-form-item class="search-buttons">
           <el-button type="success" icon="plus" @click="handleAddClick">
             {{ $t("device.add") }}
@@ -196,24 +189,14 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import request from "@/utils/request";
 import { useUserStoreHook } from "@/store/modules/user-store";
+import DeviceAPI, { DeviceVO } from "@/api/iot/device-api";
 import UserAPI from "@/api/system/user-api";
 
 defineOptions({
   name: "DeviceManagement",
   inheritAttrs: false,
 });
-
-/**
- * API 端點配置
- */
-const API_ENDPOINTS = {
-  list: "/api/v1/devices",
-  create: "/api/v1/devices",
-  update: "/api/v1/devices/{id}",
-  delete: "/api/v1/devices/{id}",
-};
 
 /**
  * 表單驗證規則
@@ -263,7 +246,7 @@ const dialog = reactive({
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
-  deviceName: "",
+  keywords: "", // Changed from deviceName to keywords to match backend expectation
   location: "",
 });
 
@@ -296,32 +279,42 @@ const formRef = ref();
 /**
  * 數據獲取
  */
-function fetchData() {
+async function fetchData() {
   loading.value = true;
-  request({
-    url: API_ENDPOINTS.list,
-    method: "get",
-    params: queryParams,
-  })
-    .then((data: any) => {
-      if (Array.isArray(data)) {
-        pageData.value = data;
-        total.value = data.length;
-      } else if (data && typeof data === "object") {
-        pageData.value = data.list || data.data || [];
-        total.value = data.total || data.count || 0;
-      } else {
-        pageData.value = [];
-        total.value = 0;
+
+  try {
+    // Get user profile to get deptId
+    const profile = await UserAPI.getProfile();
+    const deptId = profile.deptId ? Number(profile.deptId) : undefined;
+
+    // Filter out empty query parameters
+    const params: any = {
+      ...queryParams,
+    };
+
+    // Remove empty parameters
+    Object.keys(params).forEach((key) => {
+      if (params[key] === "" || params[key] === undefined) {
+        delete params[key];
       }
-    })
-    .catch((error) => {
-      console.error("獲取數據失敗:", error);
-      ElMessage.error("獲取數據失敗");
-    })
-    .finally(() => {
-      loading.value = false;
     });
+
+    // Add department ID if available
+    if (deptId) {
+      params.deptId = deptId;
+    }
+
+    console.log("Fetching devices with params:", params);
+
+    const data = await DeviceAPI.listDevices(params);
+    pageData.value = data || [];
+    total.value = data?.length || 0;
+  } catch (error) {
+    console.error("獲取數據失敗:", error);
+    ElMessage.error("獲取數據失敗");
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -338,7 +331,7 @@ function handleQuery() {
 function handleResetQuery() {
   queryFormRef.value?.resetFields();
   queryParams.pageNum = 1;
-  queryParams.deviceName = "";
+  queryParams.keywords = ""; // Changed from deviceName to keywords
   queryParams.location = "";
   fetchData();
 }
@@ -358,6 +351,7 @@ async function handleAddClick() {
 async function handleEditClick(row: DeviceVO) {
   dialog.title = "編輯設備";
   // 過濾掉不需要的字段
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { lastSeen, createdAt, ...editData } = row;
   Object.assign(formData, editData);
   dialog.visible = true;
@@ -374,10 +368,7 @@ async function handleDelete(row: DeviceVO) {
       type: "warning",
     });
 
-    await request({
-      url: API_ENDPOINTS.delete.replace("{id}", row.deviceId),
-      method: "delete",
-    });
+    await DeviceAPI.deleteDevices(row.deviceId);
 
     ElMessage.success("刪除成功");
     fetchData();
@@ -401,24 +392,30 @@ async function handleSubmit() {
 
     dialog.loading = true;
 
-    // 過濾掉後端不需要的字段
-    const { deptName, ...submitData } = formData;
+    // Get user profile to get deptId
+    const profile = await UserAPI.getProfile();
+    const deptId = profile.deptId ? Number(profile.deptId) : 0;
+
+    // Prepare form data with correct types
+    const submitData: any = {
+      deviceName: formData.deviceName,
+      deviceModel: formData.deviceModel,
+      deviceType: formData.deviceType as "WATER_LEVEL_SENSOR" | "OTHER",
+      deptId,
+      location: formData.location,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      status: formData.status as "ACTIVE" | "INACTIVE",
+    };
 
     if (formData.deviceId) {
-      // 更新
-      await request({
-        url: API_ENDPOINTS.update.replace("{id}", formData.deviceId),
-        method: "put",
-        data: submitData,
-      });
+      // Update
+      submitData.deviceId = formData.deviceId;
+      await DeviceAPI.updateDevice(formData.deviceId, submitData);
       ElMessage.success("更新成功");
     } else {
-      // 新增
-      await request({
-        url: API_ENDPOINTS.create,
-        method: "post",
-        data: submitData,
-      });
+      // Create
+      await DeviceAPI.addDevice(submitData);
       ElMessage.success("新增成功");
     }
 
@@ -498,9 +495,9 @@ function getStatusTagType(status: string): "success" | "warning" | "danger" | "i
 function getStatusText(status: string): string {
   switch (status) {
     case "ACTIVE":
-      return "運行中";
+      return "Active";
     case "INACTIVE":
-      return "離線";
+      return "InActive";
     default:
       return status;
   }
@@ -551,27 +548,6 @@ onMounted(async () => {
 
   fetchData();
 });
-
-/**
- * 類型定義
- */
-interface DeviceVO {
-  deviceId: string;
-  deviceName: string;
-  deviceModel: string;
-  deviceType?: string;
-  deviceTypeText?: string;
-  deptId: string | number;
-  deptName?: string;
-  location?: string;
-  latitude?: number;
-  longitude?: number;
-  status: string;
-  statusText?: string;
-  lastSeen?: string;
-  createdAt?: string;
-  isOnline?: boolean;
-}
 </script>
 
 <style lang="scss" scoped>

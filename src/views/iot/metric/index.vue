@@ -3,12 +3,22 @@
     <!-- 搜尋區域 -->
     <div class="search-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item prop="keyword" :label="$t('metric.keyword')">
+        <el-form-item prop="keywords" :label="$t('metric.keywords')">
           <el-input
-            v-model="queryParams.keyword"
-            :placeholder="$t('metric.keywordPlaceholder')"
+            v-model="queryParams.keywords"
+            :placeholder="$t('metric.keywordsPlaceholder')"
             clearable
             @keyup.enter="handleQuery"
+          />
+        </el-form-item>
+
+        <!-- Unit Filter / 單位篩選 -->
+        <el-form-item :label="$t('metric.unit')" prop="unit">
+          <el-input
+            v-model="queryParams.unit"
+            :placeholder="$t('metric.unitPlaceholder')"
+            clearable
+            style="width: 120px"
           />
         </el-form-item>
 
@@ -236,11 +246,13 @@ const dialog = reactive({
 });
 
 const queryParams = reactive({
-  page: 1,
+  page: 1, // Frontend uses 1-based, backend converts to 0-based
   size: 10,
-  keyword: "",
+  keywords: "", // Changed from 'keyword' to 'keywords' to match backend
   physicalQuantity: "",
+  unit: "", // Added unit field to match backend
   dataType: "",
+  deptId: undefined as number | undefined,
 });
 
 const formData = reactive({
@@ -325,8 +337,9 @@ function handleQuery() {
 function handleResetQuery() {
   queryFormRef.value?.resetFields();
   queryParams.page = 1;
-  queryParams.keyword = "";
+  queryParams.keywords = "";
   queryParams.physicalQuantity = "";
+  queryParams.unit = "";
   queryParams.dataType = "";
   fetchData();
 }
