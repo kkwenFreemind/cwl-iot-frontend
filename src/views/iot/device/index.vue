@@ -472,6 +472,18 @@ async function handleDelete(row: DeviceVO) {
       }
     );
 
+    // 先刪除 EMQX 配置
+    try {
+      console.log("開始刪除 EMQX 配置，設備ID:", row.deviceId);
+      await DeviceAPI.deleteDeviceEmqxConfig(row.deviceId);
+      console.log("EMQX 配置刪除成功");
+    } catch (emqxError) {
+      console.error("EMQX 配置刪除失敗:", emqxError);
+      ElMessage.warning(t("device.emqx.deleteConfigWarning"));
+      // 不阻擋設備刪除，但提示用戶 EMQX 配置刪除失敗
+    }
+
+    // 再刪除設備
     await DeviceAPI.deleteDevices(row.deviceId);
 
     ElMessage.success(t("device.deleteSuccess"));

@@ -200,6 +200,34 @@ const DeviceAPI = {
       method: "get",
     });
   },
+
+  /**
+   * Create EMQX configuration for a specific device
+   * Generates MQTT broker account, password, and dedicated topics
+   *
+   * @param deviceId - Unique identifier of the device
+   * @returns Promise resolving to EMQX device configuration
+   */
+  createDeviceEmqxConfig(deviceId: string) {
+    return request<any, EmqxDeviceConfigVO>({
+      url: `${DEVICE_BASE_URL}/${deviceId}/emqx-config`,
+      method: "post",
+    });
+  },
+
+  /**
+   * Delete EMQX configuration for a specific device
+   * Removes MQTT broker account, password, and dedicated topics
+   *
+   * @param deviceId - Unique identifier of the device
+   * @returns Promise resolving to deletion response
+   */
+  deleteDeviceEmqxConfig(deviceId: string) {
+    return request({
+      url: `${DEVICE_BASE_URL}/${deviceId}/emqx-config`,
+      method: "delete",
+    });
+  },
 };
 
 /**

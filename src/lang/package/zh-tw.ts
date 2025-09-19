@@ -904,6 +904,8 @@ export default {
       unknownError: "未知錯誤",
       invalidResponse: "API返回無效響應",
       unrecognizedFormat: "API響應格式無法識別",
+      createConfigWarning: "設備創建成功，但EMQX配置失敗。請聯繫管理員。",
+      deleteConfigWarning: "設備刪除成功，但EMQX配置清理失敗。請聯繫管理員。",
     },
 
     // 通用錯誤訊息

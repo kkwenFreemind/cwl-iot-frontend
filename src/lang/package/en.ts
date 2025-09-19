@@ -964,6 +964,10 @@ export default {
       unknownError: "Unknown error",
       invalidResponse: "API returned invalid response",
       unrecognizedFormat: "API response format cannot be recognized",
+      createConfigWarning:
+        "Device created successfully, but EMQX configuration failed. Please contact administrator.",
+      deleteConfigWarning:
+        "Device deleted successfully, but EMQX configuration cleanup failed. Please contact administrator.",
     },
 
     // General Error Messages
