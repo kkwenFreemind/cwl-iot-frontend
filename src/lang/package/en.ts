@@ -817,6 +817,7 @@ export default {
     reset: "Reset",
     add: "Add Device",
     edit: "Edit",
+    detail: "Detail",
     delete: "Delete",
     online: "Online",
     offline: "Offline",
@@ -947,6 +948,30 @@ export default {
       department: "All Departments",
       model: "Device Model",
       location: "Location",
+    },
+
+    // EMQX Configuration
+    emqx: {
+      configTitle: "Device EMQX Configuration Details",
+      modalTitle: "Device EMQX Configuration",
+      deviceId: "Device ID",
+      mqttClientId: "MQTT Client ID",
+      emqxUsername: "EMQX Username",
+      emqxPassword: "EMQX Password",
+      telemetryTopic: "Telemetry Topic",
+      commandTopic: "Command Topic",
+      getConfigError: "Failed to get EMQX configuration",
+      unknownError: "Unknown error",
+      invalidResponse: "API returned invalid response",
+      unrecognizedFormat: "API response format cannot be recognized",
+    },
+
+    // General Error Messages
+    errors: {
+      fetchDataFailed: "Failed to fetch data",
+      saveFailed: "Save failed",
+      deleteFailed: "Delete failed",
+      apiError: "API error",
     },
   },
   // IoT Metric Definition Management

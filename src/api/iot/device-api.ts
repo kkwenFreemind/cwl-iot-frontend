@@ -186,6 +186,20 @@ const DeviceAPI = {
       method: "get",
     });
   },
+
+  /**
+   * Get EMQX configuration for a specific device
+   * Retrieves MQTT broker configuration and connection details
+   *
+   * @param deviceId - Unique identifier of the device
+   * @returns Promise resolving to EMQX device configuration
+   */
+  getDeviceEmqxConfig(deviceId: string) {
+    return request<any, EmqxDeviceConfigVO>({
+      url: `${DEVICE_BASE_URL}/${deviceId}/emqx-config`,
+      method: "get",
+    });
+  },
 };
 
 /**
@@ -299,4 +313,30 @@ export interface DeviceVO {
   createdAt?: string;
   /** Optional real-time connectivity status indicator */
   isOnline?: boolean;
+}
+
+/**
+ * EMQX Device Configuration View Object
+ * Represents EMQX MQTT broker configuration for a device
+ */
+export interface EmqxDeviceConfigVO {
+  /** Response code */
+  code: string;
+  /** Response message */
+  msg: string;
+  /** Actual EMQX configuration data */
+  data: {
+    /** Unique device identifier */
+    deviceId: string;
+    /** EMQX username for authentication */
+    emqxUsername: string;
+    /** EMQX password for authentication */
+    emqxPassword: string;
+    /** MQTT client ID for device connection */
+    mqttClientId: string;
+    /** MQTT telemetry topic for publishing sensor data */
+    telemetryTopic: string;
+    /** MQTT command topic for subscribing to commands */
+    commandTopic: string;
+  };
 }

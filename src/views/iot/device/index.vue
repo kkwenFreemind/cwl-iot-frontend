@@ -84,6 +84,15 @@
               {{ $t("device.edit") }}
             </el-button>
             <el-button
+              type="info"
+              icon="view"
+              link
+              size="small"
+              @click="handleDetailClick(scope.row)"
+            >
+              {{ $t("device.detail") }}
+            </el-button>
+            <el-button
               type="danger"
               icon="delete"
               link
@@ -121,9 +130,9 @@
             :placeholder="$t('device.deviceForm.deviceNamePlaceholder')"
           />
         </el-form-item>
-        <el-form-item :label="$t('device.deviceForm.deviceModel')" prop="deviceType">
+        <el-form-item :label="$t('device.deviceForm.deviceModel')" prop="deviceModel">
           <el-select
-            v-model="formData.deviceType"
+            v-model="formData.deviceModel"
             :placeholder="$t('device.deviceForm.deviceModelPlaceholder')"
           >
             <el-option :label="$t('device.waterLevelSensor')" value="WATER_LEVEL_SENSOR" />
@@ -192,11 +201,17 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { useUserStoreHook } from "@/store/modules/user-store";
 import DeviceAPI, { DeviceVO } from "@/api/iot/device-api";
 import UserAPI from "@/api/system/user-api";
+import { useI18n } from "vue-i18n";
 
 defineOptions({
   name: "DeviceManagement",
   inheritAttrs: false,
 });
+
+/**
+ * i18n 實例
+ */
+const { t } = useI18n();
 
 /**
  * 表單驗證規則
@@ -205,28 +220,28 @@ const rules = computed(() => ({
   deviceName: [
     {
       required: true,
-      message: "請輸入設備名稱",
+      message: t("device.validation.deviceNameRequired"),
       trigger: "blur",
     },
   ],
-  deviceType: [
+  deviceModel: [
     {
       required: true,
-      message: "請選擇設備類型",
+      message: t("device.validation.deviceTypeRequired"),
       trigger: "change",
     },
   ],
   status: [
     {
       required: true,
-      message: "請選擇狀態",
+      message: t("device.validation.statusRequired"),
       trigger: "change",
     },
   ],
   location: [
     {
       required: true,
-      message: "請輸入安裝位置",
+      message: t("device.validation.locationRequired"),
       trigger: "blur",
     },
   ],
@@ -250,14 +265,23 @@ const queryParams = reactive({
   location: "",
 });
 
-const formData = reactive({
+const formData = reactive<{
+  deviceId: string | undefined;
+  deviceName: string;
+  deviceModel: "WATER_LEVEL_SENSOR" | "OTHER" | undefined;
+  deptId: number;
+  deptName: string;
+  status: "ACTIVE" | "INACTIVE" | undefined;
+  location: string;
+  latitude: number | undefined;
+  longitude: number | undefined;
+}>({
   deviceId: undefined,
   deviceName: "",
-  deviceModel: "",
-  deviceType: "WATER_LEVEL_SENSOR",
+  deviceModel: undefined,
   deptId: 0,
   deptName: "",
-  status: "ACTIVE",
+  status: undefined,
   location: "",
   latitude: undefined,
   longitude: undefined,
@@ -311,7 +335,7 @@ async function fetchData() {
     total.value = data?.length || 0;
   } catch (error) {
     console.error("獲取數據失敗:", error);
-    ElMessage.error("獲取數據失敗");
+    ElMessage.error(t("device.errors.fetchDataFailed"));
   } finally {
     loading.value = false;
   }
@@ -340,7 +364,7 @@ function handleResetQuery() {
  * 新增按鈕點擊
  */
 async function handleAddClick() {
-  dialog.title = "新增設備";
+  dialog.title = t("device.deviceForm.title.add");
   await resetForm();
   dialog.visible = true;
 }
@@ -349,12 +373,88 @@ async function handleAddClick() {
  * 編輯按鈕點擊
  */
 async function handleEditClick(row: DeviceVO) {
-  dialog.title = "編輯設備";
-  // 過濾掉不需要的字段
+  dialog.title = t("device.deviceForm.title.edit");
+  // 過濾掉不需要的字段並直接使用 deviceModel
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { lastSeen, createdAt, ...editData } = row;
+  const { lastSeen, createdAt, deviceModel, ...editData } = row;
   Object.assign(formData, editData);
+  // 直接將 API 的 deviceModel 賦值給表單的 deviceModel 字段
+  formData.deviceModel = deviceModel as "WATER_LEVEL_SENSOR" | "OTHER";
   dialog.visible = true;
+}
+
+/**
+ * 詳細按鈕點擊 - 獲取EMQX配置
+ */
+async function handleDetailClick(row: DeviceVO) {
+  try {
+    console.log("開始獲取設備EMQX配置，設備ID:", row.deviceId);
+    const response: any = await DeviceAPI.getDeviceEmqxConfig(row.deviceId);
+    console.log("EMQX配置API原始響應:", response);
+    console.log("EMQX配置類型:", typeof response);
+
+    // 檢查響應結構 - 直接檢查是否包含data屬性
+    if (!response || typeof response !== "object") {
+      throw new Error(t("device.emqx.invalidResponse"));
+    }
+
+    // 如果響應直接是data對象（被攔截器處理過）
+    if (response.deviceId && response.emqxUsername) {
+      console.log("響應是直接的data對象");
+      // 顯示EMQX配置詳情
+      ElMessageBox.alert(
+        `<div>
+          <h4>${t("device.emqx.configTitle")}</h4>
+          <p><strong>${t("device.emqx.deviceId")}:</strong> ${response.deviceId}</p>
+          <p><strong>${t("device.emqx.mqttClientId")}:</strong> ${response.mqttClientId}</p>
+          <p><strong>${t("device.emqx.emqxUsername")}:</strong> ${response.emqxUsername}</p>
+          <p><strong>${t("device.emqx.emqxPassword")}:</strong> ${response.emqxPassword}</p>
+          <p><strong>${t("device.emqx.telemetryTopic")}:</strong> ${response.telemetryTopic}</p>
+          <p><strong>${t("device.emqx.commandTopic")}:</strong> ${response.commandTopic}</p>
+        </div>`,
+        t("device.emqx.modalTitle"),
+        {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: t("common.confirm"),
+          type: "info",
+        }
+      );
+    }
+    // 如果響應包含data屬性（原始API響應）
+    else if (response.data) {
+      console.log("響應包含data屬性");
+      // 檢查是否有錯誤代碼
+      if (response.code && response.code !== "00000") {
+        throw new Error(`API錯誤: ${response.msg || "未知錯誤"}`);
+      }
+
+      // 顯示EMQX配置詳情
+      ElMessageBox.alert(
+        `<div>
+          <h4>${t("device.emqx.configTitle")}</h4>
+          <p><strong>${t("device.emqx.deviceId")}:</strong> ${response.data.deviceId}</p>
+          <p><strong>${t("device.emqx.mqttClientId")}:</strong> ${response.data.mqttClientId}</p>
+          <p><strong>${t("device.emqx.emqxUsername")}:</strong> ${response.data.emqxUsername}</p>
+          <p><strong>${t("device.emqx.emqxPassword")}:</strong> ${response.data.emqxPassword}</p>
+          <p><strong>${t("device.emqx.telemetryTopic")}:</strong> ${response.data.telemetryTopic}</p>
+          <p><strong>${t("device.emqx.commandTopic")}:</strong> ${response.data.commandTopic}</p>
+        </div>`,
+        t("device.emqx.modalTitle"),
+        {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: t("common.confirm"),
+          type: "info",
+        }
+      );
+    } else {
+      console.error("無法識別的響應結構:", response);
+      throw new Error(t("device.emqx.unrecognizedFormat"));
+    }
+  } catch (error) {
+    console.error("獲取EMQX配置失敗:", error);
+    const errorMessage = error instanceof Error ? error.message : t("device.emqx.unknownError");
+    ElMessage.error(`${t("device.emqx.getConfigError")}: ${errorMessage}`);
+  }
 }
 
 /**
@@ -362,20 +462,24 @@ async function handleEditClick(row: DeviceVO) {
  */
 async function handleDelete(row: DeviceVO) {
   try {
-    await ElMessageBox.confirm("確定要刪除此設備嗎？", "警告", {
-      confirmButtonText: "確定",
-      cancelButtonText: "取消",
-      type: "warning",
-    });
+    await ElMessageBox.confirm(
+      t("device.deleteDialog.confirmMessage"),
+      t("device.deleteDialog.title"),
+      {
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      }
+    );
 
     await DeviceAPI.deleteDevices(row.deviceId);
 
-    ElMessage.success("刪除成功");
+    ElMessage.success(t("device.deleteSuccess"));
     fetchData();
   } catch (error: any) {
     if (error !== "cancel") {
       console.error("刪除失敗:", error);
-      ElMessage.error("刪除失敗");
+      ElMessage.error(t("device.errors.deleteFailed"));
     }
   }
 }
@@ -399,31 +503,30 @@ async function handleSubmit() {
     // Prepare form data with correct types
     const submitData: any = {
       deviceName: formData.deviceName,
-      deviceModel: formData.deviceModel,
-      deviceType: formData.deviceType as "WATER_LEVEL_SENSOR" | "OTHER",
+      deviceModel: formData.deviceModel!, // 表單驗證確保不會為 undefined
       deptId,
       location: formData.location,
       latitude: formData.latitude,
       longitude: formData.longitude,
-      status: formData.status as "ACTIVE" | "INACTIVE",
+      status: formData.status!, // 表單驗證確保不會為 undefined
     };
 
     if (formData.deviceId) {
       // Update
       submitData.deviceId = formData.deviceId;
       await DeviceAPI.updateDevice(formData.deviceId, submitData);
-      ElMessage.success("更新成功");
+      ElMessage.success(t("device.updateSuccess"));
     } else {
       // Create
       await DeviceAPI.addDevice(submitData);
-      ElMessage.success("新增成功");
+      ElMessage.success(t("device.addSuccess"));
     }
 
     handleCloseDialog();
     fetchData();
   } catch (error) {
     console.error("保存失敗:", error);
-    ElMessage.error("保存失敗");
+    ElMessage.error(t("device.errors.saveFailed"));
   } finally {
     dialog.loading = false;
   }
@@ -466,11 +569,10 @@ async function resetForm() {
   Object.assign(formData, {
     deviceId: undefined,
     deviceName: "",
-    deviceModel: "",
-    deviceType: "WATER_LEVEL_SENSOR",
+    deviceModel: undefined,
     deptId,
     deptName,
-    status: "ACTIVE",
+    status: undefined,
     location: "",
     latitude: undefined,
     longitude: undefined,
@@ -495,9 +597,9 @@ function getStatusTagType(status: string): "success" | "warning" | "danger" | "i
 function getStatusText(status: string): string {
   switch (status) {
     case "ACTIVE":
-      return "Active";
+      return t("device.active");
     case "INACTIVE":
-      return "InActive";
+      return t("device.inactive");
     default:
       return status;
   }
@@ -506,9 +608,9 @@ function getStatusText(status: string): string {
 function getDeviceModelText(deviceModel: string): string {
   switch (deviceModel) {
     case "WATER_LEVEL_SENSOR":
-      return "水位感測器";
+      return t("device.waterLevelSensor");
     case "OTHER":
-      return "其他設備";
+      return t("device.otherDevice");
     default:
       return deviceModel;
   }

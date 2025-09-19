@@ -745,6 +745,7 @@ export default {
     reset: "重置",
     add: "新增設備",
     edit: "編輯",
+    detail: "詳情",
     delete: "刪除",
     online: "在線",
     offline: "離線",
@@ -887,6 +888,30 @@ export default {
       manufacturer: "製造商篩選",
       location: "位置篩選",
       dateRange: "日期範圍",
+    },
+
+    // EMQX配置相關
+    emqx: {
+      configTitle: "設備EMQX配置詳情",
+      modalTitle: "設備EMQX配置",
+      deviceId: "設備ID",
+      mqttClientId: "MQTT客戶端ID",
+      emqxUsername: "EMQX用戶名",
+      emqxPassword: "EMQX密碼",
+      telemetryTopic: "遙測主題",
+      commandTopic: "命令主題",
+      getConfigError: "獲取EMQX配置失敗",
+      unknownError: "未知錯誤",
+      invalidResponse: "API返回無效響應",
+      unrecognizedFormat: "API響應格式無法識別",
+    },
+
+    // 通用錯誤訊息
+    errors: {
+      fetchDataFailed: "獲取數據失敗",
+      saveFailed: "保存失敗",
+      deleteFailed: "刪除失敗",
+      apiError: "API錯誤",
     },
   },
   // IoT指標定義管理
