@@ -1125,4 +1125,16 @@ export default {
     selectDeptFirst: "Please select a department first",
     noData: "No data",
   },
+
+  // Electronic Map Internationalization
+  emap: {
+    centerOnDevices: "Center on Devices",
+    zoomIn: "Zoom In",
+    zoomOut: "Zoom Out",
+    myLocation: "My Location",
+    initMapFailed: "Failed to initialize map",
+    locationSuccess: "Location updated successfully",
+    locationFailed: "Failed to get location",
+    geolocationNotSupported: "Geolocation is not supported by this browser",
+  },
 };
