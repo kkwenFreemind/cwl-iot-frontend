@@ -311,5 +311,4 @@ async function fetchDevices() {
 
 ## Git log
 
-- 861145c 2025-09-19 15:02:45 feat: implement electronic map visualization for IoT devices 
- 
+- 861145c 2025-09-19 15:02:45 feat: implement electronic map visualization for IoT devices
