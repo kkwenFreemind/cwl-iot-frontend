@@ -978,6 +978,79 @@ export default {
       apiError: "API error",
     },
   },
+  // Device Type Management Internationalization
+  deviceType: {
+    title: "Device Type Management",
+    typeName: "Type Name",
+    description: "Description",
+    status: "Status",
+    active: "Active",
+    inactive: "Inactive",
+    metrics: "Metrics",
+    metricsCount: "Metrics",
+    deviceCount: "Device Count",
+    devicesCount: "Devices",
+    createTime: "Create Time",
+    operation: "Operations",
+    search: "Search",
+    reset: "Reset",
+    add: "Add Type",
+    edit: "Edit",
+    delete: "Delete",
+    keywords: "Keywords",
+    keywordsPlaceholder: "Type Name/Description",
+
+    // Form
+    deviceTypeForm: {
+      title: {
+        add: "Add Device Type",
+        edit: "Edit Device Type",
+      },
+      typeName: "Type Name",
+      typeNamePlaceholder: "Enter type name",
+      description: "Description",
+      descriptionPlaceholder: "Enter type description (optional)",
+      status: "Status",
+    },
+
+    // Metrics Management
+    manageMetrics: "Metrics Management",
+    availableMetrics: "Available Metrics",
+    selectedMetrics: "Selected Metrics",
+    selectMetrics: "Select Metrics",
+    searchMetrics: "Search Metrics",
+    updateMetricsSuccess: "Metrics association updated successfully",
+    selectedCount: "Selected {count} metrics",
+    operationTips:
+      "You can use the search function to quickly find the metrics you need, or select directly from the list.",
+    saveWarning: "Confirming will update the metric association configuration for this device type",
+    noDescription: "No description available",
+
+    // Validation Messages
+    validation: {
+      typeNameRequired: "Type name is required",
+    },
+
+    // Delete Confirmation
+    deleteDialog: {
+      title: "Delete Confirmation",
+      confirmMessage: "This will permanently delete the device type. Continue?",
+    },
+
+    // Success Messages
+    addSuccess: "Device type created successfully",
+    updateSuccess: "Device type updated successfully",
+    deleteSuccess: "Device type deleted successfully",
+
+    // Error Messages
+    errors: {
+      fetchDataFailed: "Failed to fetch data",
+      fetchMetricsFailed: "Failed to fetch metrics data",
+      saveFailed: "Save failed",
+      deleteFailed: "Delete failed",
+    },
+  },
+
   // IoT Metric Definition Management
   metric: {
     // Basic operations

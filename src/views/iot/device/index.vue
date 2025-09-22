@@ -139,6 +139,20 @@
             <el-option :label="$t('device.otherDevice')" value="OTHER" />
           </el-select>
         </el-form-item>
+        <el-form-item :label="$t('device.deviceForm.deviceType')" prop="deviceTypeId">
+          <el-select
+            v-model="formData.deviceTypeId"
+            :placeholder="$t('device.deviceForm.deviceTypePlaceholder')"
+            clearable
+          >
+            <el-option
+              v-for="deviceType in deviceTypes"
+              :key="deviceType.id || 0"
+              :label="deviceType.name"
+              :value="deviceType.id!"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item v-if="formData.deviceId" :label="$t('device.deviceId')" prop="deviceId">
           <el-input v-model="formData.deviceId" readonly :placeholder="$t('device.deviceId')" />
         </el-form-item>
@@ -200,6 +214,7 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useUserStoreHook } from "@/store/modules/user-store";
 import DeviceAPI, { DeviceVO } from "@/api/iot/device-api";
+import DeviceTypeAPI, { IotDeviceTypeVO } from "@/api/iot/device-type-api";
 import UserAPI from "@/api/system/user-api";
 import { useI18n } from "vue-i18n";
 
@@ -225,6 +240,13 @@ const rules = computed(() => ({
     },
   ],
   deviceModel: [
+    {
+      required: true,
+      message: t("device.validation.deviceTypeRequired"),
+      trigger: "change",
+    },
+  ],
+  deviceTypeId: [
     {
       required: true,
       message: t("device.validation.deviceTypeRequired"),
@@ -269,6 +291,7 @@ const formData = reactive<{
   deviceId: string | undefined;
   deviceName: string;
   deviceModel: "WATER_LEVEL_SENSOR" | "OTHER" | undefined;
+  deviceTypeId: number | undefined;
   deptId: number;
   deptName: string;
   status: "ACTIVE" | "INACTIVE" | undefined;
@@ -279,6 +302,7 @@ const formData = reactive<{
   deviceId: undefined,
   deviceName: "",
   deviceModel: undefined,
+  deviceTypeId: undefined,
   deptId: 0,
   deptName: "",
   status: undefined,
@@ -288,6 +312,7 @@ const formData = reactive<{
 });
 
 const pageData = ref<DeviceVO[]>([]);
+const deviceTypes = ref<IotDeviceTypeVO[]>([]);
 
 /**
  * 用戶 store
@@ -299,6 +324,24 @@ const userStore = useUserStoreHook();
  */
 const queryFormRef = ref();
 const formRef = ref();
+
+/**
+ * Load device types for the user's department
+ */
+async function loadDeviceTypes() {
+  try {
+    const profile = await UserAPI.getProfile();
+    const deptId = profile.deptId ? Number(profile.deptId) : undefined;
+
+    if (deptId) {
+      const types = await DeviceTypeAPI.getActiveDeviceTypesByDepartment(deptId);
+      deviceTypes.value = types || [];
+    }
+  } catch (error) {
+    console.error("獲取設備類型失敗:", error);
+    deviceTypes.value = [];
+  }
+}
 
 /**
  * 數據獲取
@@ -366,6 +409,7 @@ function handleResetQuery() {
 async function handleAddClick() {
   dialog.title = t("device.deviceForm.title.add");
   await resetForm();
+  await loadDeviceTypes();
   dialog.visible = true;
 }
 
@@ -380,6 +424,7 @@ async function handleEditClick(row: DeviceVO) {
   Object.assign(formData, editData);
   // 直接將 API 的 deviceModel 賦值給表單的 deviceModel 字段
   formData.deviceModel = deviceModel as "WATER_LEVEL_SENSOR" | "OTHER";
+  await loadDeviceTypes();
   dialog.visible = true;
 }
 
@@ -516,6 +561,7 @@ async function handleSubmit() {
     const submitData: any = {
       deviceName: formData.deviceName,
       deviceModel: formData.deviceModel!, // 表單驗證確保不會為 undefined
+      deviceTypeId: formData.deviceTypeId,
       deptId,
       location: formData.location,
       latitude: formData.latitude,
@@ -582,6 +628,7 @@ async function resetForm() {
     deviceId: undefined,
     deviceName: "",
     deviceModel: undefined,
+    deviceTypeId: undefined,
     deptId,
     deptName,
     status: undefined,

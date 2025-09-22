@@ -916,7 +916,77 @@ export default {
       apiError: "API錯誤",
     },
   },
-  // IoT指標定義管理
+  // 設備類型管理國際化
+  deviceType: {
+    title: "設備類型管理",
+    typeName: "類型名稱",
+    description: "描述",
+    status: "狀態",
+    active: "啟用",
+    inactive: "停用",
+    metrics: "指標管理",
+    metricsCount: "個指標",
+    deviceCount: "設備數量",
+    devicesCount: "個設備",
+    createTime: "建立時間",
+    operation: "操作",
+    search: "搜尋",
+    reset: "重置",
+    add: "新增類型",
+    edit: "編輯",
+    delete: "刪除",
+    keywords: "關鍵字",
+    keywordsPlaceholder: "類型名稱/描述",
+
+    // 表單
+    deviceTypeForm: {
+      title: {
+        add: "新增設備類型",
+        edit: "編輯設備類型",
+      },
+      typeName: "類型名稱",
+      typeNamePlaceholder: "請輸入類型名稱",
+      description: "描述",
+      descriptionPlaceholder: "請輸入類型描述（可選）",
+      status: "狀態",
+    },
+
+    // 指標管理
+    manageMetrics: "指標管理",
+    availableMetrics: "可用指標",
+    selectedMetrics: "已選指標",
+    selectMetrics: "指標選擇",
+    searchMetrics: "搜尋指標",
+    updateMetricsSuccess: "指標關聯更新成功",
+    selectedCount: "已選擇 {count} 個指標",
+    operationTips: "您可以使用搜索功能快速找到需要的指標，或直接在列表中選擇。",
+    saveWarning: "確認後將更新該設備類型的指標關聯配置",
+    noDescription: "暫無描述",
+
+    // 驗證訊息
+    validation: {
+      typeNameRequired: "請輸入類型名稱",
+    },
+
+    // 刪除確認
+    deleteDialog: {
+      title: "刪除確認",
+      confirmMessage: "此操作將永久刪除該設備類型，是否繼續？",
+    },
+
+    // 成功訊息
+    addSuccess: "設備類型新增成功",
+    updateSuccess: "設備類型更新成功",
+    deleteSuccess: "設備類型刪除成功",
+
+    // 錯誤訊息
+    errors: {
+      fetchDataFailed: "獲取數據失敗",
+      fetchMetricsFailed: "獲取指標數據失敗",
+      saveFailed: "保存失敗",
+      deleteFailed: "刪除失敗",
+    },
+  },
   metric: {
     // 基本操作
     add: "新增",
