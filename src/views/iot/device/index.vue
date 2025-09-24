@@ -35,23 +35,26 @@
         border
         class="data-table__content"
       >
-        <el-table-column :label="$t('device.deviceName')" prop="deviceName" min-width="120" />
+        <el-table-column :label="$t('device.deviceName')" prop="deviceName" min-width="100" />
         <el-table-column
           :label="$t('device.deviceModel')"
           prop="deviceModel"
-          width="120"
+          width="180"
           align="center"
         >
           <template #default="scope">
             <span>{{ getDeviceModelText(scope.row.deviceModel) }}</span>
           </template>
         </el-table-column>
+
         <el-table-column
-          :label="$t('device.deviceId')"
-          prop="deviceId"
-          width="140"
+          :label="$t('device.location')"
+          prop="location"
+          width="250"
           align="center"
+          show-overflow-tooltip
         />
+
         <el-table-column :label="$t('device.status')" align="center" prop="status" width="80">
           <template #default="scope">
             <el-tag :type="getStatusTagType(scope.row.status)" size="small">
@@ -59,20 +62,14 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('device.location')"
-          prop="location"
-          width="150"
-          align="center"
-          show-overflow-tooltip
-        />
+
         <el-table-column
           :label="$t('device.createTime')"
           align="center"
           prop="createdAt"
-          width="150"
+          width="200"
         />
-        <el-table-column :label="$t('device.operation')" fixed="right" width="180">
+        <el-table-column :label="$t('device.operation')" fixed="right" width="220">
           <template #default="scope">
             <el-button
               type="primary"
@@ -139,20 +136,6 @@
             <el-option :label="$t('device.otherDevice')" value="OTHER" />
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('device.deviceForm.deviceType')" prop="deviceTypeId">
-          <el-select
-            v-model="formData.deviceTypeId"
-            :placeholder="$t('device.deviceForm.deviceTypePlaceholder')"
-            clearable
-          >
-            <el-option
-              v-for="deviceType in deviceTypes"
-              :key="deviceType.id || 0"
-              :label="deviceType.name"
-              :value="deviceType.id!"
-            />
-          </el-select>
-        </el-form-item>
         <el-form-item v-if="formData.deviceId" :label="$t('device.deviceId')" prop="deviceId">
           <el-input v-model="formData.deviceId" readonly :placeholder="$t('device.deviceId')" />
         </el-form-item>
@@ -214,22 +197,39 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useUserStoreHook } from "@/store/modules/user-store";
 import DeviceAPI, { DeviceVO } from "@/api/iot/device-api";
-import DeviceTypeAPI, { IotDeviceTypeVO } from "@/api/iot/device-type-api";
 import UserAPI from "@/api/system/user-api";
 import { useI18n } from "vue-i18n";
 
+/**
+ * Device Management Component
+ *
+ * This component provides comprehensive IoT device management functionality including:
+ * - Device listing with search and pagination
+ * - Device creation, editing, and deletion
+ * - EMQX MQTT broker configuration management
+ * - Geographic location tracking with latitude/longitude
+ * - Multi-protocol support (Sparkplug B, Modbus TCP, HTTP JSON, Custom MQTT)
+ *
+ * @component DeviceManagement
+ * @author Chang Xiu-Wen, AI-Enhanced
+ * @version 1.0.0
+ */
 defineOptions({
   name: "DeviceManagement",
   inheritAttrs: false,
 });
 
 /**
- * i18n 實例
+ * Internationalization instance for multi-language support
+ * @type {ReturnType<typeof useI18n>}
  */
 const { t } = useI18n();
 
 /**
- * 表單驗證規則
+ * Form validation rules for device management form
+ * Defines validation constraints for all form fields including required fields,
+ * data types, and custom validation messages
+ * @type {ComputedRef<Record<string, Array<Record<string, any>>>>}
  */
 const rules = computed(() => ({
   deviceName: [
@@ -240,13 +240,6 @@ const rules = computed(() => ({
     },
   ],
   deviceModel: [
-    {
-      required: true,
-      message: t("device.validation.deviceTypeRequired"),
-      trigger: "change",
-    },
-  ],
-  deviceTypeId: [
     {
       required: true,
       message: t("device.validation.deviceTypeRequired"),
@@ -270,16 +263,35 @@ const rules = computed(() => ({
 }));
 
 /**
- * 響應式狀態
+ * Reactive state variables for component data management
+ */
+
+/**
+ * Loading state for data table and async operations
+ * @type {Ref<boolean>}
  */
 const loading = ref(false);
+
+/**
+ * Total number of devices for pagination
+ * @type {Ref<number>}
+ */
 const total = ref(0);
+
+/**
+ * Dialog state management for form drawer
+ * @type {UnwrapNestedRefs<{visible: boolean, title: string, loading: boolean}>}
+ */
 const dialog = reactive({
   visible: false,
   title: "",
   loading: false,
 });
 
+/**
+ * Query parameters for device search and pagination
+ * @type {UnwrapNestedRefs<{pageNum: number, pageSize: number, keywords: string, location: string}>}
+ */
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
@@ -287,11 +299,15 @@ const queryParams = reactive({
   location: "",
 });
 
+/**
+ * Form data for device creation and editing
+ * Contains all device properties including geographic coordinates
+ * @type {UnwrapNestedRefs<{deviceId: string | undefined, deviceName: string, deviceModel: "WATER_LEVEL_SENSOR" | "OTHER" | undefined, deptId: number, deptName: string, status: "ACTIVE" | "INACTIVE" | undefined, location: string, latitude: number | undefined, longitude: number | undefined}>}
+ */
 const formData = reactive<{
   deviceId: string | undefined;
   deviceName: string;
   deviceModel: "WATER_LEVEL_SENSOR" | "OTHER" | undefined;
-  deviceTypeId: number | undefined;
   deptId: number;
   deptName: string;
   status: "ACTIVE" | "INACTIVE" | undefined;
@@ -302,7 +318,6 @@ const formData = reactive<{
   deviceId: undefined,
   deviceName: "",
   deviceModel: undefined,
-  deviceTypeId: undefined,
   deptId: 0,
   deptName: "",
   status: undefined,
@@ -311,40 +326,43 @@ const formData = reactive<{
   longitude: undefined,
 });
 
+/**
+ * Device list data array for table display and pagination
+ * @type {Ref<DeviceVO[]>}
+ */
 const pageData = ref<DeviceVO[]>([]);
-const deviceTypes = ref<IotDeviceTypeVO[]>([]);
 
 /**
- * 用戶 store
+ * User store instance for accessing user information and authentication state
+ * @type {ReturnType<typeof useUserStoreHook>}
  */
 const userStore = useUserStoreHook();
 
 /**
- * 表單引用
+ * Form references for validation and form manipulation
+ */
+
+/**
+ * Reference to the search form for query operations
+ * @type {Ref<any>}
  */
 const queryFormRef = ref();
+
+/**
+ * Reference to the device form for validation and submission
+ * @type {Ref<any>}
+ */
 const formRef = ref();
 
 /**
- * Load device types for the user's department
- */
-async function loadDeviceTypes() {
-  try {
-    const profile = await UserAPI.getProfile();
-    const deptId = profile.deptId ? Number(profile.deptId) : undefined;
-
-    if (deptId) {
-      const types = await DeviceTypeAPI.getActiveDeviceTypesByDepartment(deptId);
-      deviceTypes.value = types || [];
-    }
-  } catch (error) {
-    console.error("獲取設備類型失敗:", error);
-    deviceTypes.value = [];
-  }
-}
-
-/**
- * 數據獲取
+ * Fetches device data from the API with current query parameters
+ * Handles loading states, error handling, and data transformation
+ * Automatically includes department ID from user profile for data filtering
+ *
+ * @async
+ * @function fetchData
+ * @returns {Promise<void>} Promise that resolves when data fetching is complete
+ * @throws {Error} Throws error if API call fails, displays user-friendly error message
  */
 async function fetchData() {
   loading.value = true;
@@ -385,7 +403,11 @@ async function fetchData() {
 }
 
 /**
- * 搜尋處理
+ * Handles search query execution
+ * Resets pagination to first page and fetches data with current search parameters
+ *
+ * @function handleQuery
+ * @returns {void}
  */
 function handleQuery() {
   queryParams.pageNum = 1;
@@ -393,7 +415,11 @@ function handleQuery() {
 }
 
 /**
- * 重置搜尋
+ * Handles search form reset
+ * Clears all search fields, resets pagination, and refreshes data
+ *
+ * @function handleResetQuery
+ * @returns {void}
  */
 function handleResetQuery() {
   queryFormRef.value?.resetFields();
@@ -404,17 +430,27 @@ function handleResetQuery() {
 }
 
 /**
- * 新增按鈕點擊
+ * Handles add device button click
+ * Opens the device creation dialog with reset form and appropriate title
+ *
+ * @async
+ * @function handleAddClick
+ * @returns {Promise<void>} Promise that resolves when dialog is opened
  */
 async function handleAddClick() {
   dialog.title = t("device.deviceForm.title.add");
   await resetForm();
-  await loadDeviceTypes();
   dialog.visible = true;
 }
 
 /**
- * 編輯按鈕點擊
+ * Handles edit device button click
+ * Populates form with selected device data and opens edit dialog
+ *
+ * @async
+ * @function handleEditClick
+ * @param {DeviceVO} row - The device data to edit
+ * @returns {Promise<void>} Promise that resolves when dialog is opened
  */
 async function handleEditClick(row: DeviceVO) {
   dialog.title = t("device.deviceForm.title.edit");
@@ -424,12 +460,19 @@ async function handleEditClick(row: DeviceVO) {
   Object.assign(formData, editData);
   // 直接將 API 的 deviceModel 賦值給表單的 deviceModel 字段
   formData.deviceModel = deviceModel as "WATER_LEVEL_SENSOR" | "OTHER";
-  await loadDeviceTypes();
   dialog.visible = true;
 }
 
 /**
- * 詳細按鈕點擊 - 獲取EMQX配置
+ * Handles device detail button click - retrieves and displays EMQX configuration
+ * Fetches EMQX MQTT broker configuration for the selected device and displays
+ * connection details in a modal dialog. Handles different API response formats.
+ *
+ * @async
+ * @function handleDetailClick
+ * @param {DeviceVO} row - The device data containing deviceId for EMQX config lookup
+ * @returns {Promise<void>} Promise that resolves when EMQX config is displayed or error is handled
+ * @throws {Error} Throws error if EMQX config retrieval fails, displays user-friendly error message
  */
 async function handleDetailClick(row: DeviceVO) {
   try {
@@ -503,7 +546,15 @@ async function handleDetailClick(row: DeviceVO) {
 }
 
 /**
- * 刪除處理
+ * Handles device deletion with confirmation dialog
+ * First attempts to delete EMQX configuration, then deletes the device itself.
+ * Shows confirmation dialog and handles partial deletion scenarios gracefully.
+ *
+ * @async
+ * @function handleDelete
+ * @param {DeviceVO} row - The device data to delete
+ * @returns {Promise<void>} Promise that resolves when deletion is complete or cancelled
+ * @throws {Error} Throws error if device deletion fails (EMQX deletion failure is handled gracefully)
  */
 async function handleDelete(row: DeviceVO) {
   try {
@@ -542,7 +593,14 @@ async function handleDelete(row: DeviceVO) {
 }
 
 /**
- * 表單提交
+ * Handles form submission for device creation and updates
+ * Validates form data, prepares submission payload, and calls appropriate API
+ * based on whether it's a new device creation or existing device update.
+ *
+ * @async
+ * @function handleSubmit
+ * @returns {Promise<void>} Promise that resolves when form submission is complete
+ * @throws {Error} Throws error if form validation or API call fails
  */
 async function handleSubmit() {
   if (!formRef.value) return;
@@ -561,7 +619,6 @@ async function handleSubmit() {
     const submitData: any = {
       deviceName: formData.deviceName,
       deviceModel: formData.deviceModel!, // 表單驗證確保不會為 undefined
-      deviceTypeId: formData.deviceTypeId,
       deptId,
       location: formData.location,
       latitude: formData.latitude,
@@ -591,7 +648,12 @@ async function handleSubmit() {
 }
 
 /**
- * 關閉對話框
+ * Handles dialog close event
+ * Closes the form dialog and resets the form to initial state
+ *
+ * @async
+ * @function handleCloseDialog
+ * @returns {Promise<void>} Promise that resolves when dialog is closed and form is reset
  */
 async function handleCloseDialog() {
   dialog.visible = false;
@@ -599,7 +661,13 @@ async function handleCloseDialog() {
 }
 
 /**
- * 重置表單
+ * Resets the device form to initial state
+ * Fetches current user profile to populate department information
+ * and resets all form fields to default values
+ *
+ * @async
+ * @function resetForm
+ * @returns {Promise<void>} Promise that resolves when form reset is complete
  */
 async function resetForm() {
   let deptId = 0;
@@ -628,7 +696,6 @@ async function resetForm() {
     deviceId: undefined,
     deviceName: "",
     deviceModel: undefined,
-    deviceTypeId: undefined,
     deptId,
     deptName,
     status: undefined,
@@ -640,7 +707,16 @@ async function resetForm() {
 }
 
 /**
- * 工具函數
+ * Utility functions for data formatting and display
+ */
+
+/**
+ * Returns the appropriate Element Plus tag type for device status display
+ * Maps device status values to corresponding tag colors for UI consistency
+ *
+ * @function getStatusTagType
+ * @param {string} status - The device status string ("ACTIVE" or "INACTIVE")
+ * @returns {"success" | "warning" | "danger" | "info" | "primary"} The tag type for Element Plus ElTag component
  */
 function getStatusTagType(status: string): "success" | "warning" | "danger" | "info" | "primary" {
   switch (status) {
@@ -653,6 +729,14 @@ function getStatusTagType(status: string): "success" | "warning" | "danger" | "i
   }
 }
 
+/**
+ * Returns the localized text for device status
+ * Translates status enum values to user-friendly display text
+ *
+ * @function getStatusText
+ * @param {string} status - The device status string ("ACTIVE" or "INACTIVE")
+ * @returns {string} The localized status text for display
+ */
 function getStatusText(status: string): string {
   switch (status) {
     case "ACTIVE":
@@ -664,6 +748,14 @@ function getStatusText(status: string): string {
   }
 }
 
+/**
+ * Returns the localized text for device model/type
+ * Translates device model enum values to user-friendly display names
+ *
+ * @function getDeviceModelText
+ * @param {string} deviceModel - The device model string ("WATER_LEVEL_SENSOR" or "OTHER")
+ * @returns {string} The localized device model text for display
+ */
 function getDeviceModelText(deviceModel: string): string {
   switch (deviceModel) {
     case "WATER_LEVEL_SENSOR":
@@ -676,7 +768,12 @@ function getDeviceModelText(deviceModel: string): string {
 }
 
 /**
- * 組件掛載時獲取數據
+ * Component lifecycle hook - executed when component is mounted
+ * Initializes user information and form data, then fetches initial device data
+ * Ensures user authentication state is loaded before data operations
+ *
+ * @function onMounted
+ * @returns {Promise<void>} Promise that resolves when initialization is complete
  */
 onMounted(async () => {
   // 確保用戶資訊已載入
