@@ -319,6 +319,8 @@ export interface DeviceVO {
   deviceModel: string;
   /** Device type classification (WATER_LEVEL_SENSOR or OTHER) */
   deviceType?: DeviceType;
+  /** Device type ID from device type configuration (string from API) */
+  deviceTypeId?: string | number;
   /** Optional localized device type text for UI display */
   deviceTypeText?: string;
   /** Department affiliation identifier */

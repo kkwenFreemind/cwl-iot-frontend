@@ -48,6 +48,21 @@
         </el-table-column>
 
         <el-table-column
+          :label="$t('device.deviceType')"
+          prop="deviceTypeId"
+          width="180"
+          align="center"
+        >
+          <template #default="scope">
+            <span
+              :title="`ID: ${scope.row.deviceTypeId}, Name: ${getDeviceTypeName(Number(scope.row.deviceTypeId))}`"
+            >
+              {{ getDeviceTypeName(Number(scope.row.deviceTypeId)) }}
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
           :label="$t('device.location')"
           prop="location"
           width="250"
@@ -141,15 +156,26 @@
           <el-select
             v-model="formData.deviceTypeId"
             :placeholder="$t('device.deviceForm.deviceTypePlaceholder')"
+            filterable
             clearable
+            @change="onDeviceTypeChange"
+            @visible-change="onDropdownVisibleChange"
           >
             <el-option
-              v-for="deviceType in deviceTypes"
-              :key="deviceType.id || 0"
-              :label="deviceType.name"
-              :value="deviceType.id!"
+              v-for="option in deviceTypeOptions"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
             />
           </el-select>
+          <!-- Debug info -->
+          <div style="margin-top: 5px; font-size: 12px; color: #666">
+            當前選擇: {{ currentDeviceTypeName }} (ID: {{ formData.deviceTypeId }})
+            <br />
+            設備類型數量: {{ deviceTypes.length }}
+            <br />
+            可用選項: {{ deviceTypes.map((t) => `${t.id}: ${t.name}`).join(", ") }}
+          </div>
         </el-form-item>
 
         <el-form-item v-if="formData.deviceId" :label="$t('device.deviceId')" prop="deviceId">
@@ -209,7 +235,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, nextTick } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useUserStoreHook } from "@/store/modules/user-store";
 import DeviceAPI, { DeviceVO } from "@/api/iot/device-api";
@@ -360,6 +386,26 @@ const pageData = ref<DeviceVO[]>([]);
 const deviceTypes = ref<IotDeviceTypeVO[]>([]);
 
 /**
+ * Computed property to get the current selected device type name
+ * @type {ComputedRef<string>}
+ */
+const currentDeviceTypeName = computed(() => {
+  if (!formData.deviceTypeId) return "未選擇";
+  return getDeviceTypeName(formData.deviceTypeId);
+});
+
+/**
+ * Computed property to generate device type options with proper labels
+ * @type {ComputedRef<Array<{label: string, value: number}>>}
+ */
+const deviceTypeOptions = computed(() => {
+  return deviceTypes.value.map((deviceType) => ({
+    label: deviceType.name || `Device Type ${deviceType.id}`,
+    value: typeof deviceType.id === "string" ? parseInt(deviceType.id, 10) : deviceType.id!,
+  }));
+});
+
+/**
  * User store instance for accessing user information and authentication state
  * @type {ReturnType<typeof useUserStoreHook>}
  */
@@ -419,6 +465,21 @@ async function fetchData() {
     console.log("Fetching devices with params:", params);
 
     const data = await DeviceAPI.listDevices(params);
+    console.log("🔍 Raw API response data:", data);
+    console.log(
+      "📊 First device sample:",
+      data?.[0]
+        ? {
+            deviceId: data[0].deviceId,
+            deviceName: data[0].deviceName,
+            deviceModel: data[0].deviceModel,
+            deviceType: data[0].deviceType,
+            hasDeviceType: Object.prototype.hasOwnProperty.call(data[0], "deviceType"),
+            allKeys: Object.keys(data[0]),
+          }
+        : "No devices returned"
+    );
+
     pageData.value = data || [];
     total.value = data?.length || 0;
   } catch (error) {
@@ -438,12 +499,110 @@ async function loadDeviceTypes() {
     const deptId = profile.deptId ? Number(profile.deptId) : undefined;
 
     if (deptId) {
+      console.log("🔍 Loading device types for department:", deptId);
       const types = await DeviceTypeAPI.getActiveDeviceTypesByDepartment(deptId);
       deviceTypes.value = types || [];
+      console.log("✅ Loaded device types:", deviceTypes.value);
+      console.log(
+        "📋 Device types structure:",
+        deviceTypes.value.map((type) => ({
+          id: type.id,
+          name: type.name,
+        }))
+      );
+      console.log(
+        "🔍 Detailed device types:",
+        deviceTypes.value.map((type) => ({
+          id: type.id,
+          name: type.name,
+          description: type.description,
+          fullObject: type,
+        }))
+      );
+    } else {
+      console.warn("⚠️ No department ID found for loading device types");
     }
   } catch (error) {
-    console.error("獲取設備類型失敗:", error);
+    console.error("❌ Failed to load device types:", error);
     deviceTypes.value = [];
+  }
+}
+
+/**
+ * Returns the device type name for a given device type ID
+ * Looks up the device type name from the loaded device types array
+ *
+ * @function getDeviceTypeName
+ * @param {number} deviceTypeId - The device type ID to look up
+ * @returns {string} The device type name, or a fallback string if not found
+ */
+function getDeviceTypeName(deviceTypeId: number): string {
+  console.log(
+    "🔍 getDeviceTypeName called with deviceTypeId:",
+    deviceTypeId,
+    "type:",
+    typeof deviceTypeId
+  );
+  console.log("  deviceTypes.value length:", deviceTypes.value.length);
+  console.log("  deviceTypes.value:", deviceTypes.value);
+
+  // 詳細檢查每個設備類型的 ID
+  deviceTypes.value.forEach((type, index) => {
+    console.log(`  Type ${index}: id=${type.id} (type: ${typeof type.id}), name=${type.name}`);
+    console.log(
+      `    Comparison: type.id === deviceTypeId -> ${type.id} === ${deviceTypeId} -> ${type.id === deviceTypeId}`
+    );
+  });
+
+  // 使用更靈活的比較方式，處理數字和字符串類型不匹配的問題
+  const deviceType = deviceTypes.value.find((type) => {
+    // 嘗試多種比較方式
+    const typeId = type.id;
+    const searchId = deviceTypeId;
+
+    // 直接比較
+    if (typeId === searchId) return true;
+
+    // 字符串和數字互轉比較
+    if (typeof typeId === "string" && typeof searchId === "number") {
+      return typeId === searchId.toString();
+    }
+    if (typeof typeId === "number" && typeof searchId === "string") {
+      return typeId.toString() === searchId;
+    }
+
+    return false;
+  });
+  console.log("  Found deviceType:", deviceType);
+
+  const result = deviceType?.name || `Device Type ${deviceTypeId}`;
+  console.log("  Returning result:", result);
+
+  return result;
+}
+
+/**
+ * Handles device type selection change for debugging
+ * @function onDeviceTypeChange
+ * @param {number} value - The selected device type ID
+ */
+function onDeviceTypeChange(value: number) {
+  console.log("🔄 Device type changed to:", value);
+  console.log("  Selected device type name:", getDeviceTypeName(value));
+  console.log("  Current formData.deviceTypeId:", formData.deviceTypeId);
+}
+
+/**
+ * Handles dropdown visibility change for debugging
+ * @function onDropdownVisibleChange
+ * @param {boolean} visible - Whether dropdown is visible
+ */
+function onDropdownVisibleChange(visible: boolean) {
+  console.log("📂 Dropdown visibility changed:", visible);
+  if (visible) {
+    console.log("  Current deviceTypes:", deviceTypes.value);
+    console.log("  Current formData.deviceTypeId:", formData.deviceTypeId);
+    console.log("  Current selected name:", getDeviceTypeName(formData.deviceTypeId || 0));
   }
 }
 
@@ -499,17 +658,67 @@ async function handleAddClick() {
  * @returns {Promise<void>} Promise that resolves when dialog is opened
  */
 async function handleEditClick(row: DeviceVO) {
+  console.log("📝 Starting handleEditClick for device:", row.deviceId);
+  console.log("  Device data:", {
+    deviceId: row.deviceId,
+    deviceName: row.deviceName,
+    deviceModel: row.deviceModel,
+    deviceTypeId: row.deviceTypeId, // API returns deviceTypeId, not deviceType
+    allKeys: Object.keys(row),
+  });
+
   dialog.title = t("device.deviceForm.title.edit");
-  // 過濾掉不需要的字段並直接使用 deviceModel 和 deviceType
+  // 過濾掉不需要的字段並直接使用 deviceModel 和 deviceTypeId
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { lastSeen, createdAt, deviceModel, deviceType, ...editData } = row;
+  const { lastSeen, createdAt, deviceModel, deviceTypeId, ...editData } = row;
   Object.assign(formData, editData);
   // 直接將 API 的 deviceModel 賦值給表單的 deviceModel 字段
   formData.deviceModel = deviceModel as "WATER_LEVEL_SENSOR" | "OTHER";
-  // 將 API 的 deviceType 轉換為 deviceTypeId（假設 deviceType 是 ID 的字符串形式）
-  formData.deviceTypeId = deviceType ? parseInt(deviceType) : undefined;
+  console.log("  Set deviceModel:", formData.deviceModel);
+
+  // 直接使用 API 返回的 deviceTypeId（字符串），轉換為數字
+  console.log("  About to load device types and set deviceTypeId...");
   await loadDeviceTypes();
+
+  // Convert string deviceTypeId to number for form binding
+  if (deviceTypeId) {
+    const numericId = parseInt(deviceTypeId.toString(), 10);
+    formData.deviceTypeId = numericId;
+    console.log(
+      "  Set deviceTypeId from API:",
+      formData.deviceTypeId,
+      typeof formData.deviceTypeId
+    );
+    console.log("  Device type name for this ID:", getDeviceTypeName(formData.deviceTypeId));
+
+    // 確保 deviceTypes 中有對應的選項
+    const matchingType = deviceTypes.value.find((type) => type.id === numericId);
+    console.log("  Matching device type in array:", matchingType);
+    if (!matchingType) {
+      console.warn("⚠️ No matching device type found for ID:", numericId);
+      console.log(
+        "  Available device types:",
+        deviceTypes.value.map((t) => ({ id: t.id, type: typeof t.id }))
+      );
+    }
+  } else {
+    console.warn("⚠️ No deviceTypeId in API response, setting to undefined");
+    formData.deviceTypeId = undefined;
+  }
+
+  console.log("  Final deviceTypeId set to:", formData.deviceTypeId, typeof formData.deviceTypeId);
+  console.log("  Final device type name:", getDeviceTypeName(formData.deviceTypeId || 0));
+
+  // 使用 nextTick 確保數據更新完成
+  await nextTick();
+  console.log("  After nextTick - formData.deviceTypeId:", formData.deviceTypeId);
+  console.log(
+    "  After nextTick - current device type name:",
+    getDeviceTypeName(formData.deviceTypeId || 0)
+  );
+
   dialog.visible = true;
+  console.log("✅ Edit dialog opened");
 }
 
 /**
@@ -668,13 +877,18 @@ async function handleSubmit() {
     const submitData: any = {
       deviceName: formData.deviceName,
       deviceModel: formData.deviceModel!, // 表單驗證確保不會為 undefined
-      deviceType: formData.deviceTypeId!, // 後端期望 deviceType 字段，使用 deviceTypeId 的值
+      deviceTypeId: formData.deviceTypeId?.toString(), // 直接使用 deviceTypeId，轉換為字符串發送給後端
       deptId,
       location: formData.location,
       latitude: formData.latitude,
       longitude: formData.longitude,
       status: formData.status!, // 表單驗證確保不會為 undefined
     };
+
+    console.log("📤 Submitting device data:");
+    console.log("  Form deviceTypeId:", formData.deviceTypeId);
+    console.log("  Submit deviceTypeId:", submitData.deviceTypeId);
+    console.log("  Complete submitData:", submitData);
 
     if (formData.deviceId) {
       // Update
