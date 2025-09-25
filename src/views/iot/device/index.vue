@@ -35,7 +35,12 @@
         border
         class="data-table__content"
       >
-        <el-table-column :label="$t('device.deviceName')" prop="deviceName" min-width="100" />
+        <el-table-column
+          :label="$t('device.deviceName')"
+          prop="deviceName"
+          min-width="100"
+          sortable
+        />
         <el-table-column
           :label="$t('device.deviceModel')"
           prop="deviceModel"
@@ -68,6 +73,7 @@
           width="250"
           align="center"
           show-overflow-tooltip
+          sortable
         />
 
         <el-table-column :label="$t('device.status')" align="center" prop="status" width="80">
@@ -83,6 +89,7 @@
           align="center"
           prop="createdAt"
           width="200"
+          sortable
         />
         <el-table-column :label="$t('device.operation')" fixed="right" width="220">
           <template #default="scope">
@@ -1069,6 +1076,8 @@ onMounted(async () => {
     formData.deptName = "";
   }
 
+  // 同時加載設備類型和設備數據，確保表格能正確顯示設備類型名稱
+  await loadDeviceTypes();
   fetchData();
 });
 </script>
