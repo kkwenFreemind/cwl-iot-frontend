@@ -783,6 +783,11 @@ export default {
     disabled: "Disabled",
     success: "Success",
     failed: "Failed",
+    querySuccess: "Query successful",
+    actions: "Actions",
+    export: "Export",
+    exportSuccess: "Export successful",
+    exportFailed: "Export failed",
   },
 
   // Device Management Internationalization
@@ -1299,6 +1304,51 @@ export default {
     // Prompts
     selectDeptFirst: "Please select a department first",
     noData: "No data",
+  },
+
+  // IoT Management
+  iot: {
+    // IoT Telemetry Management
+    telemetry: {
+      // Page titles and descriptions
+      title: "Telemetry Data Management",
+      description:
+        "View and manage IoT device telemetry data, including water level, battery voltage, signal strength and other metrics",
+
+      // Query form
+      queryForm: "Query Conditions",
+      currentDept: "Current Department",
+      deptId: "Department ID",
+      deptIdPlaceholder: "Please enter department ID",
+      startTime: "Start Time",
+      startTimePlaceholder: "Please select start time",
+      endTime: "End Time",
+      endTimePlaceholder: "Please select end time",
+
+      // Loading states
+      loadingDept: "Loading department info...",
+      unknownDept: "Unknown department",
+      loadProfileFailed: "Failed to load profile",
+
+      // Results table
+      results: "Query Results",
+      deviceCode: "Device Code",
+      deviceName: "Device Name",
+      metricName: "Metric Name",
+      value: "Value",
+      timestamp: "Timestamp",
+      department: "Department",
+
+      // Detail dialog
+      detailTitle: "Telemetry Data Details",
+
+      // Additional fields
+      quality: "Data Quality",
+      metadata: "Metadata",
+
+      // Validation messages
+      deptIdRequired: "Please enter department ID",
+    },
   },
 
   // Electronic Map Internationalization

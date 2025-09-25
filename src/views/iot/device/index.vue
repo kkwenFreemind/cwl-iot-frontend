@@ -28,109 +28,236 @@
 
     <!-- 數據表格 -->
     <el-card shadow="hover" class="data-table">
-      <el-table
-        v-loading="loading"
-        :data="pageData"
-        highlight-current-row
-        border
-        class="data-table__content"
-      >
-        <el-table-column
-          :label="$t('device.deviceName')"
-          prop="deviceName"
-          min-width="100"
-          sortable
-        />
-        <el-table-column
-          :label="$t('device.deviceModel')"
-          prop="deviceModel"
-          width="180"
-          align="center"
+      <template #header>
+        <div class="card-header">
+          <span>{{ $t("device.deviceList") }}</span>
+          <div class="header-actions">
+            <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+              <el-tab-pane :label="$t('device.devices')" name="devices"></el-tab-pane>
+              <el-tab-pane
+                :label="$t('iot.telemetry.telemetryData')"
+                name="telemetry"
+              ></el-tab-pane>
+            </el-tabs>
+          </div>
+        </div>
+      </template>
+
+      <!-- 設備列表 -->
+      <div v-if="activeTab === 'devices'">
+        <el-table
+          v-loading="loading"
+          :data="pageData"
+          highlight-current-row
+          border
+          class="data-table__content"
         >
-          <template #default="scope">
-            <span>{{ getDeviceModelText(scope.row.deviceModel) }}</span>
-          </template>
-        </el-table-column>
+          <el-table-column
+            :label="$t('device.deviceName')"
+            prop="deviceName"
+            min-width="100"
+            sortable
+          />
+          <el-table-column
+            :label="$t('device.deviceModel')"
+            prop="deviceModel"
+            width="180"
+            align="center"
+          >
+            <template #default="scope">
+              <span>{{ getDeviceModelText(scope.row.deviceModel) }}</span>
+            </template>
+          </el-table-column>
 
-        <el-table-column
-          :label="$t('device.deviceType')"
-          prop="deviceTypeId"
-          width="180"
-          align="center"
+          <el-table-column
+            :label="$t('device.deviceType')"
+            prop="deviceTypeId"
+            width="180"
+            align="center"
+          >
+            <template #default="scope">
+              <span
+                :title="`ID: ${scope.row.deviceTypeId}, Name: ${getDeviceTypeName(Number(scope.row.deviceTypeId))}`"
+              >
+                {{ getDeviceTypeName(Number(scope.row.deviceTypeId)) }}
+              </span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            :label="$t('device.location')"
+            prop="location"
+            width="250"
+            align="center"
+            show-overflow-tooltip
+            sortable
+          />
+
+          <el-table-column :label="$t('device.status')" align="center" prop="status" width="80">
+            <template #default="scope">
+              <el-tag :type="getStatusTagType(scope.row.status)" size="small">
+                {{ getStatusText(scope.row.status) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            :label="$t('device.createTime')"
+            align="center"
+            prop="createdAt"
+            width="200"
+            sortable
+          />
+          <el-table-column :label="$t('device.operation')" fixed="right" width="220">
+            <template #default="scope">
+              <el-button
+                type="primary"
+                icon="edit"
+                link
+                size="small"
+                @click="handleEditClick(scope.row)"
+              >
+                {{ $t("device.edit") }}
+              </el-button>
+              <el-button
+                type="info"
+                icon="view"
+                link
+                size="small"
+                @click="handleDetailClick(scope.row)"
+              >
+                {{ $t("device.detailButton") }}
+              </el-button>
+              <el-button
+                type="danger"
+                icon="delete"
+                link
+                size="small"
+                @click="handleDelete(scope.row)"
+              >
+                {{ $t("device.delete") }}
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <!-- Telemetry 數據 -->
+      <div v-if="activeTab === 'telemetry'">
+        <div class="telemetry-controls" style="margin-bottom: 20px">
+          <el-form ref="telemetryQueryFormRef" :model="telemetryQueryForm" :inline="true">
+            <el-form-item :label="$t('iot.telemetry.startTime')" prop="startTime">
+              <el-date-picker
+                v-model="telemetryQueryForm.startTime"
+                type="datetime"
+                :placeholder="$t('iot.telemetry.startTimePlaceholder')"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DDTHH:mm:ss"
+              />
+            </el-form-item>
+            <el-form-item :label="$t('iot.telemetry.endTime')" prop="endTime">
+              <el-date-picker
+                v-model="telemetryQueryForm.endTime"
+                type="datetime"
+                :placeholder="$t('iot.telemetry.endTimePlaceholder')"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DDTHH:mm:ss"
+              />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="loadTelemetryData">
+                {{ $t("common.query") }}
+              </el-button>
+              <el-button @click="resetTelemetryQuery">
+                {{ $t("common.reset") }}
+              </el-button>
+              <el-button type="info" @click="testTelemetryAPI">測試API</el-button>
+            </el-form-item>
+          </el-form>
+
+          <!-- Debug info -->
+          <div
+            style="
+              padding: 10px;
+              margin-top: 10px;
+              font-size: 12px;
+              background: #f5f5f5;
+              border-radius: 4px;
+            "
+          >
+            <strong>調試信息:</strong>
+            <br />
+            DeptId: {{ userDeptId }}
+            <br />
+            Telemetry數據數量: {{ telemetryData.length }}
+            <br />
+            總數: {{ telemetryTotal }}
+            <br />
+            當前頁碼: {{ telemetryPagination.current }}
+            <br />
+            頁大小: {{ telemetryPagination.size }}
+          </div>
+        </div>
+
+        <el-table
+          v-loading="telemetryLoading"
+          :data="telemetryData"
+          highlight-current-row
+          border
+          class="data-table__content"
+          :empty-text="$t('common.noData')"
         >
-          <template #default="scope">
-            <span
-              :title="`ID: ${scope.row.deviceTypeId}, Name: ${getDeviceTypeName(Number(scope.row.deviceTypeId))}`"
-            >
-              {{ getDeviceTypeName(Number(scope.row.deviceTypeId)) }}
-            </span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          :label="$t('device.location')"
-          prop="location"
-          width="250"
-          align="center"
-          show-overflow-tooltip
-          sortable
-        />
-
-        <el-table-column :label="$t('device.status')" align="center" prop="status" width="80">
-          <template #default="scope">
-            <el-tag :type="getStatusTagType(scope.row.status)" size="small">
-              {{ getStatusText(scope.row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          :label="$t('device.createTime')"
-          align="center"
-          prop="createdAt"
-          width="200"
-          sortable
-        />
-        <el-table-column :label="$t('device.operation')" fixed="right" width="220">
-          <template #default="scope">
-            <el-button
-              type="primary"
-              icon="edit"
-              link
-              size="small"
-              @click="handleEditClick(scope.row)"
-            >
-              {{ $t("device.edit") }}
-            </el-button>
-            <el-button
-              type="info"
-              icon="view"
-              link
-              size="small"
-              @click="handleDetailClick(scope.row)"
-            >
-              {{ $t("device.detailButton") }}
-            </el-button>
-            <el-button
-              type="danger"
-              icon="delete"
-              link
-              size="small"
-              @click="handleDelete(scope.row)"
-            >
-              {{ $t("device.delete") }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+          <el-table-column
+            prop="deviceId"
+            :label="$t('iot.telemetry.deviceCode')"
+            min-width="150"
+          />
+          <el-table-column
+            prop="deviceName"
+            :label="$t('iot.telemetry.deviceName')"
+            min-width="120"
+          />
+          <el-table-column
+            prop="metricIdentifier"
+            :label="$t('iot.telemetry.metricName')"
+            min-width="120"
+          />
+          <el-table-column prop="metricValue" :label="$t('iot.telemetry.value')" width="120">
+            <template #default="scope">
+              <span>{{ scope.row.metricValue }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="time" :label="$t('iot.telemetry.timestamp')" min-width="160">
+            <template #default="scope">
+              <span>{{ formatDateTime(scope.row.time) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="deptName" :label="$t('iot.telemetry.department')" width="120" />
+          <el-table-column :label="$t('common.actions')" fixed="right" width="120">
+            <template #default="scope">
+              <el-button type="primary" size="small" text @click="viewTelemetryDetail(scope.row)">
+                {{ $t("common.view") }}
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
 
       <!-- 分頁組件 -->
       <pagination
-        v-if="total > 0"
+        v-if="activeTab === 'devices' && total > 0"
         v-model:total="total"
         v-model:page="queryParams.pageNum!"
         v-model:limit="queryParams.pageSize!"
         @pagination="fetchData"
+      />
+
+      <pagination
+        v-if="activeTab === 'telemetry' && telemetryTotal > 0"
+        v-model:total="telemetryTotal"
+        v-model:page="telemetryPagination.current"
+        v-model:limit="telemetryPagination.size"
+        @pagination="loadTelemetryData"
       />
     </el-card>
 
@@ -247,6 +374,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { useUserStoreHook } from "@/store/modules/user-store";
 import DeviceAPI, { DeviceVO } from "@/api/iot/device-api";
 import DeviceTypeAPI, { IotDeviceTypeVO } from "@/api/iot/device-type-api";
+import TelemetryAPI from "@/api/iot/telemetry-api";
 import UserAPI from "@/api/system/user-api";
 import { useI18n } from "vue-i18n";
 
@@ -330,10 +458,22 @@ const rules = computed(() => ({
 const loading = ref(false);
 
 /**
+ * Telemetry loading state
+ * @type {Ref<boolean>}
+ */
+const telemetryLoading = ref(false);
+
+/**
  * Total number of devices for pagination
  * @type {Ref<number>}
  */
 const total = ref(0);
+
+/**
+ * Total number of telemetry records for pagination
+ * @type {Ref<number>}
+ */
+const telemetryTotal = ref(0);
 
 /**
  * Dialog state management for form drawer
@@ -346,6 +486,12 @@ const dialog = reactive({
 });
 
 /**
+ * Active tab for switching between devices and telemetry views
+ * @type {Ref<string>}
+ */
+const activeTab = ref("devices");
+
+/**
  * Query parameters for device search and pagination
  * @type {UnwrapNestedRefs<{pageNum: number, pageSize: number, keywords: string, location: string}>}
  */
@@ -355,6 +501,30 @@ const queryParams = reactive({
   keywords: "", // Changed from deviceName to keywords to match backend expectation
   location: "",
 });
+
+/**
+ * Telemetry query parameters
+ * @type {UnwrapNestedRefs<{startTime: string | undefined, endTime: string | undefined}>}
+ */
+const telemetryQueryForm = reactive({
+  startTime: undefined as string | undefined,
+  endTime: undefined as string | undefined,
+});
+
+/**
+ * Telemetry pagination
+ * @type {UnwrapNestedRefs<{current: number, size: number}>}
+ */
+const telemetryPagination = reactive({
+  current: 1,
+  size: 10,
+});
+
+/**
+ * User department ID for debugging
+ * @type {Ref<number | undefined>}
+ */
+const userDeptId = ref<number | undefined>(undefined);
 
 /**
  * Form data for device creation and editing
@@ -390,6 +560,13 @@ const formData = reactive<{
  * @type {Ref<DeviceVO[]>}
  */
 const pageData = ref<DeviceVO[]>([]);
+
+/**
+ * Telemetry data array for table display
+ * @type {Ref<any[]>}
+ */
+const telemetryData = ref<any[]>([]);
+
 const deviceTypes = ref<IotDeviceTypeVO[]>([]);
 
 /**
@@ -638,6 +815,140 @@ function handleResetQuery() {
   queryParams.keywords = ""; // Changed from deviceName to keywords
   queryParams.location = "";
   fetchData();
+}
+
+/**
+ * Handles tab change between devices and telemetry views
+ * @function handleTabChange
+ * @param {string | number} tabName - The name of the active tab
+ */
+function handleTabChange(tabName: string | number) {
+  const tab = String(tabName);
+  console.log("Tab changed to:", tab);
+  if (tab === "telemetry" && telemetryData.value.length === 0) {
+    // Auto load telemetry data when switching to telemetry tab
+    loadTelemetryData();
+  }
+}
+
+/**
+ * Loads telemetry data from the API
+ * @async
+ * @function loadTelemetryData
+ */
+async function loadTelemetryData() {
+  telemetryLoading.value = true;
+
+  try {
+    // Get user profile to get deptId
+    const profile = await UserAPI.getProfile();
+    const deptId = profile.deptId ? Number(profile.deptId) : undefined;
+
+    if (!deptId) {
+      ElMessage.warning(t("iot.telemetry.deptIdRequired"));
+      return;
+    }
+
+    console.log("Loading telemetry data for department:", deptId);
+
+    const response = await TelemetryAPI.getTelemetryByDepartment(
+      deptId,
+      telemetryQueryForm.startTime,
+      telemetryQueryForm.endTime,
+      telemetryPagination.current,
+      telemetryPagination.size
+    );
+
+    console.log("Telemetry API response:", response);
+
+    // Handle nested response structure: response.data.data
+    if (response && (response as any).data && (response as any).data.data) {
+      const apiData = (response as any).data.data;
+      telemetryData.value = apiData.list || [];
+      telemetryTotal.value = apiData.total || 0;
+    } else {
+      // Fallback for direct response structure
+      telemetryData.value = (response as any).list || [];
+      telemetryTotal.value = (response as any).total || 0;
+    }
+
+    ElMessage.success(t("common.querySuccess"));
+  } catch (error) {
+    console.error("Failed to load telemetry data:", error);
+    ElMessage.error(t("common.queryFailed"));
+  } finally {
+    telemetryLoading.value = false;
+  }
+}
+
+/**
+ * Resets telemetry query form
+ * @function resetTelemetryQuery
+ */
+function resetTelemetryQuery() {
+  telemetryQueryForm.startTime = undefined;
+  telemetryQueryForm.endTime = undefined;
+  telemetryPagination.current = 1;
+  telemetryData.value = [];
+  telemetryTotal.value = 0;
+}
+
+/**
+ * Views telemetry detail in a dialog
+ * @function viewTelemetryDetail
+ * @param {any} record - The telemetry record to view
+ */
+function viewTelemetryDetail(record: any) {
+  ElMessageBox.alert(
+    `<div>
+      <h4>${t("iot.telemetry.detailTitle")}</h4>
+      <p><strong>${t("iot.telemetry.deviceCode")}:</strong> ${record.deviceId}</p>
+      <p><strong>${t("iot.telemetry.deviceName")}:</strong> ${record.deviceName || record.deviceId}</p>
+      <p><strong>${t("iot.telemetry.metricName")}:</strong> ${record.metricIdentifier}</p>
+      <p><strong>${t("iot.telemetry.value")}:</strong> ${record.metricValue}</p>
+      <p><strong>${t("iot.telemetry.timestamp")}:</strong> ${formatDateTime(record.time)}</p>
+      <p><strong>${t("iot.telemetry.department")}:</strong> ${record.deptName}</p>
+      <p><strong>${t("iot.telemetry.quality")}:</strong> ${record.quality}</p>
+    </div>`,
+    t("iot.telemetry.detailTitle"),
+    {
+      dangerouslyUseHTMLString: true,
+      confirmButtonText: t("common.confirm"),
+      type: "info",
+    }
+  );
+}
+
+/**
+ * Formats date time for display
+ * @function formatDateTime
+ * @param {string} dateTime - The date time string to format
+ * @returns {string} Formatted date time string
+ */
+function formatDateTime(dateTime: string): string {
+  return new Date(dateTime).toLocaleString();
+}
+
+/**
+ * Tests telemetry API directly
+ * @async
+ * @function testTelemetryAPI
+ */
+async function testTelemetryAPI() {
+  try {
+    console.log("Testing telemetry API...");
+    const response = await TelemetryAPI.getTelemetryByDepartment(2, undefined, undefined, 1, 10);
+    console.log("Test API response:", response);
+
+    ElMessageBox.alert(`<pre>${JSON.stringify(response, null, 2)}</pre>`, "API測試結果", {
+      dangerouslyUseHTMLString: true,
+      confirmButtonText: "確定",
+      type: "info",
+    });
+  } catch (error) {
+    console.error("API test failed:", error);
+    ElMessage.error("API測試失敗");
+  }
 }
 
 /**
@@ -1062,6 +1373,7 @@ onMounted(async () => {
     const profile = await UserAPI.getProfile();
     formData.deptId = profile.deptId ? parseInt(profile.deptId) : 0;
     formData.deptName = profile.deptName || "";
+    userDeptId.value = formData.deptId; // Set for debugging
     console.log(
       "初始化時從 API 獲取的用戶個人資料 deptId:",
       formData.deptId,
@@ -1074,6 +1386,7 @@ onMounted(async () => {
     console.error("初始化時獲取用戶個人資料失敗:", error);
     formData.deptId = 0;
     formData.deptName = "";
+    userDeptId.value = 0;
   }
 
   // 同時加載設備類型和設備數據，確保表格能正確顯示設備類型名稱

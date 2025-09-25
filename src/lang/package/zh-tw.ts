@@ -1222,6 +1222,51 @@ export default {
     selectDeptFirst: "請先選擇部門",
     noData: "暫無數據",
   },
+
+  // IoT Management
+  iot: {
+    // IoT Telemetry Management
+    telemetry: {
+      // Page titles and descriptions
+      title: "遙測數據管理",
+      description: "查看和管理IoT設備的遙測數據，包括水位、電池電壓、訊號強度等指標",
+
+      // Query form
+      queryForm: "查詢條件",
+      currentDept: "當前部門",
+      deptId: "部門ID",
+      deptIdPlaceholder: "請輸入部門ID",
+      startTime: "開始時間",
+      startTimePlaceholder: "請選擇開始時間",
+      endTime: "結束時間",
+      endTimePlaceholder: "請選擇結束時間",
+
+      // Loading states
+      loadingDept: "載入部門資訊中...",
+      unknownDept: "未知部門",
+      loadProfileFailed: "載入個人資訊失敗",
+
+      // Results table
+      results: "查詢結果",
+      deviceCode: "設備編號",
+      deviceName: "設備名稱",
+      metricName: "指標名稱",
+      value: "數值",
+      timestamp: "時間戳",
+      department: "部門",
+
+      // Detail dialog
+      detailTitle: "遙測數據詳情",
+
+      // Additional fields
+      quality: "數據品質",
+      metadata: "元數據",
+
+      // Validation messages
+      deptIdRequired: "請輸入部門ID",
+    },
+  },
+
   common: {
     confirm: "確定",
     cancel: "取消",
