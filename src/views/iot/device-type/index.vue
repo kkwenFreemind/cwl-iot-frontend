@@ -1,3 +1,42 @@
+<!--
+==================================================================================
+Device Type Management Component
+==================================================================================
+
+This component provides comprehensive IoT device type management functionality including:
+- Device type listing with search and pagination
+- Device type creation, editing, and deletion
+- Device type status management (active/inactive)
+- Associated metrics configuration and management
+- Device count tracking per type
+- Multi-language support with internationalization
+- Department-based data filtering and access control
+
+Key Features:
+- CRUD operations for IoT device types
+- Metrics assignment and configuration per device type
+- Real-time device count statistics
+- Advanced search and filtering capabilities
+- Responsive data table with sorting and pagination
+- Form validation with comprehensive error handling
+- Status management with visual indicators
+
+Technical Stack:
+- Vue 3 Composition API with TypeScript
+- Element Plus UI components
+- Reactive state management
+- RESTful API integration
+- Internationalization (i18n) support
+
+@component DeviceTypeManagement
+@author Chang Xiu-Wen, AI-Enhanced
+@version 1.2.0
+@created 2025-09-30
+@updated 2025-09-30
+
+==================================================================================
+-->
+
 <template>
   <div class="app-container">
     <!-- 搜尋區域 -->

@@ -1,3 +1,64 @@
+<!--
+==================================================================================
+Metric Management Component (IoT Telemetry Data Definition)
+==================================================================================
+
+This component provides comprehensive IoT metric definition and management functionality 
+for telemetry data structure configuration including:
+- Metric definition creation, editing, and deletion with validation
+- Physical quantity classification and data type specification
+- Unit of measurement configuration and standardization
+- Active/inactive status management for metric definitions
+- Department-based metric access control and filtering
+- Advanced search and pagination for large metric datasets
+
+Key Metric Features:
+- Physical Quantity Types: Water Level, Temperature, Humidity, Pressure, Others
+- Data Type Support: Integer, Float, Boolean, String values
+- Metric Naming: Primary name and alias configuration
+- Unit Management: Standardized measurement units (m, °C, %, Pa, etc.)
+- Status Control: Active/inactive metric definition states
+- Department Filtering: Role-based metric visibility and management
+
+Data Management Capabilities:
+- CRUD operations for metric definitions with form validation
+- Real-time search and filtering by name, unit, or physical quantity
+- Pagination support for handling large metric definition datasets
+- Department-based data isolation and access control
+- Metric definition reusability across multiple device types
+- Status-based metric activation and deactivation
+
+Form Validation & UX:
+- Comprehensive form validation with error messaging
+- Dropdown selections for standardized values
+- Real-time input validation and feedback
+- Responsive drawer-based form interface
+- Internationalization support for multi-language UI
+- Loading states and error handling for all operations
+
+Technical Architecture:
+- Vue 3 Composition API with TypeScript for type safety
+- Element Plus UI components for professional interface
+- Reactive state management for real-time data updates
+- RESTful API integration with error handling
+- Department-based authorization and data filtering
+- Responsive design with SCSS styling
+
+Integration Points:
+- Device Type Management: Metrics assigned to device types
+- Device Management: Metrics used in device telemetry configuration
+- Telemetry System: Metric definitions for data structure validation
+- User Management: Department-based access control integration
+
+@component MetricManagement
+@author Chang Xiu-Wen, AI-Enhanced
+@version 1.5.0
+@created 2025-09-30
+@updated 2025-09-30
+
+==================================================================================
+-->
+
 <template>
   <div class="app-container">
     <!-- 搜尋區域 -->

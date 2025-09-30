@@ -1,3 +1,99 @@
+<!--
+==================================================================================
+Role Management Component (Access Control & Permission Administration)
+==================================================================================
+
+This component provides comprehensive role-based access control (RBAC) management 
+functionality for system administrators to manage user roles and permissions including:
+- Role creation, editing, and deletion with comprehensive form validation
+- Permission assignment and management with hierarchical menu tree structure
+- Data scope configuration with granular access control levels
+- Role status management and priority ordering system
+- Bulk role operations with multi-selection capabilities
+- Advanced search and filtering for efficient role discovery
+
+Key Role Management Features:
+- Role CRUD Operations: Complete role lifecycle management with validation
+- Permission Assignment: Hierarchical permission tree with selective assignment
+- Data Scope Control: Configurable data access levels (All, Department+Sub, Department, Self)
+- Role Status Management: Active/inactive role state control with visual indicators
+- Role Prioritization: Sortable role ordering for system hierarchy establishment
+- Bulk Operations: Multi-role selection for efficient batch management
+
+Permission Management System:
+- Hierarchical Menu Tree: Tree-structured permission display with parent-child relationships
+- Selective Permission Assignment: Granular permission selection with inheritance support
+- Real-time Permission Updates: Dynamic permission assignment with immediate effect
+- Permission Validation: Comprehensive permission checking and validation
+- Menu-based Permissions: Integration with system menu structure for access control
+- Role-Permission Mapping: Efficient role-to-permission relationship management
+
+Data Scope & Access Control:
+- All Data Access: System-wide data visibility for administrative roles
+- Department + Sub-departments: Hierarchical departmental data access
+- Department Only: Single department data access restriction
+- Self Data Only: Personal data access limitation for security
+- Configurable Scope Assignment: Flexible data access level configuration
+- Inheritance Control: Parent-child data scope relationship management
+
+Search & Filtering Capabilities:
+- Role Name Search: Full-text search across role names and descriptions
+- Real-time Query Processing: Instant search results with dynamic filtering
+- Advanced Filtering Options: Multi-criteria role filtering and sorting
+- Pagination Support: Memory-efficient browsing of large role datasets
+- Search Reset Functionality: Quick filter clearing and data refresh
+- Responsive Search Interface: Optimized search experience across devices
+
+Form Validation & Data Integrity:
+- Comprehensive Form Validation: Multi-field validation with error messaging
+- Role Code Uniqueness: System-wide unique role code enforcement
+- Required Field Validation: Mandatory field checking with user feedback
+- Data Type Validation: Proper data type enforcement for all fields
+- Real-time Validation: Instant validation feedback during form input
+- Submission Validation: Pre-submission data integrity checks
+
+User Interface & Experience:
+- Responsive Table Design: Optimized role listing with sortable columns
+- Status Indicators: Visual role status representation with color coding
+- Action Buttons: Context-sensitive role management actions
+- Modal Dialogs: Professional form presentation with proper spacing
+- Loading States: User feedback during data operations and API calls
+- Error Handling: Graceful error management with user-friendly messages
+
+Technical Implementation:
+- Vue 3 Composition API with TypeScript for robust development
+- Element Plus UI components for professional administrative interface
+- Reactive state management for real-time role and permission updates
+- RESTful API integration with comprehensive error handling
+- Form validation with Element Plus validation rules
+- Responsive design with optimized table and modal layouts
+- Internationalization (i18n) support for multi-language deployment
+
+Security & Audit Features:
+- Role-based Access Control: Complete RBAC implementation with permission hierarchy
+- Data Scope Security: Granular data access control based on organizational structure
+- Permission Inheritance: Hierarchical permission assignment with proper inheritance
+- Audit Trail Integration: Role modification logging for compliance tracking
+- Session Management: Role-based session control and timeout management
+- Authorization Checks: Real-time permission validation for all operations
+
+Integration Points:
+- User Management System: Role assignment to users and user group management
+- Menu System: Dynamic menu generation based on role permissions
+- Department Management: Integration with organizational structure for data scope control
+- Authentication System: Role-based authentication and authorization
+- Audit System: Complete role and permission change logging
+- Session Management: Role-based session control and access validation
+
+@component Role
+@author Chang Xiu-Wen, AI-Enhanced
+@version 2.0.0
+@created 2025-09-12
+@updated 2025-09-30
+
+==================================================================================
+-->
+
 <template>
   <div class="app-container">
     <!-- 搜尋區域 -->

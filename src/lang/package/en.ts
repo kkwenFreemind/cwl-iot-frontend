@@ -832,6 +832,8 @@ export default {
     add: "Add Device",
     edit: "Edit",
     detailButton: "Detail",
+    devices: "Devices",
+    deviceList: "Device List",
     delete: "Delete",
     online: "Online",
     offline: "Offline",
@@ -1315,6 +1317,7 @@ export default {
     telemetry: {
       // Page titles and descriptions
       title: "Telemetry Data Management",
+      telemetryData: "Telemetry Data",
       description:
         "View and manage IoT device telemetry data, including water level, battery voltage, signal strength and other metrics",
 

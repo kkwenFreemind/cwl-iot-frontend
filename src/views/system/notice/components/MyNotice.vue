@@ -1,3 +1,83 @@
+<!--
+==================================================================================
+My Notice Component (Personal Notification Center)
+==================================================================================
+
+This component provides comprehensive personal notification management functionality 
+for users to view, read, and manage their notifications including:
+- Personal notification viewing with advanced search and filtering capabilities
+- Read/unread status tracking and management with visual indicators
+- Notification content display with rich text formatting support
+- Real-time notification status updates and user interaction tracking
+- Pagination support for efficient handling of large notification datasets
+- Detailed notification preview with publisher information and timestamps
+
+Key Notification Features:
+- Personal Notice Display: User-specific notification listing and management
+- Read Status Management: Visual read/unread indicators with automatic status updates
+- Notice Type Classification: Categorized notifications with type-based styling
+- Publisher Information: Complete publisher details with user identification
+- Timestamp Display: Formatted publication times for chronological organization
+- Content Preview: Rich text content display with HTML formatting support
+
+Search & Filtering Capabilities:
+- Title-based Search: Full-text search across notification titles
+- Real-time Query Processing: Instant search results with dynamic filtering
+- Advanced Filtering Options: Multi-criteria notification filtering
+- Pagination Support: Memory-efficient browsing of large notification datasets
+- Search Reset Functionality: Quick filter clearing and data refresh
+- Responsive Search Interface: Optimized search experience across devices
+
+User Interaction Features:
+- Notice Reading: Automatic read status marking upon notification viewing
+- Detailed View Modal: Expandable notification detail dialog with complete content
+- Status Indicator System: Visual read/unread status with color-coded tags
+- Interactive Table Interface: Sortable and responsive notification listing
+- Loading States: User feedback during data retrieval and status updates
+- Error Handling: Graceful error management for API operations
+
+Content Management:
+- Rich Text Support: HTML content rendering with proper formatting
+- Meta Information Display: Publisher, timestamp, and classification details
+- Content Sanitization: Safe HTML rendering with XSS protection
+- Responsive Content Layout: Optimized content display for various screen sizes
+- Long Content Handling: Proper overflow management and content expansion
+- Typography Optimization: Enhanced readability with professional text styling
+
+Notification Status System:
+- Automatic Read Marking: Seamless status updates upon notification interaction
+- Visual Status Indicators: Clear read/unread distinction with color coding
+- Status Persistence: Reliable status tracking across user sessions
+- Real-time Updates: Live status synchronization for active user sessions
+- Bulk Status Operations: Efficient mass status management capabilities
+- Status History Tracking: Complete notification interaction audit trail
+
+Technical Implementation:
+- Vue 3 Composition API with TypeScript for robust component development
+- Element Plus UI components for professional notification interface
+- Reactive state management for real-time notification updates
+- RESTful API integration with comprehensive error handling
+- Responsive design with optimized table and modal layouts
+- Internationalization (i18n) support for multi-language deployment
+- XSS protection and content sanitization for secure HTML rendering
+
+Integration Points:
+- User Management System: Personal notification targeting and delivery
+- Content Management: Rich text content creation and formatting
+- Authentication System: User-specific notification access control
+- Real-time Messaging: Live notification delivery and status updates
+- Audit System: Notification interaction logging and tracking
+- Email Integration: Notification delivery channel coordination
+
+@component MyNotice
+@author Chang Xiu-Wen, AI-Enhanced  
+@version 1.6.0
+@created 2025-09-30
+@updated 2025-09-30
+
+==================================================================================
+-->
+
 <template>
   <div class="app-container">
     <!-- Search area -->
@@ -110,14 +190,6 @@
 </template>
 
 <script setup lang="ts">
-/**
- * @fileoverview My Notice Component
- * @description User interface for viewing and reading personal notifications
- * @author System Administrator
- * @created 2024-01-15
- * @updated 2024-01-15
- */
-
 defineOptions({
   name: "MyNotice",
   inheritAttrs: false,

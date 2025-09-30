@@ -1,46 +1,63 @@
+<!--
+==================================================================================
+Electronic Map Component (IoT Device Geospatial Visualization)
+==================================================================================
+
+This component provides comprehensive geospatial visualization and mapping functionality 
+for IoT device management including:
+- Interactive Leaflet-based mapping with multiple tile layer providers
+- Real-time IoT device location visualization with status indicators
+- Multi-language map support (English/Mixed language options)
+- Device clustering and geolocation services
+- Interactive device information popups and detail drawers
+- Map controls for zoom, pan, and user location detection
+- Department-based device filtering and access control
+
+Key Mapping Features:
+- Multiple map providers: CartoDB (Light/Dark), OpenStreetMap, ESRI, Stamen Terrain
+- Dynamic device markers with status-based color coding
+- Interactive popups with device information and actions
+- Map layer switching controls for different visualization styles
+- Responsive full-screen map interface
+- Device legend with status indicators
+- Geolocation API integration for user positioning
+
+IoT Device Integration:
+- Real-time device status monitoring (Active/Inactive)
+- Device detail information display
+- EMQX configuration viewing and management
+- Device editing and deletion operations
+- Geographic coordinate tracking (latitude/longitude)
+- Department-filtered device data loading
+
+Interactive Controls:
+- Zoom in/out controls
+- Center map on devices functionality  
+- User location detection and centering
+- Map style quick switcher (English/Mixed maps)
+- Device filtering and search capabilities
+- Responsive device information drawer
+
+Technical Implementation:
+- Leaflet.js for advanced mapping capabilities
+- Vue 3 Composition API with TypeScript
+- Element Plus UI components integration
+- Reactive state management for map and device data
+- RESTful API integration for device data
+- Internationalization (i18n) support
+- Responsive CSS design with SCSS styling
+
+@component ElectronicMap
+@author Chang Xiu-Wen, AI-Enhanced
+@version 2.0.0
+@created 2025-09-30
+@updated 2025-09-30
+
+==================================================================================
+-->
+
 <template>
   <div class="emap-container">
-    <!-- 搜尋區域 -->
-    <!-- <div class="search-container">
-      <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item prop="keywords" :label="$t('device.deviceName')">
-       // 創建地圖實例
-    mapInstance.value = L.map(mapContainer.value, {
-      center: [centerLat, centerLng],
-      zoom: 5, // 進一步縮小初始縮放等級以查看更大區域
-      zoomControl: false, // 禁用默認縮放控制
-    }); <el-input
-            v-model="queryParams.keywords"
-            :placeholder="$t('device.deviceNamePlaceholder')"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item prop="status" :label="$t('device.status')">
-          <el-select
-            v-model="queryParams.status"
-            :placeholder="$t('device.deviceForm.statusPlaceholder')"
-            clearable
-          >
-            <el-option :label="$t('device.active')" value="ACTIVE" />
-            <el-option :label="$t('device.inactive')" value="INACTIVE" />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item class="search-buttons">
-          <el-button type="primary" icon="search" @click="handleQuery">
-            {{ $t("device.search") }}
-          </el-button>
-          <el-button icon="refresh" @click="handleResetQuery">
-            {{ $t("device.reset") }}
-          </el-button>
-          <el-button type="info" icon="location" @click="centerMapOnDevices">
-            {{ $t("emap.centerOnDevices") }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div> -->
-
     <!-- 全螢幕地圖容器 -->
     <div ref="mapContainer" class="leaflet-map-container"></div>
 
@@ -57,6 +74,26 @@
           {{ $t("emap.myLocation") }}
         </el-button>
       </el-button-group>
+
+      <!-- 快速切换英文地图按钮 -->
+      <div class="map-style-switcher">
+        <el-button-group>
+          <el-button
+            :type="currentMapStyle === 'english' ? 'primary' : 'default'"
+            size="small"
+            @click="switchToEnglishMap"
+          >
+            🌍 English Map
+          </el-button>
+          <el-button
+            :type="currentMapStyle === 'mixed' ? 'primary' : 'default'"
+            size="small"
+            @click="switchToMixedMap"
+          >
+            🗺️ Mixed Map
+          </el-button>
+        </el-button-group>
+      </div>
 
       <div class="device-legend">
         <div class="legend-item">
@@ -164,6 +201,10 @@ const deviceDrawer = reactive({
   title: "",
 });
 
+// 地图样式状态
+const currentMapStyle = ref<"english" | "mixed">("english");
+const mapLayers = ref<Record<string, L.TileLayer>>({});
+
 /**
  * 用戶 store
  */
@@ -256,12 +297,87 @@ async function initMap() {
       zoomControl: false, // 禁用默認縮放控制
     });
 
-    // 添加 OpenStreetMap 圖層
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19,
-    }).addTo(mapInstance.value);
+    // 添加地图图层 - 支持多种地图样式选择
+    const layers = {
+      // OpenStreetMap 标准版（多语言，根据地区显示）
+      osm: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }),
+
+      // CartoDB Positron - 简洁的英文地图
+      cartoLight: L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution:
+          '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+        maxZoom: 19,
+        subdomains: "abcd",
+      }),
+
+      // CartoDB Dark - 深色主题英文地图
+      cartoDark: L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution:
+          '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+        maxZoom: 19,
+        subdomains: "abcd",
+      }),
+
+      // Stamen Terrain - 地形英文地图
+      stamenTerrain: L.tileLayer(
+        "https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png",
+        {
+          attribution:
+            'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> — Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 18,
+          subdomains: "abcd",
+        }
+      ),
+
+      // ESRI World Street Map - 英文街道地图
+      esriStreet: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution:
+            "Tiles © Esri — Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012",
+          maxZoom: 19,
+        }
+      ),
+
+      // ESRI World Imagery - 卫星影像（英文标注）
+      esriSatellite: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution:
+            "Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+          maxZoom: 19,
+        }
+      ),
+    };
+
+    // 存储图层到 ref 中供其他函数使用
+    mapLayers.value = layers;
+
+    // 默认使用 CartoDB Light（简洁英文地图）
+    const defaultLayer = layers.cartoLight;
+    defaultLayer.addTo(mapInstance.value);
+
+    // 添加图层控制器，允许用户切换地图样式
+    const layerControl = L.control.layers(
+      {
+        "CartoDB Light (English)": layers.cartoLight,
+        "CartoDB Dark (English)": layers.cartoDark,
+        OpenStreetMap: layers.osm,
+        "ESRI Street Map (English)": layers.esriStreet,
+        "ESRI Satellite (English)": layers.esriSatellite,
+        "Stamen Terrain (English)": layers.stamenTerrain,
+      },
+      {},
+      {
+        position: "topleft",
+        collapsed: true,
+      }
+    );
+    layerControl.addTo(mapInstance.value);
 
     // 添加縮放控制
     L.control
@@ -562,6 +678,46 @@ function centerMapOnDevices() {
 }
 
 /**
+ * 切换到英文地图
+ */
+function switchToEnglishMap() {
+  if (!mapInstance.value || !mapLayers.value.cartoLight) return;
+
+  // 移除当前图层
+  mapInstance.value.eachLayer((layer) => {
+    if (layer instanceof L.TileLayer) {
+      mapInstance.value!.removeLayer(layer);
+    }
+  });
+
+  // 添加英文地图图层
+  mapLayers.value.cartoLight.addTo(mapInstance.value);
+  currentMapStyle.value = "english";
+
+  ElMessage.success("已切换到英文地图 (CartoDB Light)");
+}
+
+/**
+ * 切换到混合地图
+ */
+function switchToMixedMap() {
+  if (!mapInstance.value || !mapLayers.value.osm) return;
+
+  // 移除当前图层
+  mapInstance.value.eachLayer((layer) => {
+    if (layer instanceof L.TileLayer) {
+      mapInstance.value!.removeLayer(layer);
+    }
+  });
+
+  // 添加OpenStreetMap图层
+  mapLayers.value.osm.addTo(mapInstance.value);
+  currentMapStyle.value = "mixed";
+
+  ElMessage.success("已切换到标准地图 (OpenStreetMap)");
+}
+
+/**
  * 工具函數
  */
 function getStatusTagType(status: string): "success" | "warning" | "danger" | "info" | "primary" {
@@ -668,6 +824,14 @@ function handleResize() {
     display: flex;
     flex-direction: column;
     gap: 12px;
+
+    .map-style-switcher {
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
+    }
 
     .device-legend {
       padding: 12px;

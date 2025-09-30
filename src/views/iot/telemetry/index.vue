@@ -1,3 +1,75 @@
+<!--
+==================================================================================
+Telemetry Data Visualization Component (IoT Real-time Data Analytics)
+==================================================================================
+
+This component provides comprehensive real-time telemetry data visualization and 
+analysis functionality for IoT device monitoring including:
+- Time-series telemetry data querying with flexible date range filtering
+- Real-time IoT sensor data display with metric values and timestamps
+- Device-specific telemetry monitoring with department-based access control
+- Advanced telemetry data detail views with metadata analysis
+- Pagination support for handling large telemetry datasets
+- Multi-language internationalization for global deployment
+
+Key Telemetry Features:
+- Time Range Filtering: Custom date/time range selection for historical data analysis
+- Real-time Data Display: Live telemetry values from IoT sensors and devices
+- Metric Visualization: Sensor readings with units, timestamps, and quality indicators
+- Device Identification: Device codes, names, and associated department information
+- Data Quality Monitoring: Quality scores and validation status for telemetry data
+- Metadata Analysis: Comprehensive device and metric metadata viewing
+
+Data Management Capabilities:
+- Department-based Data Filtering: Role-based telemetry data access control
+- Pagination Support: Efficient handling of large telemetry datasets
+- Real-time Query Processing: Dynamic data retrieval with API integration
+- Data Transformation: API response formatting for table display
+- Error Handling: Comprehensive error management for API failures
+- Loading States: User feedback during data retrieval operations
+
+Advanced Analytics Features:
+- Historical Data Analysis: Time-series data querying and visualization
+- Device Status Monitoring: Online/offline status tracking
+- Data Quality Assessment: Quality scores and validation metrics
+- Metric Versioning: Version control for metric definitions
+- Ingestion Timestamps: Data arrival time tracking for latency analysis
+- Edge Node Identification: Edge computing node tracking
+
+Detail View Capabilities:
+- Complete Telemetry Record Display: Full device and metric information
+- Metadata Exploration: JSON-formatted metadata with syntax highlighting
+- Data Quality Indicators: Visual quality status representation
+- Device Context Information: Department and location details
+- Timestamp Formatting: Human-readable time display with timezone support
+- Expandable Information Panels: Detailed record examination interface
+
+Technical Implementation:
+- Vue 3 Composition API with TypeScript for robust development
+- Element Plus UI components for professional data visualization
+- Reactive state management for real-time data updates
+- RESTful API integration with error handling and retry logic
+- Department-based authorization and data filtering
+- Responsive design with optimized table layouts
+- Internationalization (i18n) support for multi-language deployment
+
+Integration Points:
+- Device Management: Device information and status integration
+- Metric Definitions: Metric configuration and validation rules
+- User Management: Department-based access control integration
+- Time-series Database: Historical data storage and retrieval
+- Real-time Data Streams: Live telemetry data ingestion
+- Analytics Dashboard: Data aggregation and visualization support
+
+@component TelemetryIndex  
+@author Chang Xiu-Wen, AI-Enhanced
+@version 2.1.0
+@created 2025-09-30
+@updated 2025-09-30
+
+==================================================================================
+-->
+
 <template>
   <div class="app-container">
     <!-- 搜尋區域 -->

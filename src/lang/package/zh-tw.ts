@@ -752,6 +752,8 @@ export default {
     add: "新增設備",
     edit: "編輯",
     detailButton: "詳情",
+    devices: "設備",
+    deviceList: "設備列表",
     delete: "刪除",
     online: "在線",
     offline: "離線",
@@ -1229,6 +1231,7 @@ export default {
     telemetry: {
       // Page titles and descriptions
       title: "遙測數據管理",
+      telemetryData: "遙測數據",
       description: "查看和管理IoT設備的遙測數據，包括水位、電池電壓、訊號強度等指標",
 
       // Query form
@@ -1301,5 +1304,17 @@ export default {
     export: "匯出",
     exportSuccess: "匯出成功",
     exportFailed: "匯出失敗",
+  },
+
+  // 電子地圖國際化
+  emap: {
+    centerOnDevices: "定位至設備",
+    zoomIn: "放大",
+    zoomOut: "縮小",
+    myLocation: "我的位置",
+    initMapFailed: "地圖初始化失敗",
+    locationSuccess: "位置更新成功",
+    locationFailed: "無法獲取位置",
+    geolocationNotSupported: "此瀏覽器不支援地理位置定位",
   },
 };
