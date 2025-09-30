@@ -1293,5 +1293,13 @@ export default {
     disabled: "禁用",
     success: "成功",
     failed: "失敗",
+    query: "查詢",
+    querySuccess: "查詢成功",
+    queryFailed: "查詢失敗",
+    actions: "操作",
+    view: "查看",
+    export: "匯出",
+    exportSuccess: "匯出成功",
+    exportFailed: "匯出失敗",
   },
 };

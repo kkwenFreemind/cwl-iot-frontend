@@ -36,72 +36,6 @@
 
     <!-- 數據表格 -->
     <el-card shadow="hover" class="data-table">
-      <template #header>
-        <div class="card-header">
-          <span>{{ $t("iot.telemetry.results") }}</span>
-          <div class="header-actions">
-            <el-button
-              type="primary"
-              size="small"
-              :disabled="!tableData.length"
-              @click="handleExport"
-            >
-              {{ $t("common.export") }}
-            </el-button>
-          </div>
-        </div>
-      </template>
-
-      <!-- Debug info -->
-      <div
-        style="
-          padding: 15px;
-          margin-bottom: 20px;
-          background: #f0f9ff;
-          border: 1px solid #bae6fd;
-          border-radius: 8px;
-        "
-      >
-        <h4 style="margin: 0 0 10px 0; color: #0369a1">調試信息</h4>
-        <div
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            font-size: 14px;
-          "
-        >
-          <div>
-            <strong>DeptId:</strong>
-            {{ queryForm.deptId || "未設置" }}
-          </div>
-          <div>
-            <strong>數據數量:</strong>
-            {{ tableData.length }}
-          </div>
-          <div>
-            <strong>總數:</strong>
-            {{ total }}
-          </div>
-          <div>
-            <strong>當前頁碼:</strong>
-            {{ pagination.current }}
-          </div>
-          <div>
-            <strong>頁大小:</strong>
-            {{ pagination.size }}
-          </div>
-          <div>
-            <strong>API狀態:</strong>
-            {{ loading ? "載入中..." : "完成" }}
-          </div>
-        </div>
-        <div style="margin-top: 10px">
-          <el-button type="info" size="small" @click="testDirectAPI">測試API調用</el-button>
-          <el-button type="warning" size="small" @click="forceLoadData">強制載入數據</el-button>
-        </div>
-      </div>
-
       <el-table
         :data="tableData"
         highlight-current-row
@@ -124,9 +58,9 @@
           :label="$t('iot.telemetry.metricName')"
           min-width="120"
         />
-        <el-table-column prop="value" :label="$t('iot.telemetry.value')" width="100">
+        <el-table-column prop="value" :label="$t('iot.telemetry.value')" width="100" align="right">
           <template #default="scope">
-            <span>{{ scope.row.value }} {{ scope.row.unit || "" }}</span>
+            <span>{{ formatValue(scope.row.value) }} {{ scope.row.unit || "" }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="timestamp" :label="$t('iot.telemetry.timestamp')" min-width="160">
@@ -134,7 +68,6 @@
             <span>{{ formatDateTime(scope.row.timestamp) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="deptName" :label="$t('iot.telemetry.department')" width="120" />
         <el-table-column :label="$t('common.actions')" fixed="right" width="120">
           <template #default="scope">
             <el-button type="primary" size="small" text @click="handleViewDetail(scope.row)">
@@ -213,7 +146,6 @@ const tableData = ref<any[]>([]);
 const selectedRecord = ref<any>(null);
 const detailDialogVisible = ref(false);
 const total = ref(0);
-const loading = ref(false);
 
 // Query form
 const queryForm = reactive({
@@ -238,10 +170,29 @@ const handleQuery = async () => {
       return;
     }
 
+    // Format dates for API - remove timezone info and milliseconds
+    const formatDateForAPI = (dateStr?: string) => {
+      if (!dateStr) return undefined;
+      // Convert from "YYYY-MM-DDTHH:mm:ss" format to API expected format
+      return dateStr.replace(/\.\d{3}Z?$/, "").split("+")[0];
+    };
+
+    const formattedStartTime = formatDateForAPI(queryForm.startTime);
+    const formattedEndTime = formatDateForAPI(queryForm.endTime);
+
+    console.log("Original dates:", {
+      startTime: queryForm.startTime,
+      endTime: queryForm.endTime,
+    });
+    console.log("Formatted dates:", {
+      startTime: formattedStartTime,
+      endTime: formattedEndTime,
+    });
+
     const response = await TelemetryAPI.getTelemetryByDepartment(
       queryForm.deptId!,
-      queryForm.startTime,
-      queryForm.endTime,
+      formattedStartTime,
+      formattedEndTime,
       pagination.current,
       pagination.size
     );
@@ -311,89 +262,15 @@ const handleViewDetail = (record: any) => {
   detailDialogVisible.value = true;
 };
 
-const handleExport = async () => {
-  try {
-    // Get all data without pagination for export
-    await TelemetryAPI.getTelemetryListByDepartment(
-      queryForm.deptId!,
-      queryForm.startTime,
-      queryForm.endTime
-    );
-
-    // Export logic here - could use a library like exceljs
-    ElMessage.success(t("common.exportSuccess"));
-  } catch (error) {
-    console.error("Export failed:", error);
-    ElMessage.error(t("common.exportFailed"));
-  }
-};
-
 const formatDateTime = (dateTime: string) => {
   return new Date(dateTime).toLocaleString();
 };
 
-/**
- * Test direct API call with hardcoded deptId
- */
-const testDirectAPI = async () => {
-  try {
-    loading.value = true;
-    console.log("Testing direct API call with deptId: 2");
-
-    const response = await TelemetryAPI.getTelemetryByDepartment(2, undefined, undefined, 1, 10);
-    console.log("Direct API test response:", response);
-
-    // Handle API response structure: response.data contains list and total
-    if (response && (response as any).data && Array.isArray((response as any).data.list)) {
-      const apiData = (response as any).data;
-      tableData.value = apiData.list.map((item: any) => ({
-        deviceCode: item.deviceId,
-        deviceName: item.deviceName || item.deviceId,
-        metricDisplayName: item.metricName || item.metricIdentifier,
-        value: item.metricValue,
-        unit: "",
-        timestamp: item.time,
-        deptName: item.deptName,
-        quality: item.quality,
-        metadata: JSON.stringify(
-          {
-            alias: item.alias,
-            dataType: item.dataType,
-            communityId: item.communityId,
-            seq: item.seq,
-            isBirth: item.isBirth,
-            isDeath: item.isDeath,
-            bdSeq: item.bdSeq,
-            metricVersion: item.metricVersion,
-            ingestionTime: item.ingestionTime,
-            edgeNodeId: item.edgeNodeId,
-            onlineStatus: item.onlineStatus,
-          },
-          null,
-          2
-        ),
-      }));
-      total.value = apiData.total;
-      pagination.total = apiData.total;
-    }
-
-    ElMessage.success("API測試成功，已載入數據");
-  } catch (error) {
-    console.error("Direct API test failed:", error);
-    ElMessage.error("API測試失敗");
-  } finally {
-    loading.value = false;
+const formatValue = (value: any) => {
+  if (typeof value === "number") {
+    return value.toFixed(2);
   }
-};
-
-/**
- * Force load data with current deptId
- */
-const forceLoadData = async () => {
-  if (!queryForm.deptId) {
-    queryForm.deptId = 2; // Force set to 2 for testing
-  }
-  await handleQuery();
+  return value;
 };
 
 // Initialize
