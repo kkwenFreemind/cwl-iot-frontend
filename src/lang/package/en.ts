@@ -1368,4 +1368,93 @@ export default {
     locationFailed: "Failed to get location",
     geolocationNotSupported: "Geolocation is not supported by this browser",
   },
+
+  // Event Rules Internationalization
+  event: {
+    // Basic Information
+    ruleName: "Rule Name",
+    ruleNamePlaceholder: "Please enter rule name",
+    description: "Description",
+    descriptionPlaceholder: "Please enter rule description",
+    device: "Device",
+    selectDevice: "Please select device",
+    selectDeviceFirst: "Please select device first to view related event rules",
+    severity: "Severity Level",
+    selectSeverity: "Please select severity level",
+    status: "Status",
+    selectStatus: "Please select status",
+    active: "Active",
+    inactive: "Inactive",
+    createdAt: "Created At",
+    conditions: "Trigger Conditions",
+    condition: "Condition",
+    noConditions: "No conditions configured yet",
+    addCondition: "Add Condition",
+    basicInfo: "Basic Information",
+
+    // Severity Levels
+    "severity.info": "Info",
+    "severity.warning": "Warning",
+    "severity.critical": "Critical",
+    "severity.emergency": "Emergency",
+
+    // Event Severity Levels (for dynamic access)
+    "event.severity.info": "Info",
+    "event.severity.warning": "Warning",
+    "event.severity.critical": "Critical",
+    "event.severity.emergency": "Emergency",
+
+    // Condition Settings
+    metricName: "Metric",
+    selectMetric: "Please select metric",
+    operator: "Operator",
+    selectOperator: "Please select operator",
+    thresholdValue: "Threshold Value",
+    enterThreshold: "Please enter threshold value",
+    selectBooleanValue: "Please select boolean value",
+    dataType: "Data Type",
+    selectDataType: "Please select data type",
+
+    // Operators
+    greaterThan: "Greater Than",
+    lessThan: "Less Than",
+    greaterEqual: "Greater Than or Equal",
+    lessEqual: "Less Than or Equal",
+    equal: "Equal",
+    notEqual: "Not Equal",
+
+    // Operations
+    add: "Add Event Rule",
+    addTitle: "Add Event Rule",
+    editTitle: "Edit Event Rule",
+    search: "Search",
+    reset: "Reset",
+
+    // Messages
+    loadDevicesFailed: "Failed to load device list",
+    loadFailed: "Failed to load event rules",
+    loadMetricsFailed: "Failed to load metrics",
+    createSuccess: "Event rule created successfully",
+    updateSuccess: "Event rule updated successfully",
+    deleteSuccess: "Event rule deleted successfully",
+    submitFailed: "Submission failed",
+    deleteFailed: "Deletion failed",
+    deleteConfirm: "Are you sure you want to delete event rule '{name}'?",
+    statusUpdateSuccess: "Status updated successfully",
+    statusUpdateFailed: "Failed to update status",
+
+    // Form Validation
+    validation: {
+      ruleNameRequired: "Please enter rule name",
+      ruleNameMaxLength: "Rule name cannot exceed 255 characters",
+      descriptionMaxLength: "Description cannot exceed 1000 characters",
+      severityRequired: "Please select severity level",
+      metricNameRequired: "Please select metric",
+      operatorRequired: "Please select operator",
+      thresholdRequired: "Please enter threshold value",
+      thresholdNumeric: "Threshold value must be numeric",
+      dataTypeRequired: "Please select data type",
+      atLeastOneCondition: "At least one trigger condition is required",
+    },
+  },
 };

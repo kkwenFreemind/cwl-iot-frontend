@@ -1317,4 +1317,93 @@ export default {
     locationFailed: "無法獲取位置",
     geolocationNotSupported: "此瀏覽器不支援地理位置定位",
   },
+
+  // 事件規則國際化
+  event: {
+    // 基本資訊
+    ruleName: "規則名稱",
+    ruleNamePlaceholder: "請輸入規則名稱",
+    description: "描述",
+    descriptionPlaceholder: "請輸入規則描述",
+    device: "設備",
+    selectDevice: "請選擇設備",
+    selectDeviceFirst: "請先選擇設備以查看相關事件規則",
+    severity: "嚴重等級",
+    selectSeverity: "請選擇嚴重等級",
+    status: "狀態",
+    selectStatus: "請選擇狀態",
+    active: "啟用",
+    inactive: "停用",
+    createdAt: "建立時間",
+    conditions: "觸發條件",
+    condition: "條件",
+    noConditions: "尚未設定任何條件",
+    addCondition: "新增條件",
+    basicInfo: "基本資訊",
+
+    // 嚴重等級
+    "severity.info": "資訊",
+    "severity.warning": "警告",
+    "severity.critical": "嚴重",
+    "severity.emergency": "緊急",
+
+    // 事件嚴重等級（用於動態訪問）
+    "event.severity.info": "資訊",
+    "event.severity.warning": "警告",
+    "event.severity.critical": "嚴重",
+    "event.severity.emergency": "緊急",
+
+    // 條件設定
+    metricName: "度量指標",
+    selectMetric: "請選擇度量指標",
+    operator: "運算符",
+    selectOperator: "請選擇運算符",
+    thresholdValue: "閾值",
+    enterThreshold: "請輸入閾值",
+    selectBooleanValue: "請選擇布林值",
+    dataType: "數據類型",
+    selectDataType: "請選擇數據類型",
+
+    // 運算符
+    greaterThan: "大於",
+    lessThan: "小於",
+    greaterEqual: "大於等於",
+    lessEqual: "小於等於",
+    equal: "等於",
+    notEqual: "不等於",
+
+    // 操作
+    add: "新增事件規則",
+    addTitle: "新增事件規則",
+    editTitle: "編輯事件規則",
+    search: "搜尋",
+    reset: "重置",
+
+    // 訊息
+    loadDevicesFailed: "載入設備列表失敗",
+    loadFailed: "載入事件規則失敗",
+    loadMetricsFailed: "載入度量指標失敗",
+    createSuccess: "事件規則建立成功",
+    updateSuccess: "事件規則更新成功",
+    deleteSuccess: "事件規則刪除成功",
+    submitFailed: "提交失敗",
+    deleteFailed: "刪除失敗",
+    deleteConfirm: "確定要刪除事件規則「{name}」嗎？",
+    statusUpdateSuccess: "狀態更新成功",
+    statusUpdateFailed: "狀態更新失敗",
+
+    // 表單驗證
+    validation: {
+      ruleNameRequired: "請輸入規則名稱",
+      ruleNameMaxLength: "規則名稱長度不能超過255個字符",
+      descriptionMaxLength: "描述長度不能超過1000個字符",
+      severityRequired: "請選擇嚴重等級",
+      metricNameRequired: "請選擇度量指標",
+      operatorRequired: "請選擇運算符",
+      thresholdRequired: "請輸入閾值",
+      thresholdNumeric: "閾值必須是數字",
+      dataTypeRequired: "請選擇數據類型",
+      atLeastOneCondition: "至少需要設定一個觸發條件",
+    },
+  },
 };
