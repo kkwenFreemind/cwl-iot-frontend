@@ -48,7 +48,7 @@ EXPOSED METHODS:
 
 @component EventForm
 @namespace IoT.Event.Components
-@author Chang Xiu-Wen, AI-Enhanced Development Team
+@author Chang Xiu-Wen, AI-Enhanced
 @version 1.2.0
 @since 2025-10-01
 @lastModified 2025-10-01

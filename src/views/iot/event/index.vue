@@ -254,7 +254,7 @@ This component provides comprehensive IoT event (alarm rule) management function
       <EventForm
         ref="eventFormRef"
         :form-data="formData"
-        :device-id="queryParams.deviceId"
+        :device-id="queryParams.deviceId || ''"
         :is-edit="dialog.type === 'edit'"
       />
 

@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>系統模組關係圖 - IoT 水位監測系統</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://html2canvas.jsdelivr.net/dist/html2canvas.min.js"></script>
+    <style>
+      body {
+        font-family: "Microsoft JhengHei", Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+      }
+      .header p {
+        margin: 10px 0 0 0;
+        opacity: 0.9;
+        font-size: 1.1em;
+      }
+      .controls {
+        padding: 20px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+        text-align: center;
+      }
+      .btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        margin: 0 10px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+      .btn:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+      }
+      .btn.export {
+        background: #e74c3c;
+      }
+      .btn.export:hover {
+        background: #c0392b;
+      }
+      .diagram-container {
+        padding: 40px;
+        background: white;
+        min-height: 800px;
+      }
+      .legend {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid #3498db;
+      }
+      .legend h3 {
+        margin: 0 0 15px 0;
+        color: #2c3e50;
+      }
+      .legend-item {
+        display: inline-block;
+        margin: 5px 15px 5px 0;
+        padding: 5px 10px;
+        background: white;
+        border-radius: 15px;
+        font-size: 12px;
+        border: 2px solid;
+      }
+      .core {
+        border-color: #e74c3c;
+        color: #e74c3c;
+      }
+      .management {
+        border-color: #3498db;
+        color: #3498db;
+      }
+      .config {
+        border-color: #f39c12;
+        color: #f39c12;
+      }
+      .audit {
+        border-color: #9b59b6;
+        color: #9b59b6;
+      }
+      .info-panel {
+        margin-top: 30px;
+        padding: 25px;
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        color: white;
+        border-radius: 15px;
+      }
+      .info-panel h3 {
+        margin: 0 0 15px 0;
+        font-size: 1.3em;
+      }
+      .module-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+      .module-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid;
+      }
+      .module-card h4 {
+        margin: 0 0 10px 0;
+        font-size: 1.1em;
+      }
+      .module-card p {
+        margin: 0;
+        font-size: 0.9em;
+        color: #666;
+        line-height: 1.5;
+      }
+      @media (max-width: 768px) {
+        .container {
+          margin: 0;
+          border-radius: 0;
+        }
+        .header h1 {
+          font-size: 2em;
+        }
+        .diagram-container {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🌊 IoT 水位監測系統 - 系統模組關係圖</h1>
+        <p>Community Water Level IoT Frontend - System Architecture Diagram</p>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="showOverview()">📊 系統總覽</button>
+        <button class="btn" onclick="showDetailed()">🔍 詳細關係圖</button>
+        <button class="btn" onclick="showDataFlow()">⚡ 資料流程圖</button>
+        <button class="btn export" onclick="exportToPDF()">📄 匯出 PDF</button>
+      </div>
+
+      <div class="diagram-container" id="diagram-container">
+        <div id="mermaid-diagram"></div>
+      </div>
+
+      <div class="legend">
+        <h3>🏷️ 圖例說明</h3>
+        <span class="legend-item core">核心管理模組</span>
+        <span class="legend-item management">權限管理模組</span>
+        <span class="legend-item config">系統配置模組</span>
+        <span class="legend-item audit">稽核監控模組</span>
+      </div>
+
+      <div class="info-panel">
+        <h3>📋 系統模組說明</h3>
+        <div class="module-grid">
+          <div class="module-card" style="border-left-color: #e74c3c">
+            <h4>👥 使用者管理 (User Management)</h4>
+            <p>
+              負責使用者帳號的完整生命週期管理，包含帳號建立、權限分配、狀態管理和部門歸屬。與角色管理和部門管理密切相關。
+            </p>
+          </div>
+          <div class="module-card" style="border-left-color: #3498db">
+            <h4>🎭 角色管理 (Role Management)</h4>
+            <p>
+              實現基於角色的存取控制(RBAC)，管理角色定義、權限分配和資料範圍控制。是整個權限系統的核心。
+            </p>
+          </div>
+          <div class="module-card" style="border-left-color: #3498db">
+            <h4>📋 選單管理 (Menu Management)</h4>
+            <p>
+              管理系統導航結構和功能選單，控制使用者介面的呈現和功能存取權限。與角色權限緊密整合。
+            </p>
+          </div>
+          <div class="module-card" style="border-left-color: #e74c3c">
+            <h4>🏢 部門管理 (Department Management)</h4>
+            <p>管理組織架構和部門層級關係，支援水位監測站點的地理區域劃分和管理階層。</p>
+          </div>
+          <div class="module-card" style="border-left-color: #f39c12">
+            <h4>📚 字典管理 (Dictionary Management)</h4>
+            <p>維護系統基礎資料和代碼表，提供下拉選項、狀態代碼等系統配置資料的集中管理。</p>
+          </div>
+          <div class="module-card" style="border-left-color: #f39c12">
+            <h4>⚙️ 系統設定 (System Configuration)</h4>
+            <p>管理系統參數配置，包含功能開關、預設值設定和系統行為配置參數。</p>
+          </div>
+          <div class="module-card" style="border-left-color: #9b59b6">
+            <h4>📢 公告管理 (Notice Management)</h4>
+            <p>管理系統公告和通知，支援富文本編輯、發布控制和目標使用者設定。</p>
+          </div>
+          <div class="module-card" style="border-left-color: #9b59b6">
+            <h4>📊 系統日誌 (System Log)</h4>
+            <p>記錄和查詢系統操作日誌，提供稽核軌跡、效能監控和安全追蹤功能。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Mermaid
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: "default",
+        themeVariables: {
+          primaryColor: "#3498db",
+          primaryTextColor: "#2c3e50",
+          primaryBorderColor: "#2980b9",
+          lineColor: "#34495e",
+          secondaryColor: "#ecf0f1",
+          tertiaryColor: "#bdc3c7",
+        },
+      });
+
+      // System Overview Diagram
+      const overviewDiagram = `
+            graph TB
+                subgraph "🌊 IoT 水位監測系統 Frontend"
+                    subgraph "核心管理模組"
+                        User["👥<br/>使用者管理<br/>(User Management)"]
+                        Dept["🏢<br/>部門管理<br/>(Department Management)"]
+                    end
+                    
+                    subgraph "權限管理模組"
+                        Role["🎭<br/>角色管理<br/>(Role Management)"]
+                        Menu["📋<br/>選單管理<br/>(Menu Management)"]
+                    end
+                    
+                    subgraph "系統配置模組"
+                        Dict["📚<br/>字典管理<br/>(Dictionary Management)"]
+                        Config["⚙️<br/>系統設定<br/>(System Configuration)"]
+                    end
+                    
+                    subgraph "稽核監控模組"
+                        Notice["📢<br/>公告管理<br/>(Notice Management)"]
+                        Log["📊<br/>系統日誌<br/>(System Log)"]
+                    end
+                end
+
+                %% Core relationships
+                User -->|依據部門| Dept
+                User -->|分配角色| Role
+                Role -->|控制選單權限| Menu
+                Role -->|資料範圍控制| Dept
+                
+                %% Configuration dependencies
+                Dict -->|提供選項資料| User
+                Dict -->|提供選項資料| Role
+                Dict -->|提供選項資料| Notice
+                Config -->|系統參數| User
+                Config -->|系統參數| Role
+                
+                %% Audit trail
+                Log -->|記錄操作| User
+                Log -->|記錄操作| Role
+                Log -->|記錄操作| Menu
+                Log -->|記錄操作| Dept
+                Log -->|記錄操作| Dict
+                Log -->|記錄操作| Config
+                Log -->|記錄操作| Notice
+
+                %% Styling
+                classDef coreModule fill:#ffebee,stroke:#e74c3c,stroke-width:2px
+                classDef authModule fill:#e3f2fd,stroke:#3498db,stroke-width:2px
+                classDef configModule fill:#fff3e0,stroke:#f39c12,stroke-width:2px
+                classDef auditModule fill:#f3e5f5,stroke:#9b59b6,stroke-width:2px
+                
+                class User,Dept coreModule
+                class Role,Menu authModule
+                class Dict,Config configModule
+                class Notice,Log auditModule
+        `;
+
+      // Detailed Relationship Diagram
+      const detailedDiagram = `
+            graph TB
+                subgraph "前端頁面組件 (Frontend Components)"
+                    UserView["src/views/system/user/index.vue<br/>👥 使用者管理頁面"]
+                    RoleView["src/views/system/role/index.vue<br/>🎭 角色管理頁面"]
+                    MenuView["src/views/system/menu/index.vue<br/>📋 選單管理頁面"]
+                    DeptView["src/views/system/dept/index.vue<br/>🏢 部門管理頁面"]
+                    DictView["src/views/system/dict/index.vue<br/>📚 字典管理頁面"]
+                    ConfigView["src/views/system/config/index.vue<br/>⚙️ 系統設定頁面"]
+                    NoticeView["src/views/system/notice/index.vue<br/>📢 公告管理頁面"]
+                    LogView["src/views/system/log/index.vue<br/>📊 系統日誌頁面"]
+                end
+
+                subgraph "API 服務層 (API Services)"
+                    UserAPI["src/api/system/user-api.ts<br/>使用者 API"]
+                    RoleAPI["src/api/system/role-api.ts<br/>角色 API"]
+                    MenuAPI["src/api/system/menu-api.ts<br/>選單 API"]
+                    DeptAPI["src/api/system/dept-api.ts<br/>部門 API"]
+                    DictAPI["src/api/system/dict-api.ts<br/>字典 API"]
+                    ConfigAPI["src/api/system/config-api.ts<br/>系統設定 API"]
+                    NoticeAPI["src/api/system/notice-api.ts<br/>公告 API"]
+                    LogAPI["src/api/system/log-api.ts<br/>日誌 API"]
+                end
+
+                subgraph "共用組件 (Shared Components)"
+                    DeptTree["src/views/system/user/components/DeptTree.vue<br/>部門樹狀選擇器"]
+                    DictItem["src/views/system/dict/dict-item.vue<br/>字典項目管理"]
+                    MyNotice["src/views/system/notice/components/MyNotice.vue<br/>個人通知中心"]
+                end
+
+                %% Page to API connections
+                UserView --> UserAPI
+                RoleView --> RoleAPI
+                MenuView --> MenuAPI
+                DeptView --> DeptAPI
+                DictView --> DictAPI
+                ConfigView --> ConfigAPI
+                NoticeView --> NoticeAPI
+                LogView --> LogAPI
+
+                %% Shared component usage
+                UserView --> DeptTree
+                DictView --> DictItem
+                NoticeView --> MyNotice
+
+                %% Cross-module dependencies
+                UserView -.->|查詢部門資料| DeptAPI
+                UserView -.->|查詢角色資料| RoleAPI
+                RoleView -.->|查詢選單資料| MenuAPI
+                RoleView -.->|查詢部門資料| DeptAPI
+                MenuView -.->|查詢父選單| MenuAPI
+                DeptView -.->|查詢父部門| DeptAPI
+                NoticeView -.->|使用字典選項| DictAPI
+                
+                %% Audit connections
+                LogView -.->|記錄所有操作| UserAPI
+                LogView -.->|記錄所有操作| RoleAPI
+                LogView -.->|記錄所有操作| MenuAPI
+                LogView -.->|記錄所有操作| DeptAPI
+                LogView -.->|記錄所有操作| DictAPI
+                LogView -.->|記錄所有操作| ConfigAPI
+                LogView -.->|記錄所有操作| NoticeAPI
+
+                %% Styling
+                classDef pageComponent fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+                classDef apiService fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+                classDef sharedComponent fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+                
+                class UserView,RoleView,MenuView,DeptView,DictView,ConfigView,NoticeView,LogView pageComponent
+                class UserAPI,RoleAPI,MenuAPI,DeptAPI,DictAPI,ConfigAPI,NoticeAPI,LogAPI apiService
+                class DeptTree,DictItem,MyNotice sharedComponent
+        `;
+
+      // Data Flow Diagram
+      const dataFlowDiagram = `
+            sequenceDiagram
+                participant U as 👤 使用者
+                participant F as 🖥️ Frontend
+                participant A as 🔗 API Layer
+                participant B as 🖥️ Backend
+                participant D as 🗄️ Database
+
+                Note over U,D: 使用者登入與權限驗證流程
+                U->>F: 1. 使用者登入
+                F->>A: 2. 呼叫認證 API
+                A->>B: 3. 驗證使用者帳密
+                B->>D: 4. 查詢使用者資料
+                D-->>B: 5. 回傳使用者資訊
+                B-->>A: 6. 回傳認證結果
+                A-->>F: 7. 回傳 JWT Token
+                F-->>U: 8. 登入成功
+
+                Note over U,D: 權限選單載入流程
+                U->>F: 9. 進入系統首頁
+                F->>A: 10. 取得使用者選單權限
+                A->>B: 11. 根據角色查詢選單
+                B->>D: 12. 查詢角色-選單關聯
+                D-->>B: 13. 回傳選單資料
+                B-->>A: 14. 回傳授權選單
+                A-->>F: 15. 建構導航選單
+                F-->>U: 16. 顯示個人化選單
+
+                Note over U,D: 系統管理操作流程
+                U->>F: 17. 執行管理操作
+                F->>A: 18. 呼叫對應 API
+                A->>B: 19. 驗證操作權限
+                B->>D: 20. 執行資料庫操作
+                D-->>B: 21. 回傳操作結果
+                B->>D: 22. 記錄操作日誌
+                B-->>A: 23. 回傳執行結果
+                A-->>F: 24. 更新前端狀態
+                F-->>U: 25. 顯示操作結果
+        `;
+
+      function showOverview() {
+        renderDiagram(overviewDiagram);
+      }
+
+      function showDetailed() {
+        renderDiagram(detailedDiagram);
+      }
+
+      function showDataFlow() {
+        const container = document.getElementById("mermaid-diagram");
+        container.innerHTML = `<div class="mermaid">${dataFlowDiagram}</div>`;
+        mermaid.init(undefined, container.querySelector(".mermaid"));
+      }
+
+      function renderDiagram(diagramText) {
+        const container = document.getElementById("mermaid-diagram");
+        container.innerHTML = `<div class="mermaid">${diagramText}</div>`;
+        mermaid.init(undefined, container.querySelector(".mermaid"));
+      }
+
+      async function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+
+        // Show loading message
+        const originalContent = document.getElementById("diagram-container").innerHTML;
+        document.getElementById("diagram-container").innerHTML =
+          '<div style="text-align: center; padding: 50px; font-size: 18px;">🔄 正在生成 PDF，請稍候...</div>';
+
+        try {
+          // Capture the entire container
+          const element = document.querySelector(".container");
+          const canvas = await html2canvas(element, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: "#ffffff",
+          });
+
+          const imgData = canvas.toDataURL("image/png");
+          const pdf = new jsPDF("l", "mm", "a4"); // landscape orientation
+
+          const imgWidth = 297; // A4 landscape width in mm
+          const pageHeight = 210; // A4 landscape height in mm
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          let heightLeft = imgHeight;
+
+          let position = 0;
+
+          // Add first page
+          pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+
+          // Add additional pages if needed
+          while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+          }
+
+          // Save the PDF
+          const currentDate = new Date().toISOString().split("T")[0];
+          pdf.save(`IoT水位監測系統-模組關係圖-${currentDate}.pdf`);
+        } catch (error) {
+          console.error("Error generating PDF:", error);
+          alert("PDF 生成失敗，請稍後再試");
+        } finally {
+          // Restore original content
+          document.getElementById("diagram-container").innerHTML = originalContent;
+          // Re-render the current diagram
+          showOverview();
+        }
+      }
+
+      // Initialize with overview diagram
+      document.addEventListener("DOMContentLoaded", function () {
+        showOverview();
+      });
+    </script>
+  </body>
+</html>
